@@ -1,0 +1,192 @@
+.footer {
+    background-color: rgb(12, 12, 87);
+    color: white;
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+.copyright {
+    text-align: center;
+    font-weight: bold;
+}
+
+.tala {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 100px;
+}
+
+.on h1 {
+    font-size: large;
+    align-items: center;
+}
+
+.on p {
+    font-size: larger;
+}
+
+.th h1 {
+    font-size: large;
+    align-items: center;
+}
+
+.th p {
+    font-size: larger;
+}
+
+body {
+    margin: 0px;
+    padding: 0%;
+    background-image: url(backk.avif);
+    align-items: center;
+}
+
+
+/* footer ending */
+
+
+.whorwe {
+    text-align: center;
+    font-weight: bolder;
+    font-size: x-large;
+    font-family: 'Lucida Sans',
+        'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: rgb(15, 0, 0);
+    text-decoration: underline;
+}
+
+.imgg img {
+    height: 400pxs;
+    width: 490px;
+    border-radius: 50px;
+}
+
+.imgg {
+    text-align: center;
+    padding-right: 60px;
+    padding-top: 20px;
+}
+
+.smarttext {
+    font-weight: bold;
+    font-size: x-large;
+    padding-left: 60px;
+    padding-right: 90px;
+}
+
+.smarttext p {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.smarttext h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    color: rgb(1, 1, 102);
+}
+
+.two-it {
+    display: flex;
+    flex-direction: row;
+}
+
+
+/* second part */
+
+
+.mission_img img {
+    height: 400pxs;
+    width: 490px;
+    border-radius: 30px;
+}
+
+.mission_txt h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    color: rgb(1, 1, 102);
+}
+
+.mission_txt p {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.mission_txt {
+    font-weight: bold;
+    font-size: x-large;
+    padding-left: 90px;
+    padding-right: 90px;
+}
+
+.mission {
+    display: flex;
+    flex-direction: row;
+    padding-top: 70px;
+    padding-left: 60px;
+}
+
+
+/* third part */
+
+.offer_img img {
+    height: 400pxs;
+    width: 490px;
+    border-radius: 30px;
+}
+
+.offer_img {
+    text-align: center;
+    padding-right: 260px;
+    padding-top: 20px;
+}
+
+.offer_txt {
+    font-weight: bold;
+    font-size: x-large;
+    padding-left: 280px;
+    padding-right: 90px;
+}
+
+.offer_txt ul {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.offer_txt h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    color: rgb(1, 1, 102);
+}
+
+.offer {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    padding-top: 50px;
+}
+
+.last_txt {
+    font-weight: bold;
+    font-size: x-large;
+    padding-left: 80px;
+    padding-right: 80px;
+}
+
+.last_txt h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    color: rgb(1, 1, 102);
+    text-align: center;
+}
+
+.last_txt p {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.last_img img {
+    height: 500px;
+    width: 890px;
+    border-radius: 30px;
+}
+
+.last_img {
+    text-align: center;
+    padding-top: 90px;
+}

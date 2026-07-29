@@ -1,0 +1,47 @@
+.footer {
+    background-color: rgb(12, 12, 87);
+    color: white;
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin-top: 160px;
+}
+
+.copyright {
+    text-align: center;
+    font-weight: bold;
+}
+
+.tala {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 100px;
+}
+
+.on h1 {
+    font-size: large;
+    align-items: center;
+}
+
+.on p {
+    font-size: larger;
+}
+
+.th h1 {
+    font-size: large;
+    align-items: center;
+}
+
+.th p {
+    font-size: larger;
+}
+
+body {
+    margin: 0px;
+    padding: 0%;
+    align-items: center;
+}
+
