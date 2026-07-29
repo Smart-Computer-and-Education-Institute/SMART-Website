@@ -15,11 +15,11 @@
 
 
     <div class="container">
-      <a href="Index.html"><img src="Smart-Logo.png" alt="smart_computer" height="195px" width="auto"></a>
+      <a href="Index.html"><img src="Smart-Logo.png" alt="smart_computer" class="logo"></a>
       <nav class="primary-navigation">
         <ul class="nav-list">
           <li><a href="Index.html" class="nav-links active ">Home</a></li>
-          <li><a href="About.html" class="nav-links">About</a></li>
+          <li><a href="About.html" class="nav-links">About Us</a></li>
           <li><a href="Course.html" class="nav-links">Course</a></li>
           <li><a href="Timeshift.html" class="nav-links">Timeshift</a></li>
           <li><a href="Contact.html" class="nav-links">Contact</a></li>
@@ -49,68 +49,53 @@
 
   </header>
   <main>
-    <section class="hero" id="home">
-      <div class="Hero">
-        <div class="even-columns">
-          <div>
-            <p class="eyebrow">Smart Computer & Education Institute · Jhapa, Nepal</p>
-            <h1 class="index-heading">Practical computer skills that <span class="text-accent">get you hired.</span>
-            </h1>
-            <p class="hero-sub">Hands-on classes in office tools, design, marketing, and accounting software
-              — taught by working professionals, built around what Nepal's job market actually asks for.
-            </p>
-            <div class="hero-btn">
-              <a href="Course.html" class="btn-primary">View Course</a>
-            </div>
+<section class="hero" id="home">
+  <div class="Hero">
+    <div class="even-columns">
+      <div class="hero-content">
+        <p class="eyebrow">Smart Computer & Education Institute · Jhapa, Nepal</p>
+        <h1 class="index-heading">Practical computer skills that <span class="text-accent">get you hired.</span></h1>
+        <p class="hero-sub">Hands-on classes in office tools, design, marketing, and accounting software
+          — taught by working professionals, built around what Nepal's job market actually asks for.
+        </p>
+        <div class="hero-btn">
+          <a href="Course.html" class="btn-primary">View Course</a>
+        </div>
 
-            <div class="stats-strip">
-              <div class="stat"><span><span class="stat-number" data-count="1200">0</span><span
-                    class="stat-plus">+</span></span><span class="stat-label">Students
-                  Trained</span></div>
-              <div class="stat"><span><span class="stat-number" data-count="12">0</span><span
-                    class="stat-plus">+</span></span><span class="stat-label">Years of
-                  Excellence</span></div>
-              <div class="stat"><span><span class="stat-number" data-count="5">0</span><span
-                    class="stat-plus">+</span></span><span class="stat-label">Career-Focused
-                  Courses</span></div>
-              <div class="stat"><span><span class="stat-number" data-count="95">0</span><span
-                    class="stat-plus">%</span></span><span class="stat-label">Student
-                  Satisfaction</span></div>
-            </div>
-            <section class="Terminal">
-              <div class="terminal-card">
-                <!-- Title bar -->
-                <div class="titlebar">
-                  <div class="dot dot-red"></div>
-                  <div class="dot dot-yellow"></div>
-                  <div class="dot dot-green"></div>
-                  <span class="titlebar-label">student@smartcomputer ~</span>
-                </div>
-
-                <!-- Terminal body -->
-                <div class="terminal-body">
-
-                  <!-- Command line: $ learn --skill="[SKILL NAME]" -->
-                  <div class="cmd-line">
-                    <span class="dollar">$</span>
-                    <span>learn --skill="</span>
-                    <span id="typedText"></span>
-                    <span class="cursor"></span>
-                    <p class="terminal-output">→ enrolling in Smart Computer and Education Institute</p>
-                    <p class="terminal-output">[████████████████░░] 92% job-ready</p>
-
-
-                  </div>
-            </section>
-
-
-
-
-          </div>
+        <div class="stats-strip">
+          <div class="stat"><span><span class="stat-number" data-count="1200">0</span><span class="stat-plus">+</span></span><span class="stat-label">Students Trained</span></div>
+          <div class="stat"><span><span class="stat-number" data-count="12">0</span><span class="stat-plus">+</span></span><span class="stat-label">Years of Excellence</span></div>
+          <div class="stat"><span><span class="stat-number" data-count="5">0</span><span class="stat-plus">+</span></span><span class="stat-label">Career-Focused Courses</span></div>
+          <div class="stat"><span><span class="stat-number" data-count="95">0</span><span class="stat-plus">%</span></span><span class="stat-label">Student Satisfaction</span></div>
         </div>
       </div>
+
+      <div class="hero-visual">
+        <section class="Terminal">
+          <div class="terminal-card">
+            <div class="titlebar">
+              <div class="dot dot-red"></div>
+              <div class="dot dot-yellow"></div>
+              <div class="dot dot-green"></div>
+              <span class="titlebar-label">student@smartcomputer ~</span>
+            </div>
+
+            <div class="terminal-body">
+              <div class="cmd-line">
+                <span class="dollar">$</span>
+                <span>learn --skill="</span>
+                <span id="typedText"></span>
+                <span class="cursor"></span>
+              </div>
+              <p class="terminal-output">→ enrolling in Smart Computer and Education Institute</p>
+              <p class="terminal-output">[████████████████░░] 92% job-ready</p>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
   </main>
 
 
@@ -147,72 +132,6 @@
       </div>
     </div>
   </footer>
-
-
-
-
-  <script>
-    // 1. Grab the button and the menu
-    const hamBtn = document.getElementById('hamBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-
-    // 2. Click hamburger → open/close menu
-    hamBtn.addEventListener('click', () => {
-      hamBtn.classList.toggle('open');      // toggles X animation
-      mobileMenu.classList.toggle('open'); // slides menu open/closed
-    });
-
-    // 3. Click any mobile link → close menu automatically
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        hamBtn.classList.remove('open');
-        mobileMenu.classList.remove('open');
-
-        // also update active link
-        mobileMenu.querySelectorAll('a').forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-      });
-    });
-
-    // 4. Active link on desktop nav
-    document.querySelectorAll('.nav-links').forEach(link => {
-      link.addEventListener('click', () => {
-        document.querySelectorAll('.nav-links').forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-      });
-    });
-
-  </script>
-
-  <script>
-    const typedE1 = document.getElementById('typedText');
-    const phrases = ['Graphic Design.', 'Digital Marketing.', 'Tally Accounting.', 'MS Office.', 'A Career.'];
-    let phrasesIndex = 0, charIndex = 0, deleting = false;
-    function typeLoop() {
-      const current = phrases[phrasesIndex];
-      if (!deleting) {
-        charIndex++;
-        typedE1.textContent = current.slice(0, charIndex);
-        if (charIndex == current.length) {
-          deleting = true;
-          setTimeout(typeLoop, 1400);
-          return;
-        }
-        setTimeout(typeLoop, 70);
-      } else {
-        charIndex--;
-        typedE1.textContent = current.slice(0, charIndex);
-        if (charIndex == 0) {
-          deleting = false;
-          phrasesIndex = (phrasesIndex + 1) % phrases.length;
-          setTimeout(typeLoop, 300);
-          return;
-        }
-        setTimeout(typeLoop, 35);
-      }
-    }
-    typeLoop();
-  </script>
+  <script src="script.js"></script>
 </body>
-
 </html>
