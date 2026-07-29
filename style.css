@@ -32,7 +32,7 @@ a {
 }
 @media (max-width: 480px) {
     .logo {
-        height: 55px;   /* roughly 2/3 of your new desktop size */
+        height: 150px;   /* roughly 2/3 of your new desktop size */
     }
 }
 .container img {
