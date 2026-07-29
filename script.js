@@ -29,7 +29,9 @@
     });
 
 // JS for terminal..
-     const typedE1 = document.getElementById('typedText');
+   const typedE1 = document.getElementById('typedText');
+
+if (typedE1) {
     const phrases = ['Graphic Design.', 'Digital Marketing.', 'Tally Accounting.', 'MS Office.', 'A Career.'];
     let phrasesIndex = 0, charIndex = 0, deleting = false;
     function typeLoop() {
@@ -56,10 +58,10 @@
       }
     }
     typeLoop();
-
-    // js for filter chips
+}
+// 4. Course Filtering Logic
 document.addEventListener('DOMContentLoaded', () => {
-    const filterButtons = document.querySelectorAll('.filter-chips');
+    const filterButtons = document.querySelectorAll('.chip');
     const courseCards = document.querySelectorAll('.course-card');
 
     filterButtons.forEach(button => {

@@ -12,7 +12,7 @@
 <body>
     <header class="primary-header">
         <div class="container">
-            <a href="Index.html"><img src="Smart-Logo.png" alt="smart_computer" height="195px" width="auto"></a>
+            <a href="Index.html"><img src="Smart-Logo.png" alt="smart_computer"></a>
             <nav class="primary-navigation">
                 <ul class="nav-list">
                     <li><a href="Index.html" class="nav-links ">Home</a></li>
@@ -25,11 +25,11 @@
                 </ul>
             </nav>
            <a href="login.html"><button class="primary-btn">Log In</button></a>
-
             <button class="ham-btn" id="hamBtn">
                 <span></span>
                 <span></span>
                 <span></span>
+            </button>
         </div>
         <div class="mobile-menu" id="mobileMenu">
             <a href="Index.html">Home</a>
@@ -39,6 +39,7 @@
             <a href="Contact.html">Contact</a>
             <a href="Gallery.html">Gallery</a>
             <a href="Notice.html">Notice</a>
+            <a href="login.html" class="mobile-login">Log In</a>
         </div>
     </header>
     <main>
@@ -48,11 +49,11 @@
                 <h2 class="course-paragraph">Pick a skill. Start building it this week.</h2>
                 <div class="course-control">
                     <div class="filter-chips">
-                        <button class="chip active">ALL Courses</button>
-                        <button class="chip">Computer</button>
-                        <button class="chip">Accounting</button>
-                        <button class="chip">Tution</button>
-                        <button class="chip">Languages</button>
+                        <button class="chip active" data-filter="all">ALL Courses</button>
+                        <button class="chip" data-filter="Computer">Computer</button>
+                        <button class="chip" data-filter="Accounting">Accounting</button>
+                        <button class="chip" data-filter="Tuition">Tuition</button>
+                        <button class="chip" data-filter="Languages">Languages</button>
                     </div>
                 </div>
                 <div class="course-grid">
@@ -92,13 +93,13 @@
                         <span class="course-duration">Months</span>
                     </div>
 
-                    <div class="course-card" data-category="Tution">
-                        <h3>Mathematics Tution</h3>
+                    <div class="course-card" data-category="Tuition">
+                        <h3>Mathematics Tuition</h3>
                         <div class="para">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente mollitia natus iure obcaecati, quasi vero debitis?</div>
                         <span class="course-duration">Months</span>
                     </div>
-                    <div class="course-card" data-category="Tution">
-                        <h3>Account tution</h3>
+                    <div class="course-card" data-category="Tuition">
+                        <h3>Account Tuition</h3>
                         <div class="para">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus adipisci, earum culpa minus ratione perferendis ab!</div>
                         <span class="course-duration">Months</span>
                     </div>
@@ -135,7 +136,7 @@
                      <div class="student-card">
                         <div class="info-client">
                             <img src="" alt="photo" width="70" height="70" class="Testimonials-img">
-                            <h5 class="Student-name">Nischal Bhuretl</h5>
+                            <h5 class="Student-name">Nischal Bhurtel</h5>
                         </div>
                         <p class="info-para">Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus accusamus quos, veritatis, voluptas excepturi temporibus maxime quisquam optio officiis, praesentium esse in numquam reprehenderit assumenda recusandae.</p>
                      </div>
