@@ -1,0 +1,87 @@
+{
+    "courses": [
+        {
+            "title": "Course 1",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 2",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 3",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 4",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 5",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 6",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 7",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 8",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 9",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 10",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 11",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 12",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+        {
+            "title": "Course 13",
+            "description": "Lorem ipsum…",
+            "categories": "...."
+        },
+    ],
+    "contact": {
+        "email": "[EMAIL_ADDRESS]",
+        "phone1": "+977‑1‑4444444",
+        "phone2": "+977‑1‑4444444",
+        "phone3": "+977‑1‑4444444",
+        "address": "123 Main St, City"
+    },
+    "gallery": {
+        "photos": [], // URLs or relative paths
+        "videos": [],
+        "audio": []
+    },
+    "notices": [
+        {
+            "title": "Welcome!",
+            "body": "New semester starts…"
+        }
+    ]
+}
