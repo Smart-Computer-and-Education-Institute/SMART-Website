@@ -41,7 +41,7 @@
     // Guard: if nobody's logged in, kick back to the login page
     onAuthStateChanged(auth, (user) => {
         if (!user) {
-            window.location.href = "/index.html";
+            window.location.href = "index.html";
         } else {
             welcomeMsg.textContent = `Logged in as ${user.email}`;
         }
