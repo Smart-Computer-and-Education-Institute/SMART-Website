@@ -41,7 +41,12 @@
 body {
     margin: 0px;
     padding: 0%;
+<<<<<<< Updated upstream:css/about_style.css
     background-image: url(backk.avif);
+=======
+    background-color: #ffffff;
+    background-image: none;
+>>>>>>> Stashed changes:assets/css/about_style.css
     align-items: center;
 }
 

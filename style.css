@@ -1,3 +1,4 @@
+
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -817,40 +818,9 @@ body {
 
 .th p {
   font-size: larger;
+
 }
 
 
-/* MOBILE PHONE FIX */
 
-@media (max-width: 480px) {
-  .index-heading {
-    font-size: 1.8rem;
-  }
 
-  .hero-sub {
-    font-size: 0.95rem;
-    max-width: 100%;
-  }
-
-  .hero-btn {
-    display: flex;
-    justify-content: center;
-  }
-
-  .stats-strip {
-    gap: 24px;
-    row-gap: 20px;
-  }
-
-  .stat {
-    min-width: 40%;
-  }
-
-  .terminal-body {
-    padding: 16px;
-  }
-
-  .cmd-line {
-    font-size: 14px;
-  }
-}
