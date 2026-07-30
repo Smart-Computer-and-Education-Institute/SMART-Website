@@ -119,3 +119,6 @@ npm run test
 Run TypeScript type checking:
 
 npm run type-check  
+
+
+M:\Milan Baskota\Git\SMART-Website>firebase deploy --only hosting:smartinstitute
