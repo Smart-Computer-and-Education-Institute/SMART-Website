@@ -97,4 +97,46 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// 5. Stats Count-Up Animation
+const animateCount = (el) => {
+  const target = parseInt(el.getAttribute("data-count"), 10);
+  const duration = 1500; // ms
+  const startTime = performance.now();
+
+  function step(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease-out
+    const current = Math.floor(eased * target);
+
+    el.textContent = current;
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = target;
+    }
+  }
+
+  requestAnimationFrame(step);
+};
+
+const statsStrip = document.querySelector(".stats-strip");
+
+if (statsStrip) {
+  const statsObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const numbersInView = entry.target.querySelectorAll(".stat-number");
+          numbersInView.forEach((num) => animateCount(num));
+          observer.unobserve(entry.target); // run only once
+        }
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  statsObserver.observe(statsStrip);
+}
 
