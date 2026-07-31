@@ -1,12 +1,18 @@
 {
   "hosting": {
-    "site": "smartinstitute",
     "public": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      "**/*.git"
+      "**/*.log",
+      "**/npm-debug.log*",
+      "**/.DS_Store",
+      "**/Thumbs.db",
+      "**/*.swp",
+      "**/.git*",
+      "**/*.bak",
+      "**/*.orig"
     ]
   }
 }
