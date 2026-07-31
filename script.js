@@ -140,4 +140,82 @@ if (statsStrip) {
   statsObserver.observe(statsStrip);
 }
 
+// COURSE DETAIL MODAL
 
+const courseCardsForModal = document.querySelectorAll(".course-card");
+const courseModal = document.getElementById("courseModal");
+const courseModalClose = document.getElementById("courseModalClose");
+
+if (courseModal) {
+  courseCardsForModal.forEach((card) => {
+    card.addEventListener("click", () => {
+      const title = card.querySelector("h3");
+      const desc = card.querySelector(".para");
+      const duration = card.querySelector(".course-duration");
+      const category = card.getAttribute("data-category");
+
+      document.getElementById("courseModalCategory").textContent = category || "";
+      document.getElementById("courseModalTitle").textContent = title ? title.textContent : "";
+      document.getElementById("courseModalDesc").textContent = desc ? desc.textContent : "";
+      document.getElementById("courseModalDuration").textContent = duration ? duration.textContent : "";
+
+      courseModal.classList.add("open");
+    });
+  });
+
+  courseModalClose.addEventListener("click", () => {
+    courseModal.classList.remove("open");
+  });
+
+  courseModal.addEventListener("click", (e) => {
+    if (e.target === courseModal) {
+      courseModal.classList.remove("open");
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      courseModal.classList.remove("open");
+    }
+  });
+}
+
+// GALLERY LIGHTBOX
+
+const galleryCards = document.querySelectorAll(".gallery-card");
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+const lightboxTitle = document.getElementById("lightboxTitle");
+const lightboxDesc = document.getElementById("lightboxDesc");
+const lightboxClose = document.getElementById("lightboxClose");
+
+galleryCards.forEach((card) => {
+  card.addEventListener("click", () => {
+    const img = card.querySelector("img");
+    const title = card.querySelector(".gallery-title");
+    const desc = card.querySelector(".gallery-desc");
+
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt;
+    lightboxTitle.textContent = title ? title.textContent : "";
+    lightboxDesc.textContent = desc ? desc.textContent : "";
+
+    lightbox.classList.add("open");
+  });
+});
+
+lightboxClose.addEventListener("click", () => {
+  lightbox.classList.remove("open");
+});
+
+lightbox.addEventListener("click", (e) => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove("open");
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    lightbox.classList.remove("open");
+  }
+});

@@ -231,3 +231,119 @@ button{
     }
 }
 
+/* COURSE MODAL CSS */
+
+.course-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.course-modal.open {
+  display: flex;
+}
+
+.course-modal-content {
+  background: #F8FAFC;
+  border-radius: 14px;
+  border-left: 5px solid #dc2626;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 36px 32px 32px;
+  box-sizing: border-box;
+  transform: scale(0.96);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.course-modal.open .course-modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.course-modal-category {
+  display: inline-block;
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  margin-right: 90px;
+}
+
+.course-modal-content h3 {
+  font-family: sans-serif;
+  color: #1e3e8a;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.course-modal-content p {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.course-modal-duration {
+  font-family: monospace;
+  font-size: 0.78rem;
+  background-color: #eef2ff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.course-modal-enroll {
+  display: block;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.course-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #1e293b;
+  color: #fff;
+  border: none;
+  width: auto;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: monospace;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  line-height: 1.8;
+  white-space: nowrap;
+}
+
+.course-modal-close span {
+  font-size: 0.9rem;
+  margin-left: 2px;
+}
+
+.course-modal-close:hover {
+  background: #0f172a;
+}
