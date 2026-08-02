@@ -730,7 +730,8 @@ tbody tr:hover { background: #FAFBFC; }
   margin: 0 0 12px;
   line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
