@@ -18,44 +18,4 @@
 
 </body>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-        getAuth,
-        onAuthStateChanged,
-        signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-    // Your project's Firebase config — must match the login page exactly
-    const firebaseConfig = {
-        apiKey: "AIzaSyDPW9bldB4sM48X1WBPjYtjyLawgUKWM88",
-        authDomain: "smartcomputerandeducation.firebaseapp.com",
-        projectId: "smartcomputerandeducation",
-        storageBucket: "smartcomputerandeducation.firebasestorage.app",
-        messagingSenderId: "924364544527",
-        appId: "1:924364544527:web:c5a4663b8555bcace0617a",
-        measurementId: "G-XE2MYDK27K"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const welcomeMsg = document.getElementById("welcomeMsg");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    // Guard: if nobody's logged in, kick back to the login page
-    onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            window.location.href = "index.html";
-        } else {
-            welcomeMsg.textContent = `Logged in as ${user.email}`;
-        }
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-        await signOut(auth);
-        window.location.href = "index.html";
-    });
-</script>
-
 </html>
