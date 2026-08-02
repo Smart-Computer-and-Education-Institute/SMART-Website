@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Computer & Education Institute</title>
+    <meta name="description" content="Latest notices from Smart Computer & Education Institute, Jhapa — admission deadlines, exam dates, holidays & important announcements for students.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="notice.css">
+</head>
+
+<body>
+    <header class="primary-header">
+        <div class="container">
+            <a href="index.html"><img src="Smart-Logo.png" alt="smart_computer" class="logo"></a>
+            <nav class="primary-navigation">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-links  ">Home</a></li>
+                    <li><a href="About.html" class="nav-links">About Us</a></li>
+                    <li><a href="Course.html" class="nav-links">Course</a></li>
+                    <li><a href="Timeshift.html" class="nav-links">Timeshift</a></li>
+                    <li><a href="Contact.html" class="nav-links">Contact</a></li>
+                    <li><a href="Gallery.html" class="nav-links">Gallery</a></li>
+                    <li><a href="Notice.html" class="nav-links active">Notice</a></li>
+                </ul>
+            </nav>
+            <a href="login.html"><button class="primary-btn">Log In</button></a>
+            <button class="ham-btn" id="hamBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html">Home</a>
+            <a href="About.html">About Us</a>
+            <a href="Course.html">Course</a>
+            <a href="Timeshift.html">Timeshift</a>
+            <a href="Contact.html">Contact</a>
+            <a href="Gallery.html">Gallery</a>
+            <a href="Notice.html" class="active">Notice</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="notice-section">
+            <div class="notice-container">
+                <h1 class="notice-heading">NOTICES</h1>
+                <h2 class="notice-subheading">Admission deadlines, exam dates, holidays and updates from the institute.</h2>
+
+                <!-- Filled in by script.js (loadPublicNotices) once the page loads -->
+                <div class="notice-public-list" id="publicNoticeList"></div>
+
+                <p class="notice-empty" id="publicNoticeEmpty" style="display:none;">
+                    No notices posted right now — check back soon.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="section-container">
+            <div class="footer-grid">
+                <div>
+                    <a href="index.html" class="footer-logo">Smart Computer & Education Institute</a>
+                    <p class="footer-tagline">Practical computer and digital skills training in Charali, Jhapa.</p>
+                </div>
+                <div>
+                    <h4>Explore</h4>
+                    <ul class="footer-links">
+                        <li><a href="About.html">About Us</a></li>
+                        <li><a href="Course.html">Course</a></li>
+                        <li><a href="Gallery.html">Gallery</a></li>
+                        <li><a href="Notice.html">Notice</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li>Mechinagar-13 Charali, Jhapa</li>
+                        <li>+977-9700071948 ,9700071958 ,9700071968</li>
+                        <li>smartinstitute@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© <span id="year"></span> Smart Computer and Education Institute. All rights reserved.</span>
+                <span>Jhapa, Nepal</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
