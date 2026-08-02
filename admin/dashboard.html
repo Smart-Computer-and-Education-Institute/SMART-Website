@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Smart Admin</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-mark">SC</div>
+      <div class="sidebar-brand-text">
+        <strong>Smart Institute</strong>
+        <span>Admin panel</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-label">Overview</div>
+      <a href="dashboard.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </a>
+
+      <div class="sidebar-nav-label">Manage</div>
+      <a href="courses.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Courses
+      </a>
+      <a href="gallery.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        Gallery
+      </a>
+      <a href="notices.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notices
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar">AD</div>
+        <div class="sidebar-user-text">
+          <strong>Admin User</strong>
+          <span>admin@smartinstitute.com</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main -->
+  <div class="main-col">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title">Dashboard</div>
+          <div class="topbar-breadcrumb">Overview of your institute</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="avatar">AD</div>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1>Welcome back, Admin</h1>
+          <p>Here's what's happening at Smart Computer & Education Institute today.</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <section class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <span class="stat-trend">+2,000</span>
+          </div>
+          <div class="stat-value">2,000+</div>
+          <div class="stat-label">Students trained</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">5</div>
+          <div class="stat-label">Active courses</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">Gallery photos</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">4</div>
+          <div class="stat-label">Published notices</div>
+        </div>
+      </section>
+
+      <!-- Recent activity + quick actions -->
+      <section class="dash-grid">
+        <div class="card">
+          <div class="panel-header">
+            <h2>Recent notices</h2>
+            <a href="notices.html">View all</a>
+          </div>
+          <div class="panel-body">
+            <div class="list-row">
+              <div class="list-row-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <div class="list-row-text">
+                <strong>New batch for Graphic Design starts Aug 15</strong>
+                <span>Posted 2 days ago</span>
+              </div>
+              <span class="badge badge-green">Published</span>
+            </div>
+            <div class="list-row">
+              <div class="list-row-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <div class="list-row-text">
+                <strong>Institute closed for Dashain holidays</strong>
+                <span>Posted 5 days ago</span>
+              </div>
+              <span class="badge badge-green">Published</span>
+            </div>
+            <div class="list-row">
+              <div class="list-row-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <div class="list-row-text">
+                <strong>Tally Accounting exam schedule released</strong>
+                <span>Draft · not visible to students</span>
+              </div>
+              <span class="badge badge-amber">Draft</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="panel-header">
+            <h2>Quick actions</h2>
+          </div>
+          <div class="quick-actions">
+            <a class="quick-action" href="courses.html">
+              <div class="list-row-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+              <div>
+                <strong>Add a course</strong><br>
+                <span>List a new career-focused course</span>
+              </div>
+            </a>
+            <a class="quick-action" href="gallery.html">
+              <div class="list-row-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+              <div>
+                <strong>Upload a photo</strong><br>
+                <span>Add to the campus gallery</span>
+              </div>
+            </a>
+            <a class="quick-action" href="notices.html">
+              <div class="list-row-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+              <div>
+                <strong>Post a notice</strong><br>
+                <span>Announce something to students</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
