@@ -9,6 +9,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const multer = require("multer");
 
 const app = express();
 const PORT = 3000;
@@ -228,6 +229,71 @@ app.delete("/api/courses/:id", (req, res) => {
 });
 
 // ---------------------------------------------------------
+// Gallery photo uploads (Multer)
+//
+// Photos are no longer added by typing a path — the admin panel
+// sends the actual file, and this saves it to disk automatically.
+//
+// Uploaded files go in img/gallery/ (a SUBfolder of img/), not
+// directly in img/. That's deliberate: img/ also holds fixed site
+// assets like the logo and About-page photos. Keeping uploads in
+// their own folder means the delete route below can safely remove
+// a file without any risk of it being one of those shared assets.
+// ---------------------------------------------------------
+
+const GALLERY_UPLOADS_DIR = path.join(__dirname, "img", "gallery");
+fs.mkdirSync(GALLERY_UPLOADS_DIR, { recursive: true }); // creates it on first run if missing
+
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+const photoUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, GALLERY_UPLOADS_DIR),
+    filename: (req, file, cb) => {
+      // Never trust the uploaded filename as-is (it's attacker-controlled
+      // text). Generate our own safe, unique name instead: timestamp +
+      // random number + the real extension.
+      const ext = path.extname(file.originalname).toLowerCase();
+      const safeName = `photo-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+      cb(null, safeName);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  fileFilter: (req, file, cb) => {
+    if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+      return cb(new Error("Only JPG, PNG, WEBP, or GIF images are allowed."));
+    }
+    cb(null, true);
+  },
+}).single("photo"); // must match formData.append("photo", file) on the client
+
+// Wraps multer so upload errors (wrong file type, too large) come back
+// as a normal JSON error response instead of crashing the request.
+function handlePhotoUpload(req, res, next) {
+  photoUpload(req, res, (err) => {
+    if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ error: "Photo is too large. Max size is 5MB." });
+    }
+    if (err) {
+      return res.status(400).json({ error: err.message || "Upload failed." });
+    }
+    next();
+  });
+}
+
+// Deletes a gallery photo's file from disk, but ONLY if it lives inside
+// img/gallery/ (i.e. it was uploaded through this system). Older entries
+// may still point at shared images elsewhere in img/ - those are never
+// touched, since deleting them could break other pages that use them.
+function deletePhotoFileIfOwned(imagePath) {
+  if (!imagePath || !imagePath.startsWith("img/gallery/")) return;
+  const filename = path.basename(imagePath); // strips any directory part
+  fs.unlink(path.join(GALLERY_UPLOADS_DIR, filename), (err) => {
+    if (err && err.code !== "ENOENT") console.error("Could not delete photo file:", err);
+  });
+}
+
+// ---------------------------------------------------------
 // Gallery API
 // Same read/write-whole-file pattern. No draft/published
 // status here (matches the old in-memory admin behavior) —
@@ -240,11 +306,16 @@ app.get("/api/gallery", (req, res) => {
 });
 
 // POST /api/gallery -> add a new photo
-app.post("/api/gallery", (req, res) => {
-  const { title, desc, image } = req.body;
+// handlePhotoUpload runs first: it parses the multipart form, saves the
+// file to img/gallery/, and populates req.file + req.body for us.
+app.post("/api/gallery", handlePhotoUpload, (req, res) => {
+  const { title, desc } = req.body;
 
   if (!title || !desc) {
     return res.status(400).json({ error: "title and desc are required" });
+  }
+  if (!req.file) {
+    return res.status(400).json({ error: "Please choose a photo to upload." });
   }
 
   const photos = readGallery();
@@ -252,7 +323,7 @@ app.post("/api/gallery", (req, res) => {
     id: "p" + Date.now(),
     title,
     desc,
-    image: image || "",
+    image: "img/gallery/" + req.file.filename,
   };
 
   photos.unshift(newPhoto);
@@ -261,7 +332,9 @@ app.post("/api/gallery", (req, res) => {
 });
 
 // PUT /api/gallery/:id -> edit an existing photo
-app.put("/api/gallery/:id", (req, res) => {
+// A new file is optional here - if the admin didn't choose one, req.file
+// is just undefined and the existing image is left alone.
+app.put("/api/gallery/:id", handlePhotoUpload, (req, res) => {
   const photos = readGallery();
   const photo = photos.find((p) => p.id === req.params.id);
 
@@ -269,24 +342,30 @@ app.put("/api/gallery/:id", (req, res) => {
     return res.status(404).json({ error: "Photo not found" });
   }
 
-  const { title, desc, image } = req.body;
+  const { title, desc } = req.body;
   if (title !== undefined) photo.title = title;
   if (desc !== undefined) photo.desc = desc;
-  if (image !== undefined) photo.image = image;
+
+  if (req.file) {
+    const oldImage = photo.image;
+    photo.image = "img/gallery/" + req.file.filename;
+    deletePhotoFileIfOwned(oldImage); // clean up the file it's replacing
+  }
 
   writeGallery(photos);
   res.json(photo);
 });
 
-// DELETE /api/gallery/:id -> remove a photo
+// DELETE /api/gallery/:id -> remove a photo (and its file, if we own it)
 app.delete("/api/gallery/:id", (req, res) => {
   const photos = readGallery();
-  const exists = photos.some((p) => p.id === req.params.id);
+  const photo = photos.find((p) => p.id === req.params.id);
 
-  if (!exists) {
+  if (!photo) {
     return res.status(404).json({ error: "Photo not found" });
   }
 
+  deletePhotoFileIfOwned(photo.image);
   writeGallery(photos.filter((p) => p.id !== req.params.id));
   res.status(204).end();
 });

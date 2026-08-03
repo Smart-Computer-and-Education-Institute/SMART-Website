@@ -68,16 +68,29 @@ function openPhotoModal(id) {
   form.reset();
   clearPhotoErrors();
 
+  const preview = document.getElementById("photoCurrentPreview");
+  const previewImg = document.getElementById("photoCurrentImg");
+
   if (id) {
     const p = photos.find((x) => x.id === id);
     document.getElementById("photoModalTitle").textContent = "Edit photo";
     document.getElementById("photoId").value = p.id;
     document.getElementById("photoTitle").value = p.title;
     document.getElementById("photoDesc").value = p.desc;
-    document.getElementById("photoImage").value = p.image || "";
+
+    // File inputs can't be pre-filled for security reasons, so instead
+    // we show the existing photo and let the file field stay empty
+    // (empty = "keep the current photo" when the form is submitted).
+    if (p.image) {
+      previewImg.src = p.image;
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none";
+    }
   } else {
     document.getElementById("photoModalTitle").textContent = "Upload photo";
     document.getElementById("photoId").value = "";
+    preview.style.display = "none";
   }
 
   openModal("photoModalOverlay");
@@ -93,37 +106,41 @@ document.getElementById("photoForm").addEventListener("submit", async (e) => {
 
   const title = document.getElementById("photoTitle").value.trim();
   const desc = document.getElementById("photoDesc").value.trim();
-  let valid = true;
+  const id = document.getElementById("photoId").value;
+  const fileInput = document.getElementById("photoImage");
+  const file = fileInput.files[0]; // undefined if nothing was chosen
 
+  let valid = true;
   if (!title) { document.getElementById("field-photo-title").classList.add("has-error"); valid = false; }
   if (!desc) { document.getElementById("field-photo-desc").classList.add("has-error"); valid = false; }
+  // A file is required when adding a new photo, optional when editing
+  // (no file chosen while editing just means "keep the current one").
+  if (!id && !file) { document.getElementById("field-photo-image").classList.add("has-error"); valid = false; }
   if (!valid) return;
 
-  const id = document.getElementById("photoId").value;
-  const data = {
-    title,
-    desc,
-    image: document.getElementById("photoImage").value.trim(),
-  };
+  // FormData instead of JSON.stringify - this is what lets us send an
+  // actual file alongside the text fields in one request. Don't set a
+  // Content-Type header here; the browser sets it automatically with
+  // the correct boundary for multipart data.
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("desc", desc);
+  if (file) formData.append("photo", file);
 
+  let res;
   if (id) {
-    // Editing an existing photo
-    await fetch(`/api/gallery/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    showToast("Photo updated");
+    res = await fetch(`/api/gallery/${id}`, { method: "PUT", body: formData });
   } else {
-    // Uploading a new one
-    await fetch("/api/gallery", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    showToast("Photo uploaded");
+    res = await fetch("/api/gallery", { method: "POST", body: formData });
   }
 
+  if (!res.ok) {
+    const { error } = await res.json().catch(() => ({ error: "Something went wrong." }));
+    showToast(error, "danger");
+    return;
+  }
+
+  showToast(id ? "Photo updated" : "Photo uploaded");
   closeModal("photoModalOverlay");
   await loadPhotos();
 });
