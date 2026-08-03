@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "n1785750383226",
+    "title": "hsfghsfgh",
+    "content": "hshsghsgh",
+    "date": "2026-08-03",
+    "status": "draft"
+  },
+  {
+    "id": "n1785750376397",
+    "title": "New Test",
+    "content": "dfhfshfs",
+    "date": "2026-08-03",
+    "status": "published"
+  }
+]
