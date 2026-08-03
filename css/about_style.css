@@ -1,0 +1,235 @@
+/* ==========================================================================
+   Blue, Red & White Theme — Smart Computer & Education Institute
+   ========================================================================== */
+
+:root {
+  --primary-blue: #14275c;     /* Deep navy blue */
+  --accent-red: #e63946;       /* Bright energetic red */
+  --light-bg: #f8fafc;         /* Crisp off-white */
+  --pure-white: #ffffff;       /* Pure white */
+  --text-dark: #1e293b;        /* Charcoal text */
+  --text-muted: #64748b;       /* Soft slate body text */
+  --border-color: #e2e8f0;     /* Light gray border */
+  --shadow-sm: 0 4px 12px rgba(20, 39, 92, 0.08);
+  --shadow-lg: 0 12px 28px rgba(20, 39, 92, 0.15);
+  --radius: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* Base Reset & Fonts */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--light-bg);
+  color: var(--text-dark);
+  line-height: 1.65;
+}
+
+/* --- Hero Section --- */
+.about-hero {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #0c183d 100%);
+  color: var(--pure-white);
+  text-align: center;
+  padding: 80px 20px;
+  position: relative;
+  border-bottom: 5px solid var(--accent-red);
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-hero h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.about-hero p {
+  font-size: 1.25rem;
+  color: #cbd5e1;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* --- Content Wrapper & Grids --- */
+.about-wrap {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  background: var(--pure-white);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.about-grid:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.about-text h2 {
+  font-size: 1.8rem;
+  color: var(--primary-blue);
+  margin-bottom: 14px;
+  position: relative;
+  display: inline-block;
+}
+
+.about-text h2::after {
+  content: '';
+  display: block;
+  width: 45px;
+  height: 4px;
+  background-color: var(--accent-red);
+  margin-top: 6px;
+  border-radius: 2px;
+}
+
+.about-text p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.about-img {
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  border-radius: calc(var(--radius) - 4px);
+}
+
+.about-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.about-grid:hover .about-img img {
+  transform: scale(1.04);
+}
+
+/* --- What We Offer Section --- */
+.offer-section {
+  max-width: 1100px;
+  margin: 70px auto 40px;
+  padding: 0 20px;
+}
+
+.offer-section h2 {
+  text-align: center;
+  font-size: 2.2rem;
+  color: var(--primary-blue);
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+
+.offer-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  list-style: none;
+  padding: 0;
+}
+
+.offer-list li {
+  background-color: var(--pure-white);
+  color: var(--primary-blue);
+  
+  border: 2px solid var(--primary-blue);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 30px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  cursor: default;
+}
+
+.offer-list li:hover {
+  background-color: var(--accent-red);
+  border-color: var(--accent-red);
+  color: var(--pure-white);
+  transform: translateY(-3px);
+  box-shadow:#FFFFFF;
+}
+
+/* --- Call to Action Strip --- */
+.cta-strip {
+  background: linear-gradient(  #595a5c);
+  color: var(--pure-white);
+  text-align: center;
+  padding: 60px 20px;
+  margin-top: 70px;
+}
+
+.cta-strip h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  display: inline-block;
+  background-color: var(--pure-white);
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 14px 36px;
+  border-radius: 30px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-blue);
+  color: var(--pure-white);
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(20, 39, 92, 0.4);
+}
+
+/* --- Responsive Styles --- */
+@media (max-width: 768px) {
+  .about-hero h1 {
+    font-size: 2.1rem;
+  }
+
+  .about-grid,
+  .about-grid.reverse {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Keep visual hierarchy natural on mobile */
+  .about-grid.reverse .about-img {
+    order: 2;
+  }
+
+  .about-grid.reverse .about-text {
+    order: 1;
+  }
+
+  .about-img {
+    height: 200px;
+  }
+}
