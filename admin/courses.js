@@ -1,60 +1,24 @@
 /* ============================================
    Courses — data + rendering
+   Now backed by the server's /api/courses routes
+   instead of a local array that reset on refresh.
    ============================================ */
 
-let courses = [
-  {
-    id: "c1",
-    name: "MS Office Fundamentals",
-    category: "Office",
-    duration: "4 weeks",
-    desc: "Word, Excel, and PowerPoint skills for everyday office work.",
-    enrolled: 210,
-    status: "active",
-  },
-  {
-    id: "c2",
-    name: "Graphic Design Mastery",
-    category: "Design",
-    duration: "8 weeks",
-    desc: "Photoshop, Illustrator, and layout fundamentals for real client work.",
-    enrolled: 96,
-    status: "active",
-  },
-  {
-    id: "c3",
-    name: "Digital Marketing Essentials",
-    category: "Marketing",
-    duration: "6 weeks",
-    desc: "Social media, ad campaigns, and analytics for small businesses.",
-    enrolled: 134,
-    status: "active",
-  },
-  {
-    id: "c4",
-    name: "Tally Accounting",
-    category: "Accounting",
-    duration: "5 weeks",
-    desc: "Bookkeeping, GST, and inventory management in Tally.",
-    enrolled: 88,
-    status: "active",
-  },
-  {
-    id: "c5",
-    name: "Advanced Excel",
-    category: "Office",
-    duration: "3 weeks",
-    desc: "Formulas, pivot tables, and dashboards for data-heavy roles.",
-    enrolled: 0,
-    status: "draft",
-  },
-];
-
+let courses = [];
 let activeFilter = "all";
 let searchTerm = "";
 
 const tableBody = document.getElementById("courseTableBody");
 const emptyState = document.getElementById("emptyState");
+
+// Pulls the current list from the server and re-renders.
+// Called on page load, and again after every add/edit/delete
+// so the screen always matches what's actually saved.
+async function loadCourses() {
+  const res = await fetch("/api/courses");
+  courses = await res.json();
+  renderCourses();
+}
 
 function renderCourses() {
   const rows = courses.filter((c) => {
@@ -147,7 +111,7 @@ function clearErrors() {
   document.querySelectorAll("#courseForm .form-field").forEach((f) => f.classList.remove("has-error"));
 }
 
-document.getElementById("courseForm").addEventListener("submit", (e) => {
+document.getElementById("courseForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   clearErrors();
 
@@ -172,24 +136,33 @@ document.getElementById("courseForm").addEventListener("submit", (e) => {
   };
 
   if (id) {
-    const c = courses.find((x) => x.id === id);
-    Object.assign(c, data);
+    // Editing an existing course
+    await fetch(`/api/courses/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     showToast("Course updated");
   } else {
-    courses.unshift({ id: "c" + Date.now(), ...data });
+    // Creating a new one
+    await fetch("/api/courses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     showToast("Course added");
   }
 
   closeModal("courseModalOverlay");
-  renderCourses();
+  await loadCourses();
 });
 
-function deleteCourse(id) {
+async function deleteCourse(id) {
   const c = courses.find((x) => x.id === id);
   if (!confirmDelete(`Delete "${c.name}"? This can't be undone.`)) return;
-  courses = courses.filter((x) => x.id !== id);
+  await fetch(`/api/courses/${id}`, { method: "DELETE" });
   showToast("Course deleted", "danger");
-  renderCourses();
+  await loadCourses();
 }
 
-renderCourses();
+loadCourses();

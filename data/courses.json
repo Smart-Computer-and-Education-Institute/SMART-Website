@@ -1,0 +1,47 @@
+[
+  {
+    "id": "c1",
+    "name": "MS Office Fundamentals",
+    "category": "Office",
+    "duration": "4 weeks",
+    "desc": "Word, Excel, and PowerPoint skills for everyday office work.",
+    "enrolled": 210,
+    "status": "active"
+  },
+  {
+    "id": "c2",
+    "name": "Graphic Design Mastery",
+    "category": "Design",
+    "duration": "8 weeks",
+    "desc": "Photoshop, Illustrator, and layout fundamentals for real client work.",
+    "enrolled": 96,
+    "status": "active"
+  },
+  {
+    "id": "c3",
+    "name": "Digital Marketing Essentials",
+    "category": "Marketing",
+    "duration": "6 weeks",
+    "desc": "Social media, ad campaigns, and analytics for small businesses.",
+    "enrolled": 134,
+    "status": "active"
+  },
+  {
+    "id": "c4",
+    "name": "Tally Accounting",
+    "category": "Accounting",
+    "duration": "5 weeks",
+    "desc": "Bookkeeping, GST, and inventory management in Tally.",
+    "enrolled": 88,
+    "status": "active"
+  },
+  {
+    "id": "c5",
+    "name": "Advanced Excel",
+    "category": "Office",
+    "duration": "3 weeks",
+    "desc": "Formulas, pivot tables, and dashboards for data-heavy roles.",
+    "enrolled": 0,
+    "status": "draft"
+  }
+]

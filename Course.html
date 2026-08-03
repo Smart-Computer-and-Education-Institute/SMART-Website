@@ -51,77 +51,18 @@
                 <div class="course-control">
                     <div class="filter-chips">
                         <button class="chip active" data-filter="all">ALL Courses</button>
-                        <button class="chip" data-filter="Computer">Computer</button>
+                        <button class="chip" data-filter="Office">Office</button>
+                        <button class="chip" data-filter="Design">Design</button>
+                        <button class="chip" data-filter="Marketing">Marketing</button>
                         <button class="chip" data-filter="Accounting">Accounting</button>
-                        <button class="chip" data-filter="Tuition">Tuition</button>
-                        <button class="chip" data-filter="Languages">Languages</button>
                     </div>
                 </div>
-                <div class="course-grid">
-                    <div class="course-card" data-category="Computer">
-                        <h3>Basic</h3>
-                        <div class="para">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam enim harum
-                            saepe quo unde, minus accusamus.</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                    <div class="course-card" data-category="Computer">
-                        <h3>Advance Basic</h3>
-                        <div class="para">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit exercitationem
-                            quidem, eveniet consequatur aliquam dolores adipisci?</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                    <div class="course-card" data-category="Computer">
-                        <h3>Graphic Designing</h3>
-                        <div class="para">Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi optio harum
-                            modi amet officia, consectetur dicta!</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                    <div class="course-card" data-category="Languages">
-                        <h3>Japanese language</h3>
-                        <div class="para">Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus omnis
-                            accusantium ab quis deleniti, impedit expedita laboriosam dolores quas unde explicabo! Vel
-                            sequi excepturi, amet eligendi id eaque nemo dolorem?</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                    <div class="course-card" data-category="Languages">
-                        <h3>English language</h3>
-                        <div class="para">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cum delectus magnam
-                            quod voluptas tenetur quas saepe!</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                    <div class="course-card" data-category="Languages">
-                        <h3>Korean language</h3>
-                        <div class="para">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem accusamus
-                            eaque animi odio rerum cumque consequatur?</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                    <div class="course-card" data-category="Accounting">
-                        <h3>Accounting Package</h3>
-                        <div class="para">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis recusandae
-                            debitis sapiente dolores fugiat veritatis cum!</div>
-                        <span class="course-duration">Months</span>
-                    </div>
+                <!-- Filled in by script.js (loadPublicCourses) once the page loads -->
+                <div class="course-grid" id="publicCourseGrid"></div>
 
-                    <div class="course-card" data-category="Tuition">
-                        <h3>Mathematics Tuition</h3>
-                        <div class="para">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente mollitia
-                            natus iure obcaecati, quasi vero debitis?</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                    <div class="course-card" data-category="Tuition">
-                        <h3>Account Tuition</h3>
-                        <div class="para">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus adipisci,
-                            earum culpa minus ratione perferendis ab!</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-
-                    <div class="course-card" data-category="Computer">
-                        <h3>Cyber s</h3>
-                        <div class="para">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Architecto eaque
-                            quam maxime modi minima dolorum nisi.</div>
-                        <span class="course-duration">Months</span>
-                    </div>
-                </div>
+                <p class="course-empty" id="publicCourseEmpty" style="display:none;">
+                    No courses posted right now — check back soon.
+                </p>
             </div>
         </section>
         <section class="info-container">

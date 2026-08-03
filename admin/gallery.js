@@ -1,5 +1,7 @@
 /* ============================================
    Gallery — data + rendering
+   Now backed by the server's /api/gallery routes
+   instead of a local array that reset on refresh.
    ============================================ */
 
 const thumbPalette = [
@@ -10,27 +12,20 @@ const thumbPalette = [
   "linear-gradient(135deg,#7C3AED,#B794F6)",
 ];
 
-let photos = [
-  {
-    id: "p1",
-    title: "Computer Lab Training",
-    desc: "Students practicing MS Office skills in our fully equipped lab.",
-  },
-  {
-    id: "p2",
-    title: "Graduation Day 2025",
-    desc: "Celebrating our students who completed their career-focused courses.",
-  },
-  {
-    id: "p3",
-    title: "Digital Marketing Workshop",
-    desc: "Hands-on session on social media and ad campaign strategy.",
-  },
-];
+let photos = [];
 
 const grid = document.getElementById("galleryGrid");
 const galleryEmpty = document.getElementById("galleryEmpty");
 const galleryCount = document.getElementById("galleryCount");
+
+// Pulls the current list from the server and re-renders.
+// Called on page load, and again after every add/edit/delete
+// so the screen always matches what's actually saved.
+async function loadPhotos() {
+  const res = await fetch("/api/gallery");
+  photos = await res.json();
+  renderGallery();
+}
 
 function renderGallery() {
   grid.innerHTML = "";
@@ -40,9 +35,12 @@ function renderGallery() {
   photos.forEach((p, i) => {
     const card = document.createElement("div");
     card.className = "gallery-admin-card";
+    const thumbInner = p.image
+      ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover;">`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>`;
     card.innerHTML = `
       <div class="gallery-admin-thumb" style="background:${thumbPalette[i % thumbPalette.length]}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        ${thumbInner}
       </div>
       <div class="gallery-admin-body">
         <h3>${escapeHtml(p.title)}</h3>
@@ -76,6 +74,7 @@ function openPhotoModal(id) {
     document.getElementById("photoId").value = p.id;
     document.getElementById("photoTitle").value = p.title;
     document.getElementById("photoDesc").value = p.desc;
+    document.getElementById("photoImage").value = p.image || "";
   } else {
     document.getElementById("photoModalTitle").textContent = "Upload photo";
     document.getElementById("photoId").value = "";
@@ -88,7 +87,7 @@ function clearPhotoErrors() {
   document.querySelectorAll("#photoForm .form-field").forEach((f) => f.classList.remove("has-error"));
 }
 
-document.getElementById("photoForm").addEventListener("submit", (e) => {
+document.getElementById("photoForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   clearPhotoErrors();
 
@@ -101,27 +100,40 @@ document.getElementById("photoForm").addEventListener("submit", (e) => {
   if (!valid) return;
 
   const id = document.getElementById("photoId").value;
+  const data = {
+    title,
+    desc,
+    image: document.getElementById("photoImage").value.trim(),
+  };
 
   if (id) {
-    const p = photos.find((x) => x.id === id);
-    p.title = title;
-    p.desc = desc;
+    // Editing an existing photo
+    await fetch(`/api/gallery/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     showToast("Photo updated");
   } else {
-    photos.unshift({ id: "p" + Date.now(), title, desc });
+    // Uploading a new one
+    await fetch("/api/gallery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
     showToast("Photo uploaded");
   }
 
   closeModal("photoModalOverlay");
-  renderGallery();
+  await loadPhotos();
 });
 
-function deletePhoto(id) {
+async function deletePhoto(id) {
   const p = photos.find((x) => x.id === id);
   if (!confirmDelete(`Delete "${p.title}"? This can't be undone.`)) return;
-  photos = photos.filter((x) => x.id !== id);
+  await fetch(`/api/gallery/${id}`, { method: "DELETE" });
   showToast("Photo deleted", "danger");
-  renderGallery();
+  await loadPhotos();
 }
 
-renderGallery();
+loadPhotos();

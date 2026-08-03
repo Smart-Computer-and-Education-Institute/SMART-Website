@@ -347,3 +347,8 @@ button{
 .course-modal-close:hover {
   background: #0f172a;
 }
+.course-empty {
+    text-align: center;
+    color: #64748b;
+    padding: 40px 0;
+}

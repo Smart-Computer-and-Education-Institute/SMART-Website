@@ -150,3 +150,8 @@
   cursor: pointer;
   line-height: 1;
 }
+.gallery-empty {
+  text-align: center;
+  color: #64748b;
+  padding: 40px 0;
+}

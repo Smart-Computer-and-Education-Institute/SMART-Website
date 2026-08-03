@@ -43,6 +43,8 @@ app.use(express.static(__dirname));
 // ---------------------------------------------------------
 
 const NOTICES_FILE = path.join(__dirname, "data", "notices.json");
+const COURSES_FILE = path.join(__dirname, "data", "courses.json");
+const GALLERY_FILE = path.join(__dirname, "data", "gallery.json");
 
 function readNotices() {
   const raw = fs.readFileSync(NOTICES_FILE, "utf-8");
@@ -51,6 +53,24 @@ function readNotices() {
 
 function writeNotices(notices) {
   fs.writeFileSync(NOTICES_FILE, JSON.stringify(notices, null, 2));
+}
+
+function readCourses() {
+  const raw = fs.readFileSync(COURSES_FILE, "utf-8");
+  return JSON.parse(raw);
+}
+
+function writeCourses(courses) {
+  fs.writeFileSync(COURSES_FILE, JSON.stringify(courses, null, 2));
+}
+
+function readGallery() {
+  const raw = fs.readFileSync(GALLERY_FILE, "utf-8");
+  return JSON.parse(raw);
+}
+
+function writeGallery(photos) {
+  fs.writeFileSync(GALLERY_FILE, JSON.stringify(photos, null, 2));
 }
 
 // ---------------------------------------------------------
@@ -131,6 +151,143 @@ app.delete("/api/notices/:id", (req, res) => {
   }
 
   writeNotices(notices.filter((n) => n.id !== req.params.id));
+  res.status(204).end();
+});
+
+// ---------------------------------------------------------
+// Courses API
+// Same shape as notices: GET (with optional ?status= filter),
+// POST to create, PUT to edit, DELETE to remove.
+// ---------------------------------------------------------
+
+// GET /api/courses                 -> everything (admin panel uses this)
+// GET /api/courses?status=active   -> only active ones (public Course.html uses this)
+app.get("/api/courses", (req, res) => {
+  const courses = readCourses();
+  const { status } = req.query;
+  const result = status ? courses.filter((c) => c.status === status) : courses;
+  res.json(result);
+});
+
+// POST /api/courses -> create a new course
+app.post("/api/courses", (req, res) => {
+  const { name, category, duration, desc, enrolled, status } = req.body;
+
+  if (!name || !duration || !desc) {
+    return res.status(400).json({ error: "name, duration, and desc are required" });
+  }
+
+  const courses = readCourses();
+  const newCourse = {
+    id: "c" + Date.now(),
+    name,
+    category: category || "Office",
+    duration,
+    desc,
+    enrolled: enrolled || 0,
+    status: status || "active",
+  };
+
+  courses.unshift(newCourse);
+  writeCourses(courses);
+  res.status(201).json(newCourse);
+});
+
+// PUT /api/courses/:id -> edit an existing course
+app.put("/api/courses/:id", (req, res) => {
+  const courses = readCourses();
+  const course = courses.find((c) => c.id === req.params.id);
+
+  if (!course) {
+    return res.status(404).json({ error: "Course not found" });
+  }
+
+  const { name, category, duration, desc, enrolled, status } = req.body;
+  if (name !== undefined) course.name = name;
+  if (category !== undefined) course.category = category;
+  if (duration !== undefined) course.duration = duration;
+  if (desc !== undefined) course.desc = desc;
+  if (enrolled !== undefined) course.enrolled = enrolled;
+  if (status !== undefined) course.status = status;
+
+  writeCourses(courses);
+  res.json(course);
+});
+
+// DELETE /api/courses/:id -> remove a course
+app.delete("/api/courses/:id", (req, res) => {
+  const courses = readCourses();
+  const exists = courses.some((c) => c.id === req.params.id);
+
+  if (!exists) {
+    return res.status(404).json({ error: "Course not found" });
+  }
+
+  writeCourses(courses.filter((c) => c.id !== req.params.id));
+  res.status(204).end();
+});
+
+// ---------------------------------------------------------
+// Gallery API
+// Same read/write-whole-file pattern. No draft/published
+// status here (matches the old in-memory admin behavior) —
+// every photo saved is shown on the public gallery.
+// ---------------------------------------------------------
+
+// GET /api/gallery -> every photo (both admin panel and public Gallery.html use this)
+app.get("/api/gallery", (req, res) => {
+  res.json(readGallery());
+});
+
+// POST /api/gallery -> add a new photo
+app.post("/api/gallery", (req, res) => {
+  const { title, desc, image } = req.body;
+
+  if (!title || !desc) {
+    return res.status(400).json({ error: "title and desc are required" });
+  }
+
+  const photos = readGallery();
+  const newPhoto = {
+    id: "p" + Date.now(),
+    title,
+    desc,
+    image: image || "",
+  };
+
+  photos.unshift(newPhoto);
+  writeGallery(photos);
+  res.status(201).json(newPhoto);
+});
+
+// PUT /api/gallery/:id -> edit an existing photo
+app.put("/api/gallery/:id", (req, res) => {
+  const photos = readGallery();
+  const photo = photos.find((p) => p.id === req.params.id);
+
+  if (!photo) {
+    return res.status(404).json({ error: "Photo not found" });
+  }
+
+  const { title, desc, image } = req.body;
+  if (title !== undefined) photo.title = title;
+  if (desc !== undefined) photo.desc = desc;
+  if (image !== undefined) photo.image = image;
+
+  writeGallery(photos);
+  res.json(photo);
+});
+
+// DELETE /api/gallery/:id -> remove a photo
+app.delete("/api/gallery/:id", (req, res) => {
+  const photos = readGallery();
+  const exists = photos.some((p) => p.id === req.params.id);
+
+  if (!exists) {
+    return res.status(404).json({ error: "Photo not found" });
+  }
+
+  writeGallery(photos.filter((p) => p.id !== req.params.id));
   res.status(204).end();
 });
 
