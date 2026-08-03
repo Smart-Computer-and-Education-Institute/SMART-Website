@@ -37,64 +37,7 @@
             <p class="form-error" id="error-general" style="text-align:center;"></p>
         </form>
     </section>
-
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import {
-            getAuth,
-            signInWithEmailAndPassword,
-            setPersistence,
-            browserLocalPersistence,
-            browserSessionPersistence
-        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-        // Your project's Firebase config
-        const firebaseConfig = {
-            apiKey: "AIzaSyCRRKupoBiX6wsFUY-3-ehWudzMw5JYe0c",
-            authDomain: "smartinstitutewebsite.firebaseapp.com",
-            projectId: "smartinstitutewebsite",
-            storageBucket: "smartinstitutewebsite.firebasestorage.app",
-            messagingSenderId: "854655317142",
-            appId: "1:854655317142:web:6f6eee0f018ee3e75dbeb7",
-            measurementId: "G-N7DS44VR6V"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        const form = document.getElementById("loginForm");
-        const usernameField = document.getElementById("Username");
-        const passwordField = document.getElementById("Password");
-        const errorGeneral = document.getElementById("error-general");
-        const rememberMe = document.getElementById("rememberMe");
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault(); // stop normal form POST — we handle it with JS instead
-
-            errorGeneral.textContent = "";
-            const email = usernameField.value.trim();
-            const password = passwordField.value;
-
-            try {
-                // "Remember me" controls whether login persists after closing the browser
-                await setPersistence(
-                    auth,
-                    rememberMe.checked ? browserLocalPersistence : browserSessionPersistence
-                );
-
-                await signInWithEmailAndPassword(auth, email, password);
-
-                // Success -> redirect to admin panel
-                window.location.href = "/admin.html";
-
-            } catch (error) {
-                errorGeneral.textContent = "Invalid email or password.";
-                console.error(error.code, error.message);
-            }
-        });
-    </script>
-
+<script src="admin/login.js"></script>
 </body>
 
 </html>
