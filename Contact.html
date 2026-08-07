@@ -7,6 +7,7 @@
     <title>Smart Computer & Education Institute</title>
     <meta name="description" content="Get in touch with Smart Computer & Education Institute in Jhapa, Nepal. Visit us, call, or enroll in our career-focused computer courses today.">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
@@ -42,42 +43,96 @@
         </div>
     </header>
     <script src="script.js"></script>
+    
 
-    <div class="mand">
-        <div class="one">
-            <h2>
-                Contact
-            </h2>
-            <h1>
-                Come see the lab for yourself,
-            </h1>
-            <p>
-                📍Mechinagar 13 Charali-Jhapa,
-                2<sup>nd</sup> floor of Aryan Plaza
-                <br> <br>
-                📞 +9779700071968 <br> +977 9700071958<br> +977 9700071948
-                <br> <br>
-                📩 Contactsmartinstitute@gmail.com
-                <br> <br>
-                ⏱️ Sun-Friday 6:00 AM to 6:00 PM <br>
-            </p>
-            </h1>
-            <div class="socials">
-                <a href="https://www.facebook.com/smart.com.np">
-                    <Img src="img/fb.png"></Img>
-                </a>
-                <a href="https://www.tiktok.com/@smartcomputer.com.np">
-                    <img src="img/inst.png"></a>
-                </a>
-            </div>
+    <main class="page">
+
+    <!-- Info cards -->
+    <section class="info-grid">
+      <div class="info-card">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7.58 8-13a8 8 0 1 0-16 0c0 5.42 8 13 8 13z"/><circle cx="12" cy="9" r="2.5"/></svg>
         </div>
-        <div class="map">
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d445.7349500066516!2d88.05294745192597!3d26.65233713027649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e5b10076063541%3A0x576f4e4164aade03!2sSmart%20Computer%20%26%20Education%20Institute!5e0!3m2!1sen!2snp!4v1782028540603!5m2!1sen!2snp"
-                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <h3>Location</h3>
+        <p>22 Gurans Marg, Dillibazar Height<br>GRYPHON: 4024, Kathmandu, Nepal</p>
+      </div>
+
+      <div class="info-card">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
         </div>
-    </div>
+        <h3>Working Hours</h3>
+        <p>8:30 AM - 5:30 PM (Mon - Fri)<br>10:00 AM - 5:00 PM (Sat - Sun)</p>
+      </div>
+
+      <div class="info-card">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </div>
+        <h3>Email</h3>
+        <p>helpdesk@ulci.edu.np</p>
+      </div>
+
+      <div class="info-card">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3>Phone</h3>
+        <p>+977-5970036</p>
+      </div>
+    </section>
+
+    <!-- Form + Map -->
+    <section class="contact-grid">
+
+      <div class="form-panel">
+        <h2>Inquiry Form</h2>
+        <form>
+          <label for="name">Your Name <span>*</span></label>
+          <input type="text" id="name" placeholder="Your full name" required>
+
+          <label for="email">Email Address <span>*</span></label>
+          <input type="email" id="email" placeholder="your.email@example.com" required>
+
+          <label for="subject">Subject <span>*</span></label>
+          <input type="text" id="subject" placeholder="Subject for inquiry" required>
+
+          <label for="message">Message <span>*</span></label>
+          <textarea id="message" rows="5" placeholder="Write something..." required></textarea>
+
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+
+      <div class="map-panel">
+        <div class="map-card">
+          <div>
+            <h4>Universal Language &amp; Computer Institute</h4>
+            <p>415419 Dilli Bazar Height Marg, Kathmandu 44600</p>
+            <span class="rating">4.9 ★ (2,944)</span>
+          </div>
+          <div class="map-card-actions">
+            <button type="button" aria-label="Open in maps">↗</button>
+            <button type="button" aria-label="Directions">➜</button>
+          </div>
+        </div>
+        <div class="map-frame">
+          <iframe
+            title="Map"
+            src="https://www.google.com/maps?q=Universal+Language+%26+Computer+Institute+Kathmandu&output=embed"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <a class="whatsapp-btn" href="#" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.11-1.34A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.28 1.18-1.76 1.24-.45.06-1 .08-1.62-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.25-3.7-4.38-3.87-.13-.17-1.05-1.39-1.05-2.66 0-1.26.66-1.88.9-2.14.22-.24.5-.3.66-.3.17 0 .34 0 .48.01.16.01.36-.06.56.43.22.53.73 1.83.79 1.96.06.13.1.28.02.45-.08.17-.13.27-.25.42-.13.15-.27.33-.38.44-.13.13-.26.27-.11.53.15.26.66 1.1 1.43 1.79 1 .89 1.83 1.16 2.09 1.29.26.13.41.11.57-.07.15-.17.65-.76.83-1.02.17-.26.34-.21.57-.13.24.09 1.5.71 1.76.84.26.13.43.19.5.3.06.11.06.62-.16 1.24z"/></svg>
+  </a>
+
 
     <footer>
         <div class="section-container">
@@ -95,6 +150,7 @@
                         <li><a href="Notice.html">Notice</a></li>
                     </ul>
                 </div>
+
                 <div>
                     <h4 class="footer-heading">Contact</h4>
                     <ul class="footer-links">
