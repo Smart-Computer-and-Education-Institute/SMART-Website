@@ -10,6 +10,7 @@ let searchTerm = "";
 
 const tableBody = document.getElementById("courseTableBody");
 const emptyState = document.getElementById("emptyState");
+const courseCountEl = document.getElementById("courseCount");
 
 // Pulls the current list from the server and re-renders.
 // Called on page load, and again after every add/edit/delete
@@ -29,6 +30,13 @@ function renderCourses() {
 
   tableBody.innerHTML = "";
   emptyState.style.display = rows.length ? "none" : "block";
+
+  // Update course count
+  if (courseCountEl) {
+    const total = courses.length;
+    courseCountEl.textContent = `${total} course${total === 1 ? "" : "s"} total`;
+  }
+
 
   rows.forEach((c) => {
     const tr = document.createElement("tr");

@@ -46,6 +46,7 @@ app.use(express.static(__dirname));
 const NOTICES_FILE = path.join(__dirname, "data", "notices.json");
 const COURSES_FILE = path.join(__dirname, "data", "courses.json");
 const GALLERY_FILE = path.join(__dirname, "data", "gallery.json");
+const TESTIMONIALS_FILE = path.join(__dirname, "data", "testimonials.json");
 
 function readNotices() {
   const raw = fs.readFileSync(NOTICES_FILE, "utf-8");
@@ -72,6 +73,17 @@ function readGallery() {
 
 function writeGallery(photos) {
   fs.writeFileSync(GALLERY_FILE, JSON.stringify(photos, null, 2));
+}
+
+function readTestimonials() {
+  try {
+    const raw = fs.readFileSync(TESTIMONIALS_FILE, "utf-8");
+    return JSON.parse(raw);
+  } catch { return []; }
+}
+
+function writeTestimonials(data) {
+  fs.writeFileSync(TESTIMONIALS_FILE, JSON.stringify(data, null, 2));
 }
 
 // ---------------------------------------------------------
@@ -367,6 +379,98 @@ app.delete("/api/gallery/:id", (req, res) => {
 
   deletePhotoFileIfOwned(photo.image);
   writeGallery(photos.filter((p) => p.id !== req.params.id));
+  res.status(204).end();
+});
+
+// ---------------------------------------------------------
+// Testimonials API
+// GET, POST (with optional photo), PUT, DELETE
+// Photos stored in img/testimonials/
+// ---------------------------------------------------------
+
+const TESTIMONIALS_UPLOADS_DIR = path.join(__dirname, "img", "testimonials");
+fs.mkdirSync(TESTIMONIALS_UPLOADS_DIR, { recursive: true });
+
+const testimonialPhotoUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, TESTIMONIALS_UPLOADS_DIR),
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      cb(null, `testimonial-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+      return cb(new Error("Only JPG, PNG, WEBP, or GIF images are allowed."));
+    }
+    cb(null, true);
+  },
+}).single("photo");
+
+function handleTestimonialPhotoUpload(req, res, next) {
+  testimonialPhotoUpload(req, res, (err) => {
+    if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ error: "Photo is too large. Max size is 5MB." });
+    }
+    if (err) return res.status(400).json({ error: err.message || "Upload failed." });
+    next();
+  });
+}
+
+function deleteTestimonialPhotoIfOwned(imagePath) {
+  if (!imagePath || !imagePath.startsWith("img/testimonials/")) return;
+  const filename = path.basename(imagePath);
+  fs.unlink(path.join(TESTIMONIALS_UPLOADS_DIR, filename), (err) => {
+    if (err && err.code !== "ENOENT") console.error("Could not delete testimonial photo:", err);
+  });
+}
+
+app.get("/api/testimonials", (req, res) => {
+  res.json(readTestimonials());
+});
+
+app.post("/api/testimonials", handleTestimonialPhotoUpload, (req, res) => {
+  const { name, text, course } = req.body;
+  if (!name || !text) {
+    return res.status(400).json({ error: "name and text are required" });
+  }
+  const testimonials = readTestimonials();
+  const newT = {
+    id: "t" + Date.now(),
+    name,
+    text,
+    course: course || "",
+    photo: req.file ? "img/testimonials/" + req.file.filename : "",
+  };
+  testimonials.push(newT);
+  writeTestimonials(testimonials);
+  res.status(201).json(newT);
+});
+
+app.put("/api/testimonials/:id", handleTestimonialPhotoUpload, (req, res) => {
+  const testimonials = readTestimonials();
+  const t = testimonials.find((x) => x.id === req.params.id);
+  if (!t) return res.status(404).json({ error: "Testimonial not found" });
+
+  const { name, text, course } = req.body;
+  if (name !== undefined) t.name = name;
+  if (text !== undefined) t.text = text;
+  if (course !== undefined) t.course = course;
+  if (req.file) {
+    deleteTestimonialPhotoIfOwned(t.photo);
+    t.photo = "img/testimonials/" + req.file.filename;
+  }
+  writeTestimonials(testimonials);
+  res.json(t);
+});
+
+app.delete("/api/testimonials/:id", (req, res) => {
+  const testimonials = readTestimonials();
+  const t = testimonials.find((x) => x.id === req.params.id);
+  if (!t) return res.status(404).json({ error: "Testimonial not found" });
+  deleteTestimonialPhotoIfOwned(t.photo);
+  writeTestimonials(testimonials.filter((x) => x.id !== req.params.id));
   res.status(204).end();
 });
 
