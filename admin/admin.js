@@ -1,6 +1,7 @@
 /* ============================================
    Shared admin panel behaviour
-   Sidebar toggle, toasts, modal helpers
+   Sidebar toggle, toasts, modal helpers,
+   logout popup, course count
    ============================================ */
 
 (function () {
@@ -35,6 +36,33 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeSidebar();
   });
+
+  /* ---------- Logout popup ---------- */
+  const topbarAvatar = document.getElementById("topbarAvatar");
+  const logoutPopup = document.getElementById("logoutPopup");
+
+  if (topbarAvatar && logoutPopup) {
+    topbarAvatar.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = logoutPopup.classList.toggle("open");
+      topbarAvatar.classList.toggle("popup-active", isOpen);
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!logoutPopup.contains(e.target) && e.target !== topbarAvatar) {
+        logoutPopup.classList.remove("open");
+        topbarAvatar.classList.remove("popup-active");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        logoutPopup.classList.remove("open");
+        topbarAvatar.classList.remove("popup-active");
+      }
+    });
+  }
 })();
 
 /* ---------- Toast notifications ---------- */
@@ -102,4 +130,4 @@ function confirmDelete(message) {
   return window.confirm(message);
 }
 
-/* ---------- Footer year (unused here but kept for parity) ---------- */
+

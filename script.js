@@ -316,3 +316,50 @@ function escapeGalleryHtml(str) {
   div.textContent = str;
   return div.innerHTML;
 }
+
+// 9. Public Testimonials Loader (Course.html only)
+// Fetches all testimonials from the server and renders them into
+// the grid on the Course page. Guarded so this does nothing on other pages.
+const publicTestimonialsGrid = document.getElementById("publicTestimonialsGrid");
+
+if (publicTestimonialsGrid) {
+  const publicTestimonialsEmpty = document.getElementById("publicTestimonialsEmpty");
+
+  fetch("/api/testimonials")
+    .then((res) => res.json())
+    .then((testimonials) => {
+      if (!testimonials.length) {
+        if (publicTestimonialsEmpty) publicTestimonialsEmpty.style.display = "block";
+        return;
+      }
+
+      testimonials.forEach((t) => {
+        const card = document.createElement("div");
+        card.className = "student-card";
+        const photoHtml = t.photo
+          ? `<img src="${escapeTestHtml(t.photo)}" alt="${escapeTestHtml(t.name)}" width="70" height="70" class="Testimonials-img">`
+          : `<div class="testimonial-placeholder">${escapeTestHtml(t.name.charAt(0).toUpperCase())}</div>`;
+        card.innerHTML = `
+          <div class="info-client">
+            ${photoHtml}
+            <h5 class="Student-name">${escapeTestHtml(t.name)}</h5>
+            ${t.course ? `<span class="testimonial-course-tag">${escapeTestHtml(t.course)}</span>` : ""}
+          </div>
+          <p class="info-para">${escapeTestHtml(t.text)}</p>
+        `;
+        publicTestimonialsGrid.appendChild(card);
+      });
+    })
+    .catch(() => {
+      if (publicTestimonialsEmpty) {
+        publicTestimonialsEmpty.textContent = "Couldn't load testimonials right now — please try again later.";
+        publicTestimonialsEmpty.style.display = "block";
+      }
+    });
+}
+
+function escapeTestHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str || "";
+  return div.innerHTML;
+}
