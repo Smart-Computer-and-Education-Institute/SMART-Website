@@ -72,6 +72,29 @@ if (typedE1) {
   typeLoop();
 }
 
+// Progress bar loading animation
+// Animates .progress-fill from 0% up to whatever % is set in data-target
+function animateProgressBar() {
+  const bar = document.getElementById('progressFill');
+  if (!bar) return;
+
+  const target = parseInt(bar.getAttribute('data-target'), 10) || 0;
+  let current = 0;
+
+  const step = () => {
+    current += 1;
+    bar.style.width = current + '%';
+
+    if (current < target) {
+      requestAnimationFrame(() => setTimeout(step, 15)); // ~15ms per 1% tick
+    }
+  };
+
+  requestAnimationFrame(step);
+}
+
+window.addEventListener('DOMContentLoaded', animateProgressBar);
+
 // 5. Stats Count-Up Animation
 const animateCount = (el) => {
   const target = parseInt(el.getAttribute("data-count"), 10);
