@@ -366,12 +366,7 @@ function escapeTestHtml(str) {
 
 // Offer script
 (function () {
-  /* =========================================================
-     EDIT THIS ARRAY to add / remove / update flyers.
-     - image: optional URL to a real flyer image/poster.
-              If omitted, a styled placeholder card is shown.
-     - link:  where "View Flyer" / "Download" points to (PDF or image).
-  ========================================================== */
+
   const FLYERS = [
     {
       tag: "New Batch",
