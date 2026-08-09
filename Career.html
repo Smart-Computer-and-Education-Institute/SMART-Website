@@ -47,4 +47,357 @@
         </div>
     </header>
 </body>
+ <div class="main-container">
+        <!-- Header Section -->
+        <section class="header-section">
+            <div class="header-content">
+                <div class="breadcrumb">$ ls ./careers --open-positions</div>
+                <h1>Career <span class="highlight">Opportunities</span></h1>
+                <p class="subtitle">Join our team and help shape the future of technology education in Nepal</p>
+                <p class="description">We're looking for passionate professionals to join Smart Computer & Education Institute. Build your career with us!</p>
+            </div>
+        </section>
+ 
+        <!-- Content Container -->
+        <div class="content-wrapper">
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <button class="filter-btn active" onclick="filterJobs('all')">All Positions</button>
+                <button class="filter-btn" onclick="filterJobs('teaching')">Teaching</button>
+                <button class="filter-btn" onclick="filterJobs('it')">IT & Support</button>
+                <button class="filter-btn" onclick="filterJobs('admin')">Administration</button>
+                <button class="filter-btn" onclick="filterJobs('marketing')">Marketing</button>
+            </div>
+ 
+            <!-- Jobs Grid -->
+            <div class="jobs-grid">
+                <!-- Job Card 1 -->
+                <div class="job-card" data-category="teaching">
+                    <div class="pin-icon">📌</div>
+                    <div class="job-tag">TEACHING</div>
+                    <div class="job-image">
+                        <div class="job-image-text">Senior Python Instructor</div>
+                    </div>
+                    <div class="job-content">
+                        <h3 class="job-title">Senior Python Instructor</h3>
+                        <div class="job-meta">
+                            <span class="meta-item">📍 Jhapa, Nepal</span>
+                            <span class="meta-item">💼 Full-time</span>
+                            <span class="meta-item">⭐ 5+ Years</span>
+                        </div>
+                        <p class="job-description">Lead advanced Python programming courses and mentor students in web development, data science, and software engineering.</p>
+                        <div class="job-details">
+                            <p><strong>Salary:</strong> NPR 40,000 - 60,000</p>
+                            <p><strong>Requirements:</strong> Degree in CS/IT, 5+ years teaching experience, expertise in Python frameworks (Django, Flask).</p>
+                        </div>
+                        <div class="job-footer">
+                            <span class="job-type-badge">Full-time • Permanent</span>
+                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
+                        </div>
+                    </div>
+                </div>
+ 
+                <!-- Job Card 2 -->
+                <div class="job-card" data-category="teaching">
+                    <div class="pin-icon">📌</div>
+                    <div class="job-tag">TEACHING</div>
+                    <div class="job-image">
+                        <div class="job-image-text">Web Development Trainer</div>
+                    </div>
+                    <div class="job-content">
+                        <h3 class="job-title">Web Development Trainer</h3>
+                        <div class="job-meta">
+                            <span class="meta-item">📍 Jhapa, Nepal</span>
+                            <span class="meta-item">💼 Full-time</span>
+                            <span class="meta-item">⭐ 3+ Years</span>
+                        </div>
+                        <p class="job-description">Train students in modern web technologies including React, JavaScript, HTML/CSS, and responsive design principles.</p>
+                        <div class="job-details">
+                            <p><strong>Salary:</strong> NPR 35,000 - 50,000</p>
+                            <p><strong>Requirements:</strong> Proficiency in React/Vue/Angular, strong JavaScript fundamentals, teaching ability, portfolio showcase.</p>
+                        </div>
+                        <div class="job-footer">
+                            <span class="job-type-badge">Full-time • Permanent</span>
+                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
+                        </div>
+                    </div>
+                </div>
+ 
+                <!-- Job Card 3 -->
+                <div class="job-card" data-category="it">
+                    <div class="pin-icon">📌</div>
+                    <div class="job-tag">IT & SUPPORT</div>
+                    <div class="job-image">
+                        <div class="job-image-text">IT Support & System Admin</div>
+                    </div>
+                    <div class="job-content">
+                        <h3 class="job-title">IT Support & System Administrator</h3>
+                        <div class="job-meta">
+                            <span class="meta-item">📍 Jhapa, Nepal</span>
+                            <span class="meta-item">💼 Full-time</span>
+                            <span class="meta-item">⭐ 2+ Years</span>
+                        </div>
+                        <p class="job-description">Maintain and support computer infrastructure, troubleshoot technical issues, and ensure seamless operations.</p>
+                        <div class="job-details">
+                            <p><strong>Salary:</strong> NPR 30,000 - 45,000</p>
+                            <p><strong>Requirements:</strong> CompTIA A+ or equivalent, Windows/Linux knowledge, networking basics, problem-solving skills.</p>
+                        </div>
+                        <div class="job-footer">
+                            <span class="job-type-badge">Full-time • Permanent</span>
+                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
+                        </div>
+                    </div>
+                </div>
+ 
+                <!-- Job Card 4 -->
+                <div class="job-card" data-category="admin">
+                    <div class="pin-icon">📌</div>
+                    <div class="job-tag">ADMINISTRATION</div>
+                    <div class="job-image">
+                        <div class="job-image-text">HR & Admin Coordinator</div>
+                    </div>
+                    <div class="job-content">
+                        <h3 class="job-title">HR & Administrative Coordinator</h3>
+                        <div class="job-meta">
+                            <span class="meta-item">📍 Jhapa, Nepal</span>
+                            <span class="meta-item">💼 Full-time</span>
+                            <span class="meta-item">⭐ 1+ Years</span>
+                        </div>
+                        <p class="job-description">Manage administrative operations, handle HR functions, and support organizational growth and excellence.</p>
+                        <div class="job-details">
+                            <p><strong>Salary:</strong> NPR 25,000 - 38,000</p>
+                            <p><strong>Requirements:</strong> Diploma in HR or Business, excellent organizational skills, MS Office proficiency, communication skills.</p>
+                        </div>
+                        <div class="job-footer">
+                            <span class="job-type-badge">Full-time • Permanent</span>
+                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
+                        </div>
+                    </div>
+                </div>
+ 
+                <!-- Job Card 5 -->
+                <div class="job-card" data-category="it">
+                    <div class="pin-icon">📌</div>
+                    <div class="job-tag">IT & SUPPORT</div>
+                    <div class="job-image">
+                        <div class="job-image-text">Database Administrator</div>
+                    </div>
+                    <div class="job-content">
+                        <h3 class="job-title">Database Administrator</h3>
+                        <div class="job-meta">
+                            <span class="meta-item">📍 Jhapa, Nepal</span>
+                            <span class="meta-item">💼 Full-time</span>
+                            <span class="meta-item">⭐ 3+ Years</span>
+                        </div>
+                        <p class="job-description">Design and maintain database solutions, ensure data security, perform backups, and optimize database performance.</p>
+                        <div class="job-details">
+                            <p><strong>Salary:</strong> NPR 38,000 - 55,000</p>
+                            <p><strong>Requirements:</strong> SQL Server/MySQL/MongoDB expertise, database design knowledge, backup & recovery experience.</p>
+                        </div>
+                        <div class="job-footer">
+                            <span class="job-type-badge">Full-time • Permanent</span>
+                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
+                        </div>
+                    </div>
+                </div>
+ 
+                <!-- Job Card 6 -->
+                <div class="job-card" data-category="marketing">
+                    <div class="pin-icon">📌</div>
+                    <div class="job-tag">MARKETING</div>
+                    <div class="job-image">
+                        <div class="job-image-text">Digital Marketing Specialist</div>
+                    </div>
+                    <div class="job-content">
+                        <h3 class="job-title">Digital Marketing Specialist</h3>
+                        <div class="job-meta">
+                            <span class="meta-item">📍 Jhapa, Nepal</span>
+                            <span class="meta-item">💼 Full-time</span>
+                            <span class="meta-item">⭐ 2+ Years</span>
+                        </div>
+                        <p class="job-description">Develop and execute digital marketing strategies, manage social media campaigns, and analyze marketing performance metrics.</p>
+                        <div class="job-details">
+                            <p><strong>Salary:</strong> NPR 28,000 - 42,000</p>
+                            <p><strong>Requirements:</strong> Digital Marketing certification, Google Analytics experience, social media campaign management expertise.</p>
+                        </div>
+                        <div class="job-footer">
+                            <span class="job-type-badge">Full-time • Permanent</span>
+                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-item">
+                <h3>50+</h3>
+                <p>Team Members</p>
+            </div>
+            <div class="stat-item">
+                <h3>12</h3>
+                <p>Years of Excellence</p>
+            </div>
+            <div class="stat-item">
+                <h3>2000+</h3>
+                <p>Successful Graduates</p>
+            </div>
+            <div class="stat-item">
+                <h3>95%</h3>
+                <p>Job Placement Rate</p>
+            </div>
+        </section>
+    </div>
+ 
+    <!-- Application Modal -->
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeApplication()">&times;</button>
+            
+            <div class="modal-header">
+                <h2 id="modalJobTitle">Apply for Position</h2>
+                <p>Smart Computer & Education Institute • Jhapa, Nepal</p>
+            </div>
+ 
+            <div class="modal-body">
+                <form id="applicationForm" onsubmit="handleSubmit(event)">
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Personal Information</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                                <span class="form-error" id="fullNameError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+977-XXXXXXXXXX" required>
+                                <span class="form-error" id="phoneError"></span>
+                            </div>
+                        </div>
+ 
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+ 
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="experience">Years of Experience *</label>
+                                <input type="number" id="experience" name="experience" min="0" max="60" required>
+                                <span class="form-error" id="experienceError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="currentPosition">Current Position/Role</label>
+                                <input type="text" id="currentPosition" name="currentPosition">
+                            </div>
+                        </div>
+                    </div>
+ 
+                    <!-- Education & Qualifications Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Education & Qualifications</h3>
+                        
+                        <div class="form-group">
+                            <label for="education">Educational Qualification *</label>
+                            <select id="education" name="education" required>
+                                <option value="">Select your qualification</option>
+                                <option value="bachelor">Bachelor's Degree</option>
+                                <option value="master">Master's Degree</option>
+                                <option value="diploma">Diploma</option>
+                                <option value="certificate">Certification Course</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <span class="form-error" id="educationError"></span>
+                        </div>
+ 
+                        <div class="form-group">
+                            <label for="field">Field of Study</label>
+                            <input type="text" id="field" name="field" placeholder="e.g., Computer Science, Business Administration">
+                        </div>
+ 
+                        <div class="form-group">
+                            <label for="skills">Key Skills (comma separated)</label>
+                            <textarea id="skills" name="skills" placeholder="e.g., Python, JavaScript, Problem Solving..." rows="2"></textarea>
+                        </div>
+                    </div>
+ 
+                    <!-- CV/Resume Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Upload CV / Resume</h3>
+                        <p class="section-description">Upload your CV or Resume (PDF, DOC, DOCX, or TXT format. Max 5MB)</p>
+                        
+                        <div class="file-upload-wrapper">
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p class="upload-text">Drag and drop your CV here, or <span class="upload-link">click to browse</span></p>
+                                <p class="upload-hint">Supported formats: PDF, DOC, DOCX, TXT (Max 5MB)</p>
+                                <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                            </div>
+                            <div class="file-preview" id="filePreview" style="display: none;">
+                                <div class="file-item">
+                                    <span class="file-icon">📄</span>
+                                    <div class="file-info">
+                                        <p class="file-name" id="fileName"></p>
+                                        <p class="file-size" id="fileSize"></p>
+                                    </div>
+                                    <button type="button" class="file-remove" onclick="removeFile()">✕</button>
+                                </div>
+                            </div>
+                            <span class="form-error" id="cvError"></span>
+                        </div>
+                    </div>
+ 
+                    <!-- Additional Information Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">Additional Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="coverLetter">Cover Letter / Why should we hire you?</label>
+                            <textarea id="coverLetter" name="coverLetter" placeholder="Tell us about your experience, skills, and why you're interested in this position..." rows="4"></textarea>
+                        </div>
+ 
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms" class="checkbox-label">I agree to the terms and conditions and privacy policy</label>
+                            <span class="form-error" id="termsError"></span>
+                        </div>
+                    </div>
+ 
+                    <!-- Form Actions -->
+                    <div class="modal-footer">
+                        <button type="button" class="cancel-btn" onclick="closeApplication()">Cancel</button>
+                        <button type="submit" class="submit-btn">Submit Application →</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message">
+        <div class="success-content">
+            <span class="success-icon">✓</span>
+            <div class="success-text">
+                <h4>Application Submitted Successfully!</h4>
+                <p id="successDetails"></p>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Error Message -->
+    <div id="errorMessage" class="error-message">
+        <span class="error-icon">✕</span>
+        <p id="errorDetails"></p>
+    </div>
+ 
+    <script src="career.js"></script>
 </html>
