@@ -1,15 +1,21 @@
-/* ==========================================================================
-   Blue, Red & White Theme — Smart Computer & Education Institute
-   ========================================================================== */
-
+body{
+  background-color: white;
+}
 :root {
-  --primary-blue: #14275c;     /* Deep navy blue */
-  --accent-red: #e63946;       /* Bright energetic red */
-  --light-bg: #f8fafc;         /* Crisp off-white */
-  --pure-white: #ffffff;       /* Pure white */
-  --text-dark: #1e293b;        /* Charcoal text */
-  --text-muted: #64748b;       /* Soft slate body text */
-  --border-color: #e2e8f0;     /* Light gray border */
+  --primary-blue: #14275c;
+  /* Deep navy blue */
+  --accent-red: #e63946;
+  /* Bright energetic red */
+  --light-bg: #f8fafc;
+  /* Crisp off-white */
+  --pure-white: #ffffff;
+  /* Pure white */
+  --text-dark: #1e293b;
+  /* Charcoal text */
+  --text-muted: #64748b;
+  /* Soft slate body text */
+  --border-color: #e2e8f0;
+  /* Light gray border */
   --shadow-sm: 0 4px 12px rgba(20, 39, 92, 0.08);
   --shadow-lg: 0 12px 28px rgba(20, 39, 92, 0.15);
   --radius: 12px;
@@ -155,7 +161,7 @@ body {
 .offer-list li {
   background-color: var(--pure-white);
   color: var(--primary-blue);
-  
+
   border: 2px solid var(--primary-blue);
   font-weight: 600;
   font-size: 1rem;
@@ -171,12 +177,12 @@ body {
   border-color: var(--accent-red);
   color: var(--pure-white);
   transform: translateY(-3px);
-  box-shadow:#FFFFFF;
+  box-shadow: #FFFFFF;
 }
 
 /* --- Call to Action Strip --- */
 .cta-strip {
-  background: linear-gradient(  #595a5c);
+  background: linear-gradient(#595a5c);
   color: var(--pure-white);
   text-align: center;
   padding: 60px 20px;
