@@ -363,3 +363,80 @@ function escapeTestHtml(str) {
   div.textContent = str || "";
   return div.innerHTML;
 }
+
+// Offer script
+(function () {
+  /* =========================================================
+     EDIT THIS ARRAY to add / remove / update flyers.
+     - image: optional URL to a real flyer image/poster.
+              If omitted, a styled placeholder card is shown.
+     - link:  where "View Flyer" / "Download" points to (PDF or image).
+  ========================================================== */
+  const FLYERS = [
+    {
+      tag: "New Batch",
+      title: "Digital Marketing — New Batch Starts Aug 20",
+      desc: "Evening batch, 6 weeks, seats limited to 20 students.",
+      date: "Posted Aug 5, 2026",
+      image: "",
+      link: "#"
+    },
+    {
+      tag: "Offer",
+      title: "20% Off — Office Package (Excel, Word, PowerPoint)",
+      desc: "Early-bird discount for enrollments before Aug 31.",
+      date: "Posted Aug 3, 2026",
+      image: "",
+      link: "#"
+    },
+    {
+      tag: "Event",
+      title: "Free Career Counseling — Every Saturday",
+      desc: "Drop by Charali branch, 10 AM–1 PM, no booking needed.",
+      date: "Posted Jul 28, 2026",
+      image: "",
+      link: "#"
+    }
+  ];
+ 
+  const tilts = [-2, 1.5, -1, 2, -1.5, 1];
+ 
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+ 
+  function renderFlyers() {
+    const grid = document.getElementById('flyerGrid');
+    const empty = document.getElementById('flyerEmpty');
+ 
+    if (!FLYERS.length) {
+      grid.style.display = 'none';
+      empty.hidden = false;
+      return;
+    }
+ 
+    grid.innerHTML = FLYERS.map((f, i) => {
+      const tilt = tilts[i % tilts.length];
+      const thumb = f.image
+        ? `<img class="flyer-card__thumb" style="background:none;padding:0;object-fit:cover;" src="${esc(f.image)}" alt="${esc(f.title)}">`
+        : `<div class="flyer-card__thumb"><span class="flyer-card__thumb-title">${esc(f.title)}</span></div>`;
+ 
+      return `
+        <article class="flyer-card" style="--tilt:${tilt}deg;">
+          <span class="flyer-card__tag">${esc(f.tag)}</span>
+          ${thumb}
+          <h3 class="flyer-card__title">${esc(f.title)}</h3>
+          <p class="flyer-card__desc">${esc(f.desc)}</p>
+          <div class="flyer-card__meta"><span>${esc(f.date)}</span></div>
+          <a class="flyer-card__cta" href="${esc(f.link)}" target="_blank" rel="noopener">View Flyer →</a>
+        </article>
+      `;
+    }).join('');
+  }
+ 
+  renderFlyers();
+})();
+
+
