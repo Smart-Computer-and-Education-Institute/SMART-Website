@@ -1,288 +1,350 @@
 // server.js
 // Main server for the Smart Computer & Education Institute website.
 //
-// This replaces the old index.js. It does everything index.js did
-// (serve the HTML/CSS/JS/images as static files) PLUS a small JSON
-// API under /api/* that the admin dashboard uses to actually save
-// changes, instead of just changing a JavaScript array in memory.
+// Serves the static site (HTML/CSS/JS/images) and a JSON API under
+// /api/* that the admin dashboard uses to read and save content.
+//
+// SECURITY OVERVIEW (see docs/SECURITY_AND_DEPLOYMENT.md for the full
+// write-up):
+//   - The admin panel and every content-changing API route now require
+//     a real, server-verified login (lib/auth.js). Previously the
+//     "login" was a client-side illusion — a hardcoded password check
+//     in JavaScript that never actually protected anything, and every
+//     /api/* route could be called by anyone, logged in or not.
+//   - Content is stored via lib/db.js and lib/blobStorage.js, which use
+//     MongoDB Atlas + Vercel Blob in production and fall back to local
+//     files for zero-setup local development. Plain fs.writeFileSync
+//     calls (the original approach) do not persist on Vercel.
+
+require("dotenv").config(); // loads .env locally; harmless no-op in production
 
 const express = require("express");
-const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
+const rateLimit = require("express-rate-limit");
+
+const db = require("./lib/db");
+const blobStorage = require("./lib/blobStorage");
+const {
+  verifyCredentials,
+  createSessionCookie,
+  clearSessionCookie,
+  requireAuthPage,
+  requireApiAuth,
+} = require("./lib/auth");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Lets us read JSON bodies sent by fetch() from the admin panel,
-// e.g. fetch("/api/notices", { method: "POST", body: JSON.stringify(...) })
-app.use(express.json());
+// Vercel terminates HTTPS in front of the function and forwards plain
+// HTTP internally; this tells Express to trust that and treat the
+// connection as secure so "secure" cookies still work correctly.
+app.set("trust proxy", 1);
 
-// The /data folder is our "database" (plain JSON files). It should
-// never be reachable directly by URL — only through the /api routes
-// below, which control exactly what gets returned. Without this,
-// anyone could open yoursite.com/data/notices.json directly and see
-// draft notices that aren't meant to be public yet.
+// ---------------------------------------------------------
+// Small helper so async route handlers don't need a try/catch each.
+// Any rejected promise is forwarded to Express's error handler at the
+// bottom of this file instead of crashing the process or hanging.
+// ---------------------------------------------------------
+function asyncHandler(fn) {
+  return (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+}
+
+// ---------------------------------------------------------
+// Security headers (helmet). We turn off helmet's default Content-
+// Security-Policy because the admin panel currently uses inline
+// onclick="..." attributes (e.g. onclick="openCourseModal()"), which a
+// strict CSP blocks. The other headers helmet sets — X-Frame-Options
+// (clickjacking protection), X-Content-Type-Options, a baseline
+// Referrer-Policy, etc. — are all still on. Moving those onclick
+// handlers to addEventListener() and turning the CSP back on is a good
+// follow-up hardening step; see docs/SECURITY_AND_DEPLOYMENT.md.
+// ---------------------------------------------------------
+app.use(helmet({ contentSecurityPolicy: false }));
+
+app.use(cookieParser());
+app.use(express.json({ limit: "1mb" }));
+
+// ---------------------------------------------------------
+// Block direct access to server-only files and folders.
+// These are only ever needed BY the server itself, never by a
+// visitor's browser. Without this, anything not matched by a more
+// specific route falls through to express.static() below and would be
+// served to anyone who asks — including this file, the database
+// connection code, and the raw JSON "seed" data.
+// ---------------------------------------------------------
+const BLOCKED_PATH_PREFIXES = [
+  "/data/",
+  "/lib/",
+  "/scripts/",
+  "/server.js",
+  "/package.json",
+  "/package-lock.json",
+  "/vercel.json",
+];
 app.use((req, res, next) => {
-  if (req.path.startsWith("/data/")) {
+  if (BLOCKED_PATH_PREFIXES.some((p) => req.path === p || req.path.startsWith(p))) {
     return res.status(403).send("Forbidden");
   }
   next();
 });
 
-// Serve every other file in the project as-is: index.html, About.html,
-// style.css, script.js, the whole admin/ folder, images, everything —
-// exactly like the old index.js did, just with proper handling for
-// every file type (the old version only knew about .html/.css/.js).
+// ---------------------------------------------------------
+// Gate the entire admin panel behind a login.
+// This runs BEFORE express.static(), so a logged-out visitor is
+// redirected to /login.html and never receives the admin HTML/JS at
+// all — unlike the original version, where every admin/*.html page was
+// served to anyone who typed the URL, and the "login" was purely
+// cosmetic on the client.
+// ---------------------------------------------------------
+app.use("/admin", requireAuthPage);
+app.get("/admin", (req, res) => res.redirect("/admin/dashboard.html"));
+
+// Serve the rest of the site (HTML, CSS, JS, images) as static files.
 app.use(express.static(__dirname));
 
 // ---------------------------------------------------------
-// Notices "database" helpers
-// These just read/write data/notices.json as a whole file.
-// Fine for a small site; a real database would do this more
-// efficiently, but for a few dozen notices this is simple and works.
+// Auth API — login / logout
 // ---------------------------------------------------------
 
-const NOTICES_FILE = path.join(__dirname, "data", "notices.json");
-const COURSES_FILE = path.join(__dirname, "data", "courses.json");
-const GALLERY_FILE = path.join(__dirname, "data", "gallery.json");
-const TESTIMONIALS_FILE = path.join(__dirname, "data", "testimonials.json");
+// Slows down password-guessing: at most 8 attempts per IP every 15
+// minutes on the login route specifically (every other route is
+// unaffected).
+const loginLimiter = rateLimit({
+  windowMs: 10 * 1000,
+  max: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many login attempts. Please try again in a few seconds." },
+});
 
-function readNotices() {
-  const raw = fs.readFileSync(NOTICES_FILE, "utf-8");
-  return JSON.parse(raw);
-}
+app.post(
+  "/api/login",
+  loginLimiter,
+  asyncHandler(async (req, res) => {
+    const { email, password, remember } = req.body || {};
 
-function writeNotices(notices) {
-  fs.writeFileSync(NOTICES_FILE, JSON.stringify(notices, null, 2));
-}
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required." });
+    }
 
-function readCourses() {
-  const raw = fs.readFileSync(COURSES_FILE, "utf-8");
-  return JSON.parse(raw);
-}
+    const ok = await verifyCredentials(email, password);
+    if (!ok) {
+      // Deliberately generic — never reveal whether the email or the
+      // password was the wrong part, which would help an attacker
+      // enumerate valid admin emails.
+      return res.status(401).json({ error: "Incorrect email or password." });
+    }
 
-function writeCourses(courses) {
-  fs.writeFileSync(COURSES_FILE, JSON.stringify(courses, null, 2));
-}
+    createSessionCookie(res, email.trim().toLowerCase(), !!remember);
+    res.json({ ok: true });
+  })
+);
 
-function readGallery() {
-  const raw = fs.readFileSync(GALLERY_FILE, "utf-8");
-  return JSON.parse(raw);
-}
-
-function writeGallery(photos) {
-  fs.writeFileSync(GALLERY_FILE, JSON.stringify(photos, null, 2));
-}
-
-function readTestimonials() {
-  try {
-    const raw = fs.readFileSync(TESTIMONIALS_FILE, "utf-8");
-    return JSON.parse(raw);
-  } catch { return []; }
-}
-
-function writeTestimonials(data) {
-  fs.writeFileSync(TESTIMONIALS_FILE, JSON.stringify(data, null, 2));
-}
+app.post("/api/logout", (req, res) => {
+  clearSessionCookie(res);
+  res.json({ ok: true });
+});
 
 // ---------------------------------------------------------
 // Notices API
+// Public routes return only published notices. Admin routes (protected)
+// return everything, including drafts, and can create/edit/delete.
+//
+// The original code used a single GET /api/notices?status=published
+// route for both audiences — but that means "give me everything" was
+// just a matter of leaving the query string off, with nothing checking
+// who was asking. Splitting these into separate public/admin routes
+// closes that gap.
 // ---------------------------------------------------------
 
-// GET /api/notices                    -> everything (admin panel uses this)
-// GET /api/notices?status=published   -> only published ones (public Notice.html uses this)
-app.get("/api/notices", (req, res) => {
-  const notices = readNotices();
-  const { status } = req.query;
-  const result = status ? notices.filter((n) => n.status === status) : notices;
-  res.json(result);
-});
+app.get(
+  "/api/public/notices",
+  asyncHandler(async (req, res) => {
+    const notices = await db.findAll("notices");
+    res.json(notices.filter((n) => n.status === "published"));
+  })
+);
 
-// POST /api/notices -> create a new notice
-app.post("/api/notices", (req, res) => {
-  const { title, content, date, status } = req.body;
+app.get(
+  "/api/notices",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    res.json(await db.findAll("notices"));
+  })
+);
 
-  if (!title || !content) {
-    return res.status(400).json({ error: "title and content are required" });
-  }
+app.post(
+  "/api/notices",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { title, content, date, status } = req.body || {};
+    if (!title || !content) {
+      return res.status(400).json({ error: "title and content are required" });
+    }
 
-  const notices = readNotices();
-  const newNotice = {
-    id: "n" + Date.now(),
-    title,
-    content,
-    date: date || new Date().toISOString().slice(0, 10),
-    status: status || "draft",
-  };
+    const newNotice = {
+      id: "n" + Date.now(),
+      title: String(title).slice(0, 200),
+      content: String(content).slice(0, 5000),
+      date: date || new Date().toISOString().slice(0, 10),
+      status: status === "published" ? "published" : "draft",
+    };
 
-  notices.unshift(newNotice);
-  writeNotices(notices);
-  res.status(201).json(newNotice);
-});
+    await db.insertOne("notices", newNotice);
+    res.status(201).json(newNotice);
+  })
+);
 
-// PUT /api/notices/:id -> edit an existing notice
-app.put("/api/notices/:id", (req, res) => {
-  const notices = readNotices();
-  const notice = notices.find((n) => n.id === req.params.id);
+app.put(
+  "/api/notices/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { title, content, date, status } = req.body || {};
+    const changes = {};
+    if (title !== undefined) changes.title = String(title).slice(0, 200);
+    if (content !== undefined) changes.content = String(content).slice(0, 5000);
+    if (date !== undefined) changes.date = date;
+    if (status !== undefined) changes.status = status === "published" ? "published" : "draft";
 
-  if (!notice) {
-    return res.status(404).json({ error: "Notice not found" });
-  }
+    const notice = await db.updateOne("notices", req.params.id, changes);
+    if (!notice) return res.status(404).json({ error: "Notice not found" });
+    res.json(notice);
+  })
+);
 
-  const { title, content, date, status } = req.body;
-  if (title !== undefined) notice.title = title;
-  if (content !== undefined) notice.content = content;
-  if (date !== undefined) notice.date = date;
-  if (status !== undefined) notice.status = status;
+app.post(
+  "/api/notices/:id/toggle",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const notice = await db.findOne("notices", req.params.id);
+    if (!notice) return res.status(404).json({ error: "Notice not found" });
 
-  writeNotices(notices);
-  res.json(notice);
-});
+    const updated = await db.updateOne("notices", req.params.id, {
+      status: notice.status === "published" ? "draft" : "published",
+    });
+    res.json(updated);
+  })
+);
 
-// POST /api/notices/:id/toggle -> flip published <-> draft
-app.post("/api/notices/:id/toggle", (req, res) => {
-  const notices = readNotices();
-  const notice = notices.find((n) => n.id === req.params.id);
-
-  if (!notice) {
-    return res.status(404).json({ error: "Notice not found" });
-  }
-
-  notice.status = notice.status === "published" ? "draft" : "published";
-  writeNotices(notices);
-  res.json(notice);
-});
-
-// DELETE /api/notices/:id -> remove a notice
-app.delete("/api/notices/:id", (req, res) => {
-  const notices = readNotices();
-  const exists = notices.some((n) => n.id === req.params.id);
-
-  if (!exists) {
-    return res.status(404).json({ error: "Notice not found" });
-  }
-
-  writeNotices(notices.filter((n) => n.id !== req.params.id));
-  res.status(204).end();
-});
+app.delete(
+  "/api/notices/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const deleted = await db.deleteOne("notices", req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Notice not found" });
+    res.status(204).end();
+  })
+);
 
 // ---------------------------------------------------------
 // Courses API
-// Same shape as notices: GET (with optional ?status= filter),
-// POST to create, PUT to edit, DELETE to remove.
+// Same public/admin split as notices: public sees only active
+// courses, the protected admin routes see and manage everything.
 // ---------------------------------------------------------
 
-// GET /api/courses                 -> everything (admin panel uses this)
-// GET /api/courses?status=active   -> only active ones (public Course.html uses this)
-app.get("/api/courses", (req, res) => {
-  const courses = readCourses();
-  const { status } = req.query;
-  const result = status ? courses.filter((c) => c.status === status) : courses;
-  res.json(result);
-});
+app.get(
+  "/api/public/courses",
+  asyncHandler(async (req, res) => {
+    const courses = await db.findAll("courses");
+    res.json(courses.filter((c) => c.status === "active"));
+  })
+);
 
-// POST /api/courses -> create a new course
-app.post("/api/courses", (req, res) => {
-  const { name, category, duration, desc, enrolled, status } = req.body;
+app.get(
+  "/api/courses",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    res.json(await db.findAll("courses"));
+  })
+);
 
-  if (!name || !duration || !desc) {
-    return res.status(400).json({ error: "name, duration, and desc are required" });
-  }
+app.post(
+  "/api/courses",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { name, category, duration, desc, enrolled, status } = req.body || {};
+    if (!name || !duration || !desc) {
+      return res.status(400).json({ error: "name, duration, and desc are required" });
+    }
 
-  const courses = readCourses();
-  const newCourse = {
-    id: "c" + Date.now(),
-    name,
-    category: category || "Office",
-    duration,
-    desc,
-    enrolled: enrolled || 0,
-    status: status || "active",
-  };
+    const newCourse = {
+      id: "c" + Date.now(),
+      name: String(name).slice(0, 150),
+      category: category || "Office",
+      duration: String(duration).slice(0, 60),
+      desc: String(desc).slice(0, 2000),
+      enrolled: Number.isFinite(Number(enrolled)) ? Number(enrolled) : 0,
+      status: status === "inactive" ? "inactive" : "active",
+    };
 
-  courses.unshift(newCourse);
-  writeCourses(courses);
-  res.status(201).json(newCourse);
-});
+    await db.insertOne("courses", newCourse);
+    res.status(201).json(newCourse);
+  })
+);
 
-// PUT /api/courses/:id -> edit an existing course
-app.put("/api/courses/:id", (req, res) => {
-  const courses = readCourses();
-  const course = courses.find((c) => c.id === req.params.id);
+app.put(
+  "/api/courses/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { name, category, duration, desc, enrolled, status } = req.body || {};
+    const changes = {};
+    if (name !== undefined) changes.name = String(name).slice(0, 150);
+    if (category !== undefined) changes.category = category;
+    if (duration !== undefined) changes.duration = String(duration).slice(0, 60);
+    if (desc !== undefined) changes.desc = String(desc).slice(0, 2000);
+    if (enrolled !== undefined) changes.enrolled = Number(enrolled) || 0;
+    if (status !== undefined) changes.status = status === "inactive" ? "inactive" : "active";
 
-  if (!course) {
-    return res.status(404).json({ error: "Course not found" });
-  }
+    const course = await db.updateOne("courses", req.params.id, changes);
+    if (!course) return res.status(404).json({ error: "Course not found" });
+    res.json(course);
+  })
+);
 
-  const { name, category, duration, desc, enrolled, status } = req.body;
-  if (name !== undefined) course.name = name;
-  if (category !== undefined) course.category = category;
-  if (duration !== undefined) course.duration = duration;
-  if (desc !== undefined) course.desc = desc;
-  if (enrolled !== undefined) course.enrolled = enrolled;
-  if (status !== undefined) course.status = status;
-
-  writeCourses(courses);
-  res.json(course);
-});
-
-// DELETE /api/courses/:id -> remove a course
-app.delete("/api/courses/:id", (req, res) => {
-  const courses = readCourses();
-  const exists = courses.some((c) => c.id === req.params.id);
-
-  if (!exists) {
-    return res.status(404).json({ error: "Course not found" });
-  }
-
-  writeCourses(courses.filter((c) => c.id !== req.params.id));
-  res.status(204).end();
-});
+app.delete(
+  "/api/courses/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const deleted = await db.deleteOne("courses", req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Course not found" });
+    res.status(204).end();
+  })
+);
 
 // ---------------------------------------------------------
-// Gallery photo uploads (Multer)
+// Photo uploads (Vercel Blob in production, local disk in dev)
 //
-// Photos are no longer added by typing a path — the admin panel
-// sends the actual file, and this saves it to disk automatically.
-//
-// Uploaded files go in img/gallery/ (a SUBfolder of img/), not
-// directly in img/. That's deliberate: img/ also holds fixed site
-// assets like the logo and About-page photos. Keeping uploads in
-// their own folder means the delete route below can safely remove
-// a file without any risk of it being one of those shared assets.
+// Uploaded files are read into memory (not written straight to disk)
+// so lib/blobStorage.js can send the same buffer to either
+// destination. Never trust the uploaded filename — it's attacker-
+// controlled text — so we generate our own name, and we pick the file
+// extension ourselves from a fixed, checked list rather than trusting
+// whatever extension the uploader's filename happened to have.
 // ---------------------------------------------------------
 
-const GALLERY_UPLOADS_DIR = path.join(__dirname, "img", "gallery");
-fs.mkdirSync(GALLERY_UPLOADS_DIR, { recursive: true }); // creates it on first run if missing
+const ALLOWED_IMAGE_TYPES = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+};
 
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-
-const photoUpload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, GALLERY_UPLOADS_DIR),
-    filename: (req, file, cb) => {
-      // Never trust the uploaded filename as-is (it's attacker-controlled
-      // text). Generate our own safe, unique name instead: timestamp +
-      // random number + the real extension.
-      const ext = path.extname(file.originalname).toLowerCase();
-      const safeName = `photo-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-      cb(null, safeName);
-    },
-  }),
+const memoryUpload = multer({
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
   fileFilter: (req, file, cb) => {
-    if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+    if (!ALLOWED_IMAGE_TYPES[file.mimetype]) {
       return cb(new Error("Only JPG, PNG, WEBP, or GIF images are allowed."));
     }
     cb(null, true);
   },
 }).single("photo"); // must match formData.append("photo", file) on the client
 
-// Wraps multer so upload errors (wrong file type, too large) come back
-// as a normal JSON error response instead of crashing the request.
 function handlePhotoUpload(req, res, next) {
-  photoUpload(req, res, (err) => {
+  memoryUpload(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
       return res.status(400).json({ error: "Photo is too large. Max size is 5MB." });
     }
@@ -293,187 +355,188 @@ function handlePhotoUpload(req, res, next) {
   });
 }
 
-// Deletes a gallery photo's file from disk, but ONLY if it lives inside
-// img/gallery/ (i.e. it was uploaded through this system). Older entries
-// may still point at shared images elsewhere in img/ - those are never
-// touched, since deleting them could break other pages that use them.
-function deletePhotoFileIfOwned(imagePath) {
-  if (!imagePath || !imagePath.startsWith("img/gallery/")) return;
-  const filename = path.basename(imagePath); // strips any directory part
-  fs.unlink(path.join(GALLERY_UPLOADS_DIR, filename), (err) => {
-    if (err && err.code !== "ENOENT") console.error("Could not delete photo file:", err);
-  });
+function safeUploadName(prefix, mimetype) {
+  const ext = ALLOWED_IMAGE_TYPES[mimetype];
+  return `${prefix}-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
 }
 
 // ---------------------------------------------------------
 // Gallery API
-// Same read/write-whole-file pattern. No draft/published
-// status here (matches the old in-memory admin behavior) —
-// every photo saved is shown on the public gallery.
+// Public GET stays open (no draft/published concept for photos, so
+// there's nothing sensitive to hide). Every write requires login.
 // ---------------------------------------------------------
 
-// GET /api/gallery -> every photo (both admin panel and public Gallery.html use this)
-app.get("/api/gallery", (req, res) => {
-  res.json(readGallery());
-});
+app.get(
+  "/api/gallery",
+  asyncHandler(async (req, res) => {
+    res.json(await db.findAll("gallery"));
+  })
+);
 
-// POST /api/gallery -> add a new photo
-// handlePhotoUpload runs first: it parses the multipart form, saves the
-// file to img/gallery/, and populates req.file + req.body for us.
-app.post("/api/gallery", handlePhotoUpload, (req, res) => {
-  const { title, desc } = req.body;
+app.post(
+  "/api/gallery",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const { title, desc } = req.body || {};
+    if (!title || !desc) {
+      return res.status(400).json({ error: "title and desc are required" });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose a photo to upload." });
+    }
 
-  if (!title || !desc) {
-    return res.status(400).json({ error: "title and desc are required" });
-  }
-  if (!req.file) {
-    return res.status(400).json({ error: "Please choose a photo to upload." });
-  }
+    const filename = safeUploadName("photo", req.file.mimetype);
+    const imageUrl = await blobStorage.saveUpload(req.file.buffer, "gallery", filename);
 
-  const photos = readGallery();
-  const newPhoto = {
-    id: "p" + Date.now(),
-    title,
-    desc,
-    image: "img/gallery/" + req.file.filename,
-  };
+    const newPhoto = {
+      id: "p" + Date.now(),
+      title: String(title).slice(0, 150),
+      desc: String(desc).slice(0, 1000),
+      image: imageUrl,
+    };
 
-  photos.unshift(newPhoto);
-  writeGallery(photos);
-  res.status(201).json(newPhoto);
-});
+    await db.insertOne("gallery", newPhoto);
+    res.status(201).json(newPhoto);
+  })
+);
 
-// PUT /api/gallery/:id -> edit an existing photo
-// A new file is optional here - if the admin didn't choose one, req.file
-// is just undefined and the existing image is left alone.
-app.put("/api/gallery/:id", handlePhotoUpload, (req, res) => {
-  const photos = readGallery();
-  const photo = photos.find((p) => p.id === req.params.id);
+app.put(
+  "/api/gallery/:id",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("gallery", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Photo not found" });
 
-  if (!photo) {
-    return res.status(404).json({ error: "Photo not found" });
-  }
+    const { title, desc } = req.body || {};
+    const changes = {};
+    if (title !== undefined) changes.title = String(title).slice(0, 150);
+    if (desc !== undefined) changes.desc = String(desc).slice(0, 1000);
 
-  const { title, desc } = req.body;
-  if (title !== undefined) photo.title = title;
-  if (desc !== undefined) photo.desc = desc;
+    if (req.file) {
+      const filename = safeUploadName("photo", req.file.mimetype);
+      changes.image = await blobStorage.saveUpload(req.file.buffer, "gallery", filename);
+      await blobStorage.deleteUpload(existing.image); // clean up the file it's replacing
+    }
 
-  if (req.file) {
-    const oldImage = photo.image;
-    photo.image = "img/gallery/" + req.file.filename;
-    deletePhotoFileIfOwned(oldImage); // clean up the file it's replacing
-  }
+    const updated = await db.updateOne("gallery", req.params.id, changes);
+    res.json(updated);
+  })
+);
 
-  writeGallery(photos);
-  res.json(photo);
-});
+app.delete(
+  "/api/gallery/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("gallery", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Photo not found" });
 
-// DELETE /api/gallery/:id -> remove a photo (and its file, if we own it)
-app.delete("/api/gallery/:id", (req, res) => {
-  const photos = readGallery();
-  const photo = photos.find((p) => p.id === req.params.id);
-
-  if (!photo) {
-    return res.status(404).json({ error: "Photo not found" });
-  }
-
-  deletePhotoFileIfOwned(photo.image);
-  writeGallery(photos.filter((p) => p.id !== req.params.id));
-  res.status(204).end();
-});
+    await blobStorage.deleteUpload(existing.image);
+    await db.deleteOne("gallery", req.params.id);
+    res.status(204).end();
+  })
+);
 
 // ---------------------------------------------------------
 // Testimonials API
-// GET, POST (with optional photo), PUT, DELETE
-// Photos stored in img/testimonials/
+// Same pattern as Gallery: public GET, protected writes.
 // ---------------------------------------------------------
 
-const TESTIMONIALS_UPLOADS_DIR = path.join(__dirname, "img", "testimonials");
-fs.mkdirSync(TESTIMONIALS_UPLOADS_DIR, { recursive: true });
+app.get(
+  "/api/testimonials",
+  asyncHandler(async (req, res) => {
+    res.json(await db.findAll("testimonials"));
+  })
+);
 
-const testimonialPhotoUpload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, TESTIMONIALS_UPLOADS_DIR),
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname).toLowerCase();
-      cb(null, `testimonial-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
-    },
-  }),
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (!ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
-      return cb(new Error("Only JPG, PNG, WEBP, or GIF images are allowed."));
+app.post(
+  "/api/testimonials",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const { name, text, course } = req.body || {};
+    if (!name || !text) {
+      return res.status(400).json({ error: "name and text are required" });
     }
-    cb(null, true);
-  },
-}).single("photo");
 
-function handleTestimonialPhotoUpload(req, res, next) {
-  testimonialPhotoUpload(req, res, (err) => {
-    if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({ error: "Photo is too large. Max size is 5MB." });
+    let photoUrl = "";
+    if (req.file) {
+      const filename = safeUploadName("testimonial", req.file.mimetype);
+      photoUrl = await blobStorage.saveUpload(req.file.buffer, "testimonials", filename);
     }
-    if (err) return res.status(400).json({ error: err.message || "Upload failed." });
-    next();
+
+    const newTestimonial = {
+      id: "t" + Date.now(),
+      name: String(name).slice(0, 100),
+      text: String(text).slice(0, 1000),
+      course: course || "",
+      photo: photoUrl,
+    };
+
+    await db.insertOne("testimonials", newTestimonial);
+    res.status(201).json(newTestimonial);
+  })
+);
+
+app.put(
+  "/api/testimonials/:id",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("testimonials", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Testimonial not found" });
+
+    const { name, text, course } = req.body || {};
+    const changes = {};
+    if (name !== undefined) changes.name = String(name).slice(0, 100);
+    if (text !== undefined) changes.text = String(text).slice(0, 1000);
+    if (course !== undefined) changes.course = course;
+
+    if (req.file) {
+      const filename = safeUploadName("testimonial", req.file.mimetype);
+      changes.photo = await blobStorage.saveUpload(req.file.buffer, "testimonials", filename);
+      await blobStorage.deleteUpload(existing.photo);
+    }
+
+    const updated = await db.updateOne("testimonials", req.params.id, changes);
+    res.json(updated);
+  })
+);
+
+app.delete(
+  "/api/testimonials/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("testimonials", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Testimonial not found" });
+
+    await blobStorage.deleteUpload(existing.photo);
+    await db.deleteOne("testimonials", req.params.id);
+    res.status(204).end();
+  })
+);
+
+// ---------------------------------------------------------
+// Centralized error handler.
+// Anything asyncHandler() catches (a bad DB connection, an unexpected
+// bug, etc.) ends up here instead of leaking a raw stack trace to the
+// visitor or crashing the server.
+// ---------------------------------------------------------
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  console.error(err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ error: "Something went wrong on our end." });
+});
+
+// Vercel imports this file as a module and calls the exported app
+// directly for each request — it must NOT also call app.listen(), or
+// the deployment fails. Only start a local server when this file is
+// run directly (`node server.js` / `npm start`).
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/`);
   });
 }
 
-function deleteTestimonialPhotoIfOwned(imagePath) {
-  if (!imagePath || !imagePath.startsWith("img/testimonials/")) return;
-  const filename = path.basename(imagePath);
-  fs.unlink(path.join(TESTIMONIALS_UPLOADS_DIR, filename), (err) => {
-    if (err && err.code !== "ENOENT") console.error("Could not delete testimonial photo:", err);
-  });
-}
-
-app.get("/api/testimonials", (req, res) => {
-  res.json(readTestimonials());
-});
-
-app.post("/api/testimonials", handleTestimonialPhotoUpload, (req, res) => {
-  const { name, text, course } = req.body;
-  if (!name || !text) {
-    return res.status(400).json({ error: "name and text are required" });
-  }
-  const testimonials = readTestimonials();
-  const newT = {
-    id: "t" + Date.now(),
-    name,
-    text,
-    course: course || "",
-    photo: req.file ? "img/testimonials/" + req.file.filename : "",
-  };
-  testimonials.push(newT);
-  writeTestimonials(testimonials);
-  res.status(201).json(newT);
-});
-
-app.put("/api/testimonials/:id", handleTestimonialPhotoUpload, (req, res) => {
-  const testimonials = readTestimonials();
-  const t = testimonials.find((x) => x.id === req.params.id);
-  if (!t) return res.status(404).json({ error: "Testimonial not found" });
-
-  const { name, text, course } = req.body;
-  if (name !== undefined) t.name = name;
-  if (text !== undefined) t.text = text;
-  if (course !== undefined) t.course = course;
-  if (req.file) {
-    deleteTestimonialPhotoIfOwned(t.photo);
-    t.photo = "img/testimonials/" + req.file.filename;
-  }
-  writeTestimonials(testimonials);
-  res.json(t);
-});
-
-app.delete("/api/testimonials/:id", (req, res) => {
-  const testimonials = readTestimonials();
-  const t = testimonials.find((x) => x.id === req.params.id);
-  if (!t) return res.status(404).json({ error: "Testimonial not found" });
-  deleteTestimonialPhotoIfOwned(t.photo);
-  writeTestimonials(testimonials.filter((x) => x.id !== req.params.id));
-  res.status(204).end();
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
-});
+module.exports = app;

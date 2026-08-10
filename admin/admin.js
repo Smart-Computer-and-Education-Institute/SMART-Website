@@ -4,6 +4,39 @@
    logout popup, course count
    ============================================ */
 
+/* ---------- Session handling ----------
+   If the server ever responds 401 (not logged in — e.g. the session
+   cookie expired while this page was open), every admin page bounces
+   back to the login screen instead of silently failing. This wraps
+   window.fetch once, here, so none of the individual admin/*.js files
+   (notices.js, courses.js, etc.) need to handle it themselves. */
+(function () {
+  const originalFetch = window.fetch;
+  window.fetch = async function (...args) {
+    const response = await originalFetch(...args);
+    if (response.status === 401) {
+      window.location.href = "/login.html";
+    }
+    return response;
+  };
+})();
+
+/* ---------- Logout ----------
+   The session cookie is httpOnly, so page JavaScript can't clear it
+   directly — that request has to go to the server. */
+(function () {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (!logoutBtn) return;
+  logoutBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } finally {
+      window.location.href = "/login.html";
+    }
+  });
+})();
+
 (function () {
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("sidebarOverlay");

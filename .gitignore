@@ -1,0 +1,22 @@
+# Dependencies — reinstalled from package.json via `npm install`
+node_modules/
+
+# Secrets — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Vercel local project metadata
+.vercel
+
+# Local uploads written when running without Vercel Blob configured
+# (keep the folders themselves; see img/gallery/.gitkeep etc. if added)
+img/gallery/*
+!img/gallery/.gitkeep
+img/testimonials/*
+!img/testimonials/.gitkeep
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log

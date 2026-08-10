@@ -1,18 +1,17 @@
 
-.Course {
 
-    background-color: #FFFFFF;
-
+.Course{
+    
+    background-color:#FFFFFF ;
+    
 }
-
-.course-container {
+.course-container{
     max-width: 1180px;
     margin: 0 auto;
-    padding: 0 24px;
-    background-color: #FFFFFF;
+    padding:0 24px ;
+    background-color:#FFFFFF ;
 }
-
-h1.Course-heading {
+h1.Course-heading{
     text-align: center;
     color: #DC2626;
     font-size: 2rem;
@@ -21,7 +20,7 @@ h1.Course-heading {
     margin-top: 10px;
 }
 
-.course-paragraph {
+.course-paragraph{
     text-align: center;
     margin-left: auto;
     margin-right: auto;
@@ -31,74 +30,69 @@ h1.Course-heading {
     margin-top: 10px;
 }
 
-.Course-heading {
+.Course-heading{
     font-size: 1.13rem;
     font-weight: 700;
     margin-bottom: 8px;
     color: #1e3e8a;
 }
 
-.para {
-    color: #64748b;
+.para{
+     color: #64748b;
     font-size: 0.9rem;
     flex-grow: 1;
     margin-bottom: 18px;
 }
 
-.filter-chips {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    line-height: 1.6;
+.filter-chips{
+   display: flex;
+   justify-content: center;
+   gap: 20px;
+   flex-wrap: wrap;
+   line-height: 1.6;
 }
-
 .filter-chips.active {
-    background-color: #1e3a8a;
-    /* navy blue */
+    background-color: #1e3a8a; /* navy blue */
     color: white;
 }
-
-.course-control {
+.course-control{
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    margin: 36px 0 38px;
-    align-items: center;
+     margin: 36px 0 38px;
+     align-items: center;
 }
-
-button {
+button{
     padding: 9px 18px;
     border-radius: 999px;
-    border: 1.5px solid #e2e8f0;
+    border:1.5px solid #e2e8f0;
     font-weight: 500;
     font-size: 0.85rem;
-    color: #64748b;
-
+    color:#64748b;
+   
 }
 
-.chip:hover {
+.chip:hover{
     cursor: pointer;
     border-color: #1e3e8a;
 }
 
-.chip.active {
+.chip.active{
     background-color: #1e3e8a;
-    color: #F8FAFC;
+    color:#F8FAFC;
     font-weight: 600;
 }
 
-.course-grid {
+.course-grid{
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(3,1fr);
+    gap:24px;
 }
-
-.course-card {
+.course-card{
     background-color: #F8FAFC;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e2e8f0 ;
     border-radius: 14px;
-    cursor: pointer;
+    cursor:pointer;
     padding: 28px;
     display: flex;
     flex-direction: column;
@@ -108,16 +102,15 @@ button {
 }
 
 
-.course-duration {
+.course-duration{
     font-family: monospace;
     font-size: 0.78rem;
-    background-color: #eef2ff;
-    padding: 5px 10px;
+    background-color:#eef2ff ;
+    padding:5px 10px;
     border-radius: 6px;
     margin-right: auto;
     margin-top: 20px;
 }
-
 @media (max-width: 760px) {
     .course-grid {
         grid-template-columns: 1fr 1fr;
@@ -131,74 +124,69 @@ button {
 }
 
 
-.info-container {
-    background-color: #387975;
+ .info-container{
+    background-color:#387975 ;
+   
+ }
 
-}
-
-.Testimonials {
+.Testimonials{
     display: block;
     padding-bottom: 10px;
-    box-sizing: border-box;
-    color: #FFFFFF;
-    text-align: center;
-    font-size: 20px;
-    font-family: sans-serif;
-    font-weight: 500;
-    line-height: 1.2em;
+  box-sizing: border-box;
+  color:#FFFFFF;
+  text-align: center;
+  font-size: 20px;
+  font-family: sans-serif;
+  font-weight: 500;
+  line-height: 1.2em;
 }
-
-.Testimonials-img {
+.Testimonials-img{
     border-radius: 50%;
 }
 
 @media (max-width:2000px) {
-    .white-text {
-        color: #fff;
-        font-size: 42px;
-        font-family: sans-serif;
-        font-weight: 900;
-        line-height: 1.2em;
-        text-align: center;
-        margin-bottom: 10px;
-        margin-right: auto;
-        margin-left: auto;
-        margin-bottom: 50px;
-    }
+    .white-text{
+    color: #fff;
+    font-size: 42px;
+    font-family: sans-serif;
+    font-weight: 900;
+    line-height: 1.2em;
+    text-align: center; margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 50px;
 }
-
-@media (max-width:991px) {
-    .white-text {
+}
+@media (max-width:991px){
+    .white-text{
         color: #fff;
         font-size: 32px;
         text-align: center;
-        font-weight: 900;
-        line-height: 1.2em;
-        text-align: center;
-        margin-bottom: 10px;
-        margin-right: auto;
-        margin-left: auto;
-        margin-bottom: 50px;
+         font-weight: 900;
+    line-height: 1.2em;
+    text-align: center; margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 50px;
     }
 }
 
-.base-container {
+.base-container{ 
     max-width: 1180px;
     margin: 0 auto;
-    padding: 0 24px;
-
-
+    padding:0 24px ;
+   
+    
+}
+.gird-layout{
+  display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:24px;
 }
 
-.gird-layout {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-}
 
-
-.student-card {
-    display: flex;
+.student-card{
+     display: flex;
     background-color: #fff9f4;
     border-radius: 14px;
     border: 2px solid #ffffff;
@@ -206,8 +194,7 @@ button {
     flex-direction: column;
     margin-bottom: 20px;
 }
-
-.Student-name {
+.Student-name{
     text-align: center;
     font-size: 22px;
     color: #387975;
@@ -216,14 +203,13 @@ button {
     font-weight: 900;
     line-height: 1.2em;
 }
-
-.info-client {
-
-    align-items: center;
-    text-align: center;
+.info-client{
+   
+   align-items: center;
+   text-align: center; 
 }
 
-.info-para {
+.info-para{
     text-align: center;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -248,120 +234,119 @@ button {
 /* COURSE MODAL CSS */
 
 .course-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow: hidden;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
 }
 
 .course-modal.open {
-    display: flex;
+  display: flex;
 }
 
 .course-modal-content {
-    background: #F8FAFC;
-    border-radius: 14px;
-    border-left: 5px solid #dc2626;
-    max-width: 480px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    padding: 36px 32px 32px;
-    box-sizing: border-box;
-    transform: scale(0.96);
-    opacity: 0;
-    transition: transform 0.25s ease, opacity 0.25s ease;
+  background: #F8FAFC;
+  border-radius: 14px;
+  border-left: 5px solid #dc2626;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 36px 32px 32px;
+  box-sizing: border-box;
+  transform: scale(0.96);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 .course-modal.open .course-modal-content {
-    transform: scale(1);
-    opacity: 1;
+  transform: scale(1);
+  opacity: 1;
 }
 
 .course-modal-category {
-    display: inline-block;
-    background: #eef2ff;
-    color: #1e3a8a;
-    font-family: monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 4px;
-    margin-bottom: 14px;
-    margin-right: 90px;
+  display: inline-block;
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  margin-right: 90px;
 }
 
 .course-modal-content h3 {
-    font-family: sans-serif;
-    color: #1e3e8a;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 12px;
+  font-family: sans-serif;
+  color: #1e3e8a;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
 .course-modal-content p {
-    color: #64748b;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 18px;
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
 }
 
 .course-modal-duration {
-    font-family: monospace;
-    font-size: 0.78rem;
-    background-color: #eef2ff;
-    padding: 5px 10px;
-    border-radius: 6px;
-    display: inline-block;
-    margin-bottom: 24px;
+  font-family: monospace;
+  font-size: 0.78rem;
+  background-color: #eef2ff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 24px;
 }
 
 .course-modal-enroll {
-    display: block;
-    text-align: center;
-    width: 100%;
-    box-sizing: border-box;
+  display: block;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .course-modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: #1e293b;
-    color: #fff;
-    border: none;
-    width: auto;
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    font-family: monospace;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    line-height: 1.8;
-    white-space: nowrap;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #1e293b;
+  color: #fff;
+  border: none;
+  width: auto;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: monospace;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  line-height: 1.8;
+  white-space: nowrap;
 }
 
 .course-modal-close span {
-    font-size: 0.9rem;
-    margin-left: 2px;
+  font-size: 0.9rem;
+  margin-left: 2px;
 }
 
 .course-modal-close:hover {
-    background: #0f172a;
+  background: #0f172a;
 }
-
 .course-empty {
     text-align: center;
     color: #64748b;
@@ -381,13 +366,13 @@ button {
     font-size: 28px;
     font-weight: 700;
     margin: 0 auto 8px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255,255,255,0.3);
 }
 
 /* Small course tag under student name */
 .testimonial-course-tag {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.15);
     color: #387975;
     font-size: 0.72rem;
     font-weight: 600;
