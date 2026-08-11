@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index" },
+    { "source": "/admin", "destination": "/api/index" },
+    { "source": "/admin/:path*", "destination": "/api/index" },
+    { "source": "/data/:path*", "destination": "/api/index" },
+    { "source": "/lib/:path*", "destination": "/api/index" },
+    { "source": "/scripts/:path*", "destination": "/api/index" },
+    { "source": "/server.js", "destination": "/api/index" },
+    { "source": "/package.json", "destination": "/api/index" },
+    { "source": "/package-lock.json", "destination": "/api/index" }
+  ]
+}

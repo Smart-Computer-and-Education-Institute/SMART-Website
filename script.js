@@ -144,7 +144,7 @@ if (statsStrip) {
 const publicNoticeList = document.getElementById("publicNoticeList");
 
 if (publicNoticeList) {
-  fetch("/api/notices?status=published")
+  fetch("/api/public/notices")
     .then((res) => res.json())
     .then((notices) => {
       const empty = document.getElementById("publicNoticeEmpty");
@@ -251,7 +251,7 @@ if (publicCourseGrid) {
     });
   });
 
-  fetch("/api/courses?status=active")
+  fetch("/api/public/courses")
     .then((res) => res.json())
     .then((courses) => {
       allCourses = courses;
@@ -386,6 +386,7 @@ function escapeTestHtml(str) {
   div.textContent = str || "";
   return div.innerHTML;
 }
+
 
 // Offer script
 (function () {
@@ -919,3 +920,4 @@ function trackApplicationSubmit(jobTitle, email) {
 function trackJobFilter(category) {
     trackEvent('job_filtered', { category: category });
 }
+
