@@ -2,8 +2,8 @@
 
 /* Root Variables */
 :root {
-    --primary-blue: #14275c;
-    --secondary-color: #d32f2f;
+    --primary-color: #14275c;
+    --secondary-color: #e63946;
     --light-bg: #f8f8fa;
     --white: #ffffff;
     --gray-dark: #333333;
@@ -32,7 +32,7 @@
 
 /* Header Section */
 .header-section {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, #2a4a7a 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2a4a7a 100%);
     color: var(--white);
     padding: 60px 40px;
     border-radius: var(--radius);

@@ -160,8 +160,10 @@ a {
 }
 
 .mobile-menu.open {
-  max-height: 400px;
-  /* slides open */
+  max-height: calc(100vh - 100px);
+  /* fits within the screen space left below the 100px header, so it scrolls instead of getting cut off */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-menu a {
