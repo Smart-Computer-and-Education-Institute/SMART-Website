@@ -1049,6 +1049,21 @@ tbody tr:hover { background: #FAFBFC; }
 .logout-popup-btn:hover { background: var(--color-danger-soft); }
 .logout-popup-btn svg { width: 15px; height: 15px; }
 
+/* Change password button injected into the logout popup by admin.js —
+   same shape as .logout-popup-btn, but neutral-colored since it isn't
+   a destructive action like Sign out. */
+.logout-popup-btn-neutral {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--color-text);
+  border-radius: 0;
+}
+.logout-popup-btn-neutral:hover { background: var(--color-bg); }
+
 /* Active ring on avatar when popup is open */
 .topbar-avatar.popup-active {
   outline: 2px solid var(--color-primary);

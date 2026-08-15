@@ -29,6 +29,7 @@ const db = require("./lib/db");
 const blobStorage = require("./lib/blobStorage");
 const {
   verifyCredentials,
+  changePassword,
   createSessionCookie,
   clearSessionCookie,
   requireAuthPage,
@@ -55,7 +56,7 @@ function asyncHandler(fn) {
 // ---------------------------------------------------------
 // Security headers (helmet). We turn off helmet's default Content-
 // Security-Policy because the admin panel currently uses inline
-// onclick="..." attributes (e.g. onclick="openCourseModal()"), which a
+// onclick="..." attributes (e.g. onclick="openServiceModal()"), which a
 // strict CSP blocks. The other headers helmet sets — X-Frame-Options
 // (clickjacking protection), X-Content-Type-Options, a baseline
 // Referrer-Policy, etc. — are all still on. Moving those onclick
@@ -147,6 +148,230 @@ app.post("/api/logout", (req, res) => {
   clearSessionCookie(res);
   res.json({ ok: true });
 });
+
+// Same idea as loginLimiter — makes brute-forcing the current password
+// through this endpoint just as slow as brute-forcing the login form.
+const changePasswordLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 6,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many attempts. Please try again in a few minutes." },
+});
+
+app.post(
+  "/api/change-password",
+  requireApiAuth,
+  changePasswordLimiter,
+  asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword, confirmPassword } = req.body || {};
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({ error: "Fill in all three password fields." });
+    }
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ error: "New password and confirmation don't match." });
+    }
+
+    const result = await changePassword(currentPassword, newPassword);
+    if (!result.ok) {
+      return res.status(400).json({ error: result.error });
+    }
+
+    // The session cookie isn't tied to the password itself, so clear it
+    // here to force a fresh login with the new password — on this
+    // device and (once the old cookie expires) anywhere else too.
+    clearSessionCookie(res);
+    res.json({ ok: true, message: "Password updated. Please log in again." });
+  })
+);
+
+// ---------------------------------------------------------
+// Settings API (site-wide contact info)
+// A single document holds every contact detail shown across the
+// public site (footer, Contact page, WhatsApp button, map). Admins
+// edit it once from Settings; every page picks it up via
+// GET /api/public/settings instead of each page hardcoding its own
+// copy of the address/phone/email, which is what caused those to
+// drift out of sync with each other in the first place.
+// ---------------------------------------------------------
+
+const DEFAULT_SETTINGS = {
+  id: "contact",
+  address: "Mechinagar-13, Charali Jhapa\nKoshi, Nepal",
+  phones: ["+977-9700071948", "+977-9700071958", "+977-9700071968"],
+  email: "smartinstitute@gmail.com",
+  hours: "6:00 AM – 6:00 PM\nSunday – Friday",
+  whatsapp: "",
+  mapEmbedUrl:
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d445.7349500066516!2d88.05294745192597!3d26.65233713027649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e5b10076063541%3A0x576f4e4164aade03!2sSmart%20Computer%20%26%20Education%20Institute!5e0!3m2!1sen!2snp!4v1782028540603!5m2!1sen!2snp",
+};
+
+async function getContactSettings() {
+  const existing = await db.findOne("settings", "contact");
+  return existing || DEFAULT_SETTINGS;
+}
+
+app.get(
+  "/api/public/settings",
+  asyncHandler(async (req, res) => {
+    res.json(await getContactSettings());
+  })
+);
+
+app.get(
+  "/api/settings",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    res.json(await getContactSettings());
+  })
+);
+
+app.put(
+  "/api/settings",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { address, phones, email, hours, whatsapp, mapEmbedUrl } = req.body || {};
+    const changes = {};
+
+    if (address !== undefined) changes.address = String(address).slice(0, 300);
+    if (email !== undefined) changes.email = String(email).slice(0, 150);
+    if (hours !== undefined) changes.hours = String(hours).slice(0, 200);
+    if (whatsapp !== undefined) changes.whatsapp = String(whatsapp).slice(0, 300);
+    if (mapEmbedUrl !== undefined) changes.mapEmbedUrl = String(mapEmbedUrl).slice(0, 1500);
+    if (phones !== undefined) {
+      const list = Array.isArray(phones) ? phones : String(phones).split("\n");
+      changes.phones = list
+        .map((p) => String(p).trim())
+        .filter(Boolean)
+        .slice(0, 10);
+    }
+
+    const existing = await db.findOne("settings", "contact");
+    const updated = existing
+      ? await db.updateOne("settings", "contact", changes)
+      : await db.insertOne("settings", { ...DEFAULT_SETTINGS, ...changes, id: "contact" });
+
+    res.json(updated);
+  })
+);
+
+// ---------------------------------------------------------
+// Categories API (the filter chips shown on the Services page and
+// used as the "Category" dropdown when adding/editing a service)
+// Public GET stays open (nothing sensitive about a list of category
+// names) — every write requires login. Deleting a category doesn't
+// touch services already using it (they simply won't match any chip
+// until re-categorized); renaming one cascades to every service that
+// used the old name, so nothing is silently orphaned.
+// ---------------------------------------------------------
+
+const DEFAULT_CATEGORIES = ["Office", "Design", "Marketing", "Accounting"];
+
+// Lazily seeds the categories collection the first time it's read, so
+// installs upgrading from the old hardcoded chip list keep the same
+// categories without any manual setup.
+async function ensureCategoriesSeeded() {
+  const existing = await db.findAll("categories");
+  if (existing.length) return existing;
+
+  const seeded = [];
+  for (let i = 0; i < DEFAULT_CATEGORIES.length; i++) {
+    const category = { id: `cat${Date.now()}${i}`, name: DEFAULT_CATEGORIES[i] };
+    await db.insertOne("categories", category);
+    seeded.push(category);
+  }
+  return seeded;
+}
+
+function sortByName(items) {
+  return items.slice().sort((a, b) => a.name.localeCompare(b.name));
+}
+
+app.get(
+  "/api/public/categories",
+  asyncHandler(async (req, res) => {
+    const categories = await ensureCategoriesSeeded();
+    res.json(sortByName(categories).map((c) => c.name));
+  })
+);
+
+app.get(
+  "/api/categories",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    res.json(sortByName(await ensureCategoriesSeeded()));
+  })
+);
+
+app.post(
+  "/api/categories",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const name = String((req.body || {}).name || "").trim().slice(0, 40);
+    if (!name) return res.status(400).json({ error: "Enter a category name." });
+    if (name.toLowerCase() === "all") {
+      return res.status(400).json({ error: '"All" is reserved for the built-in "show everything" filter.' });
+    }
+
+    const existing = await db.findAll("categories");
+    if (existing.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+      return res.status(409).json({ error: "That category already exists." });
+    }
+
+    const category = { id: "cat" + Date.now(), name };
+    await db.insertOne("categories", category);
+    res.status(201).json(category);
+  })
+);
+
+app.put(
+  "/api/categories/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const name = String((req.body || {}).name || "").trim().slice(0, 40);
+    if (!name) return res.status(400).json({ error: "Enter a category name." });
+    if (name.toLowerCase() === "all") {
+      return res.status(400).json({ error: '"All" is reserved for the built-in "show everything" filter.' });
+    }
+
+    const existing = await db.findOne("categories", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Category not found" });
+
+    const all = await db.findAll("categories");
+    const clashes = all.some(
+      (c) => c.id !== req.params.id && c.name.toLowerCase() === name.toLowerCase()
+    );
+    if (clashes) return res.status(409).json({ error: "That category already exists." });
+
+    const oldName = existing.name;
+    const updated = await db.updateOne("categories", req.params.id, { name });
+
+    // Cascade the rename so services keep pointing at a category that
+    // actually still exists, instead of silently going orphaned.
+    if (oldName !== name) {
+      const services = await db.findAll("services");
+      await Promise.all(
+        services
+          .filter((s) => s.category === oldName)
+          .map((s) => db.updateOne("services", s.id, { category: name }))
+      );
+    }
+
+    res.json(updated);
+  })
+);
+
+app.delete(
+  "/api/categories/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("categories", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Category not found" });
+    await db.deleteOne("categories", req.params.id);
+    res.status(204).end();
+  })
+);
 
 // ---------------------------------------------------------
 // Notices API
@@ -240,29 +465,32 @@ app.delete(
 );
 
 // ---------------------------------------------------------
-// Courses API
+// Services API
+// (Formerly "Courses" — renamed sitewide for consistency; see
+// docs/SECURITY_AND_DEPLOYMENT.md for the collection-rename note if
+// you're upgrading an existing MongoDB deployment.)
 // Same public/admin split as notices: public sees only active
-// courses, the protected admin routes see and manage everything.
+// services, the protected admin routes see and manage everything.
 // ---------------------------------------------------------
 
 app.get(
-  "/api/public/courses",
+  "/api/public/services",
   asyncHandler(async (req, res) => {
-    const courses = await db.findAll("courses");
-    res.json(courses.filter((c) => c.status === "active"));
+    const services = await db.findAll("services");
+    res.json(services.filter((s) => s.status === "active"));
   })
 );
 
 app.get(
-  "/api/courses",
+  "/api/services",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    res.json(await db.findAll("courses"));
+    res.json(await db.findAll("services"));
   })
 );
 
 app.post(
-  "/api/courses",
+  "/api/services",
   requireApiAuth,
   asyncHandler(async (req, res) => {
     const { name, category, duration, desc, enrolled, status } = req.body || {};
@@ -270,8 +498,8 @@ app.post(
       return res.status(400).json({ error: "name, duration, and desc are required" });
     }
 
-    const newCourse = {
-      id: "c" + Date.now(),
+    const newService = {
+      id: "s" + Date.now(),
       name: String(name).slice(0, 150),
       category: category || "Office",
       duration: String(duration).slice(0, 60),
@@ -280,13 +508,13 @@ app.post(
       status: status === "inactive" ? "inactive" : "active",
     };
 
-    await db.insertOne("courses", newCourse);
-    res.status(201).json(newCourse);
+    await db.insertOne("services", newService);
+    res.status(201).json(newService);
   })
 );
 
 app.put(
-  "/api/courses/:id",
+  "/api/services/:id",
   requireApiAuth,
   asyncHandler(async (req, res) => {
     const { name, category, duration, desc, enrolled, status } = req.body || {};
@@ -298,18 +526,18 @@ app.put(
     if (enrolled !== undefined) changes.enrolled = Number(enrolled) || 0;
     if (status !== undefined) changes.status = status === "inactive" ? "inactive" : "active";
 
-    const course = await db.updateOne("courses", req.params.id, changes);
-    if (!course) return res.status(404).json({ error: "Course not found" });
-    res.json(course);
+    const service = await db.updateOne("services", req.params.id, changes);
+    if (!service) return res.status(404).json({ error: "Service not found" });
+    res.json(service);
   })
 );
 
 app.delete(
-  "/api/courses/:id",
+  "/api/services/:id",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const deleted = await db.deleteOne("courses", req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Course not found" });
+    const deleted = await db.deleteOne("services", req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Service not found" });
     res.status(204).end();
   })
 );
@@ -455,7 +683,7 @@ app.post(
   requireApiAuth,
   handlePhotoUpload,
   asyncHandler(async (req, res) => {
-    const { name, text, course } = req.body || {};
+    const { name, text, service } = req.body || {};
     if (!name || !text) {
       return res.status(400).json({ error: "name and text are required" });
     }
@@ -470,7 +698,7 @@ app.post(
       id: "t" + Date.now(),
       name: String(name).slice(0, 100),
       text: String(text).slice(0, 1000),
-      course: course || "",
+      service: service || "",
       photo: photoUrl,
     };
 
@@ -487,11 +715,11 @@ app.put(
     const existing = await db.findOne("testimonials", req.params.id);
     if (!existing) return res.status(404).json({ error: "Testimonial not found" });
 
-    const { name, text, course } = req.body || {};
+    const { name, text, service } = req.body || {};
     const changes = {};
     if (name !== undefined) changes.name = String(name).slice(0, 100);
     if (text !== undefined) changes.text = String(text).slice(0, 1000);
-    if (course !== undefined) changes.course = course;
+    if (service !== undefined) changes.service = service;
 
     if (req.file) {
       const filename = safeUploadName("testimonial", req.file.mimetype);

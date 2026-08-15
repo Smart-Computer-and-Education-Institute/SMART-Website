@@ -33,7 +33,7 @@ function renderTestimonials() {
         ${photoHtml}
         <div class="testimonial-admin-meta">
           <strong>${escapeHtml(t.name)}</strong>
-          ${t.course ? `<span class="badge badge-blue">${escapeHtml(t.course)}</span>` : ""}
+          ${t.service ? `<span class="badge badge-blue">${escapeHtml(t.service)}</span>` : ""}
         </div>
       </div>
       <p class="testimonial-admin-text">"${escapeHtml(t.text)}"</p>
@@ -67,7 +67,7 @@ function openTestimonialModal(id) {
     document.getElementById("testimonialModalTitle").textContent = "Edit testimonial";
     document.getElementById("testimonialId").value = t.id;
     document.getElementById("testimonialName").value = t.name;
-    document.getElementById("testimonialCourse").value = t.course || "";
+    document.getElementById("testimonialService").value = t.service || "";
     document.getElementById("testimonialText").value = t.text;
     if (t.photo) {
       previewImg.src = t.photo;
@@ -94,7 +94,7 @@ document.getElementById("testimonialForm").addEventListener("submit", async (e) 
 
   const name = document.getElementById("testimonialName").value.trim();
   const text = document.getElementById("testimonialText").value.trim();
-  const course = document.getElementById("testimonialCourse").value.trim();
+  const service = document.getElementById("testimonialService").value.trim();
   const id = document.getElementById("testimonialId").value;
   const fileInput = document.getElementById("testimonialPhoto");
   const file = fileInput.files[0];
@@ -107,7 +107,7 @@ document.getElementById("testimonialForm").addEventListener("submit", async (e) 
   const formData = new FormData();
   formData.append("name", name);
   formData.append("text", text);
-  formData.append("course", course);
+  formData.append("service", service);
   if (file) formData.append("photo", file);
 
   let res;

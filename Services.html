@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us | Smart Computer & Education Institute</title>
-    <meta name="description" content="Smart Computer & Education Institute — practical, career-focused computer and tuition classes in Charali, Jhapa.">
+    <title>Smart Computer & Education Institute</title>
+    <meta name="description" content="Explore hands-on services in Tally, graphic design, digital marketing & office software at Smart Computer & Education Institute, Jhapa.">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/about_style.css">
+    <link rel="stylesheet" href="services.css">
 </head>
 
 <body>
@@ -46,64 +46,39 @@
             <a href="Contact.html">Contact</a>
         </div>
     </header>
+    <main>
+        <section class="Service">
+            <div class="service-container">
+                <h1 class="Service-heading">SERVICES</h1>
+                <h2 class="service-paragraph">Pick a skill. Start building it this week.</h2>
+                <div class="service-control">
+                    <!-- "All" chip is fixed; category chips are added by script.js
+                         (loadServiceCategories) from whatever the admin panel has
+                         configured, instead of being hardcoded here. -->
+                    <div class="filter-chips" id="serviceFilterChips">
+                        <button class="chip active" data-filter="all">All Services</button>
+                    </div>
+                </div>
+                <!-- Filled in by script.js (loadPublicServices) once the page loads -->
+                <div class="service-grid" id="publicServiceGrid"></div>
 
-    <section class="about-hero">
-        <div class="hero-content">
-            <h1>Who We Are</h1>
-            <p>Smart Computer & Education Institute helps students and professionals in Charali, Jhapa build real, job-ready skills through practical, hands-on training.</p>
-        </div>
-    </section>
-
-    <section class="about-wrap">
-        <!-- 1. Our Story -->
-        <div class="about-grid">
-            <div class="about-text">
-                <h2>Our Story</h2>
-                <p>At Smart Computer & Education Institute, we believe education should be practical, affordable, and career-focused. For over 12 years, we have been helping students build confidence through quality computer training, language classes, and skill-based services.</p>
+                <p class="service-empty" id="publicServiceEmpty" style="display:none;">
+                    No services posted right now — check back soon.
+                </p>
             </div>
-            <div class="about-img">
-                <img src="img/smart_1.jpg" alt="Smart Computer Institute classroom">
+        </section>
+        <section class="info-container">
+            <div class="base-container">
+                <h6 class="Testimonials">Testimonials</h6>
+                <h2 class="white-text">See What our Students Say</h2>
+                <!-- Filled by script.js (loadTestimonials) -->
+                <div class="gird-layout" id="publicTestimonialsGrid"></div>
+                <p class="testimonial-empty" id="publicTestimonialsEmpty" style="display:none;color:#64748b;text-align:center;padding:30px 0;">
+                    No testimonials posted yet — check back soon.
+                </p>
             </div>
-        </div>
-
-        <!-- 2. Our Mission -->
-        <div class="about-grid reverse">
-            <div class="about-img">
-                <img src="img/smart-3.jpg" alt="Students at Smart Computer Institute">
-            </div>
-            <div class="about-text">
-                <h2>Our Mission</h2>
-                <p>We believe education changes lives. Our mission is to make quality computer and language education accessible to everyone by providing practical training, experienced instructors, and real-world learning that prepares students for academic and career success.</p>
-            </div>
-        </div>
-
-        <!-- 3. Our Vision -->
-        <div class="about-grid">
-            <div class="about-text">
-                <h2>Our Vision</h2>
-                <p>To be the leading skill-development hub in Jhapa, empowering individuals with cutting-edge digital literacy, vocational proficiency, and global career opportunities.</p>
-            </div>
-            <div class="about-img">
-                <img src="img/smart-ins.jpg" alt="Our Vision for Education">
-            </div>
-        </div>
-
-        <!-- 4. Why Choose Us -->
-        <div class="about-grid reverse">
-            <div class="about-img">
-                <img src="img/last.jpg" alt="Why Choose Smart Computer Institute">
-            </div>
-            <div class="about-text">
-                <h2>Why Choose Us</h2>
-                <p>With 12+ years of teaching experience, flexible shift timings, hands-on lab access, and dedicated job placement assistance, we ensure every student transforms learning into success.</p>
-            </div>
-        </div>
-    </section>
-
-    <div class="cta-strip">
-        <h2>Ready to get started?</h2>
-        <a href="Contact.html" class="btn-primary">Contact Us</a>
-    </div>
+        </section>
+    </main>
 
     <footer>
         <div class="section-container">
@@ -113,7 +88,7 @@
                     <p class="footer-tagline">Practical computer and digital skills training in Charali, Jhapa.</p>
                 </div>
                 <div>
-                    <h4>Explore</h4>
+                    <h4 class="footer-heading">Explore</h4>
                     <ul class="footer-links">
                         <li><a href="About.html">About Us</a></li>
                         <li><a href="Services.html">Services</a></li>
@@ -125,7 +100,10 @@
                     </ul>
                 </div>
                 <div>
-                    <h4>Contact</h4>
+                    <h4 class="footer-heading">Contact</h4>
+                    <!-- Filled in live from Settings -> Contact info in the admin
+                         panel (see applyContactSettings() in script.js), so this
+                         only ever needs to be edited in one place. -->
                     <ul class="footer-links">
                         <li data-contact="address">Mechinagar-13, Charali Jhapa</li>
                         <li data-contact="phones">+977-9700071948, 9700071958, 9700071968</li>
@@ -140,6 +118,16 @@
         </div>
     </footer>
 
+    <div class="service-modal" id="serviceModal">
+      <div class="service-modal-content">
+        <button class="service-modal-close" id="serviceModalClose">Close <span aria-hidden="true">&times;</span></button>
+        <span class="service-modal-category" id="serviceModalCategory"></span>
+        <h3 id="serviceModalTitle"></h3>
+        <p id="serviceModalDesc"></p>
+        <span class="service-modal-duration" id="serviceModalDuration"></span>
+        <a href="Contact.html" class="btn-primary service-modal-enroll">Enroll Now</a>
+      </div>
+    </div>
     <script src="script.js"></script>
 </body>
 

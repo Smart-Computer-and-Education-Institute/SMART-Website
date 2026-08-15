@@ -1,7 +1,7 @@
 /* ============================================
    Shared admin panel behaviour
    Sidebar toggle, toasts, modal helpers,
-   logout popup, course count
+   logout popup + change password, service count
    ============================================ */
 
 /* ---------- Session handling ----------
@@ -9,7 +9,7 @@
    cookie expired while this page was open), every admin page bounces
    back to the login screen instead of silently failing. This wraps
    window.fetch once, here, so none of the individual admin/*.js files
-   (notices.js, courses.js, etc.) need to handle it themselves. */
+   (services.js, notices.js, etc.) need to handle it themselves. */
 (function () {
   const originalFetch = window.fetch;
   window.fetch = async function (...args) {
@@ -93,6 +93,133 @@
       if (e.key === "Escape") {
         logoutPopup.classList.remove("open");
         topbarAvatar.classList.remove("popup-active");
+      }
+    });
+
+    /* ---------- Change password ----------
+       Injected here (rather than copy-pasted into every admin page's
+       HTML) so it shows up in the logout popup everywhere automatically.
+       Uses the same .modal-overlay/.form-field markup and openModal()/
+       closeModal() helpers as every other modal in the panel. */
+    const changePasswordBtn = document.createElement("button");
+    changePasswordBtn.type = "button";
+    changePasswordBtn.className = "logout-popup-btn logout-popup-btn-neutral";
+    changePasswordBtn.id = "changePasswordBtn";
+    changePasswordBtn.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Change password';
+    const divider = logoutPopup.querySelector(".logout-popup-divider");
+    if (divider) divider.insertAdjacentElement("afterend", changePasswordBtn);
+    else logoutPopup.appendChild(changePasswordBtn);
+
+    if (!document.getElementById("changePasswordModalOverlay")) {
+      const modal = document.createElement("div");
+      modal.className = "modal-overlay";
+      modal.id = "changePasswordModalOverlay";
+      modal.innerHTML = `
+        <div class="modal">
+          <div class="modal-header">
+            <h2>Change password</h2>
+            <button class="modal-close" data-close-modal aria-label="Close">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <form id="changePasswordForm">
+            <div class="modal-body">
+              <p id="changePasswordError" style="display:none;color:var(--color-danger);font-size:13px;margin:0 0 14px;"></p>
+
+              <div class="form-field" id="field-current-password">
+                <label for="currentPassword">Current password</label>
+                <input type="password" id="currentPassword" autocomplete="current-password">
+                <span class="form-error-text">Enter your current password.</span>
+              </div>
+
+              <div class="form-field" id="field-new-password">
+                <label for="newPassword">New password</label>
+                <input type="password" id="newPassword" autocomplete="new-password">
+                <span class="form-error-text">Must be at least 10 characters.</span>
+              </div>
+
+              <div class="form-field" id="field-confirm-password">
+                <label for="confirmPassword">Confirm new password</label>
+                <input type="password" id="confirmPassword" autocomplete="new-password">
+                <span class="form-error-text">Passwords don't match.</span>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+              <button type="submit" class="btn btn-primary">Update password</button>
+            </div>
+          </form>
+        </div>`;
+      document.body.appendChild(modal);
+    }
+
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    const changePasswordError = document.getElementById("changePasswordError");
+
+    function clearChangePasswordErrors() {
+      document.querySelectorAll("#changePasswordForm .form-field").forEach((f) => f.classList.remove("has-error"));
+      changePasswordError.style.display = "none";
+    }
+
+    changePasswordBtn.addEventListener("click", () => {
+      logoutPopup.classList.remove("open");
+      topbarAvatar.classList.remove("popup-active");
+      changePasswordForm.reset();
+      clearChangePasswordErrors();
+      openModal("changePasswordModalOverlay");
+    });
+
+    changePasswordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearChangePasswordErrors();
+
+      const currentPassword = document.getElementById("currentPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      let valid = true;
+      if (!currentPassword) {
+        document.getElementById("field-current-password").classList.add("has-error");
+        valid = false;
+      }
+      if (!newPassword || newPassword.length < 10) {
+        document.getElementById("field-new-password").classList.add("has-error");
+        valid = false;
+      }
+      if (newPassword !== confirmPassword) {
+        document.getElementById("field-confirm-password").classList.add("has-error");
+        valid = false;
+      }
+      if (!valid) return;
+
+      const submitBtn = changePasswordForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch("/api/change-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          changePasswordError.textContent = data.error || "Couldn't update the password.";
+          changePasswordError.style.display = "block";
+          submitBtn.disabled = false;
+          return;
+        }
+
+        // The server clears the session cookie as part of this (a password
+        // change should require logging back in with the new one), so send
+        // the admin to the login page rather than leaving them on a page
+        // that will just 401 on the next request.
+        window.location.href = "/login.html?passwordChanged=1";
+      } catch (err) {
+        changePasswordError.textContent = "Network error — please try again.";
+        changePasswordError.style.display = "block";
+        submitBtn.disabled = false;
       }
     });
   }
