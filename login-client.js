@@ -24,6 +24,22 @@ function clearErrors() {
   setError("error-general", "");
 }
 
+// After a successful password change (see admin.js), the admin panel
+// sends the admin here with ?passwordChanged=1 since the session cookie
+// gets cleared as part of that change. Show a neutral confirmation
+// instead of just dropping them on a blank login form with no context.
+(function showPasswordChangedNotice() {
+  if (!location.search.includes("passwordChanged=1")) return;
+  const notice = document.createElement("p");
+  notice.textContent = "Password updated. Please log in with your new password.";
+  notice.style.cssText =
+    "text-align:center;color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;" +
+    "border-radius:6px;padding:8px 12px;font-size:0.85rem;margin:0 0 16px;";
+  loginForm.insertBefore(notice, loginForm.firstChild.nextSibling);
+  // Drop the query param so refreshing the page doesn't repeat the notice.
+  history.replaceState(null, "", location.pathname);
+})();
+
 loginForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   clearErrors();

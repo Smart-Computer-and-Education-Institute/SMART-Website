@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Computer & Education Institute</title>
-    <meta name="description" content="Latest notices from Smart Computer & Education Institute, Jhapa — admission deadlines, exam dates, holidays & important announcements for students.">
+    <meta name="description" content="Explore hands-on services in Tally, graphic design, digital marketing & office software at Smart Computer & Education Institute, Jhapa.">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="notice.css">
+    <link rel="stylesheet" href="services.css">
 </head>
 
 <body>
@@ -16,7 +16,7 @@
             <a href="index.html"><img src="Smart-Logo.png" alt="smart_computer" class="logo"></a>
             <nav class="primary-navigation">
                 <ul class="nav-list">
-<li><a href="index.html" class="nav-links">Home</a></li>
+                    <li><a href="index.html" class="nav-links">Home</a></li>
                     <li><a href="About.html" class="nav-links">About Us</a></li>
                     <li><a href="Services.html" class="nav-links">Services</a></li>
                     <li><a href="offer.html" class="nav-links">Offers</a></li>
@@ -46,18 +46,35 @@
             <a href="Contact.html">Contact</a>
         </div>
     </header>
-
     <main>
-        <section class="notice-section">
-            <div class="notice-container">
-                <h1 class="notice-heading">NOTICES</h1>
-                <h2 class="notice-subheading">Admission deadlines, exam dates, holidays and updates from the institute.</h2>
+        <section class="Service">
+            <div class="service-container">
+                <h1 class="Service-heading">SERVICES</h1>
+                <h2 class="service-paragraph">Pick a skill. Start building it this week.</h2>
+                <div class="service-control">
+                    <!-- "All" chip is fixed; category chips are added by script.js
+                         (loadServiceCategories) from whatever the admin panel has
+                         configured, instead of being hardcoded here. -->
+                    <div class="filter-chips" id="serviceFilterChips">
+                        <button class="chip active" data-filter="all">All Services</button>
+                    </div>
+                </div>
+                <!-- Filled in by script.js (loadPublicServices) once the page loads -->
+                <div class="service-grid" id="publicServiceGrid"></div>
 
-                <!-- Filled in by script.js (loadPublicNotices) once the page loads -->
-                <div class="notice-public-list" id="publicNoticeList"></div>
-
-                <p class="notice-empty" id="publicNoticeEmpty" style="display:none;">
-                    No notices posted right now — check back soon.
+                <p class="service-empty" id="publicServiceEmpty" style="display:none;">
+                    No services posted right now — check back soon.
+                </p>
+            </div>
+        </section>
+        <section class="info-container">
+            <div class="base-container">
+                <h6 class="Testimonials">Testimonials</h6>
+                <h2 class="white-text">See What our Students Say</h2>
+                <!-- Filled by script.js (loadTestimonials) -->
+                <div class="gird-layout" id="publicTestimonialsGrid"></div>
+                <p class="testimonial-empty" id="publicTestimonialsEmpty" style="display:none;color:#64748b;text-align:center;padding:30px 0;">
+                    No testimonials posted yet — check back soon.
                 </p>
             </div>
         </section>
@@ -71,7 +88,7 @@
                     <p class="footer-tagline">Practical computer and digital skills training in Charali, Jhapa.</p>
                 </div>
                 <div>
-                    <h4>Explore</h4>
+                    <h4 class="footer-heading">Explore</h4>
                     <ul class="footer-links">
                         <li><a href="About.html">About Us</a></li>
                         <li><a href="Services.html">Services</a></li>
@@ -83,7 +100,10 @@
                     </ul>
                 </div>
                 <div>
-                    <h4>Contact</h4>
+                    <h4 class="footer-heading">Contact</h4>
+                    <!-- Filled in live from Settings -> Contact info in the admin
+                         panel (see applyContactSettings() in script.js), so this
+                         only ever needs to be edited in one place. -->
                     <ul class="footer-links">
                         <li data-contact="address">Mechinagar-13, Charali Jhapa</li>
                         <li data-contact="phones">+977-9700071948, 9700071958, 9700071968</li>
@@ -98,6 +118,16 @@
         </div>
     </footer>
 
+    <div class="service-modal" id="serviceModal">
+      <div class="service-modal-content">
+        <button class="service-modal-close" id="serviceModalClose">Close <span aria-hidden="true">&times;</span></button>
+        <span class="service-modal-category" id="serviceModalCategory"></span>
+        <h3 id="serviceModalTitle"></h3>
+        <p id="serviceModalDesc"></p>
+        <span class="service-modal-duration" id="serviceModalDuration"></span>
+        <a href="Contact.html" class="btn-primary service-modal-enroll">Enroll Now</a>
+      </div>
+    </div>
     <script src="script.js"></script>
 </body>
 

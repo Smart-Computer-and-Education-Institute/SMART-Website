@@ -1,10 +1,10 @@
 /* ============================================
    Dashboard — pulls real numbers from the same
-   /api/courses, /api/gallery, /api/notices routes
-   the Courses/Gallery/Notices admin pages already use.
+   /api/services, /api/gallery, /api/notices routes
+   the Services/Gallery/Notices admin pages already use.
    ============================================ */
 
-const statCourses = document.getElementById("statCourses");
+const statServices = document.getElementById("statServices");
 const statGallery = document.getElementById("statGallery");
 const statNotices = document.getElementById("statNotices");
 const recentNoticesBody = document.getElementById("recentNoticesBody");
@@ -65,23 +65,23 @@ function renderRecentNotices(notices) {
 
 async function loadDashboard() {
   try {
-    const [courses, gallery, notices] = await Promise.all([
-      fetch("/api/courses").then((r) => r.json()),
+    const [services, gallery, notices] = await Promise.all([
+      fetch("/api/services").then((r) => r.json()),
       fetch("/api/gallery").then((r) => r.json()),
       fetch("/api/notices").then((r) => r.json()),
     ]);
 
-    const activeCourses = courses.filter((c) => c.status === "active").length;
+    const activeServices = services.filter((s) => s.status === "active").length;
     const publishedNotices = notices.filter((n) => n.status === "published").length;
 
-    statCourses.textContent = activeCourses;
+    statServices.textContent = activeServices;
     statGallery.textContent = gallery.length;
     statNotices.textContent = publishedNotices;
 
     renderRecentNotices(notices);
   } catch (err) {
     console.error("Could not load dashboard data:", err);
-    statCourses.textContent = "—";
+    statServices.textContent = "—";
     statGallery.textContent = "—";
     statNotices.textContent = "—";
     recentNoticesBody.innerHTML = `

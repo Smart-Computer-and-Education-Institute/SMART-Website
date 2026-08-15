@@ -1,0 +1,375 @@
+.Service{
+    
+    background-color:#FFFFFF ;
+    
+}
+.service-container{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding:0 24px ;
+    background-color:#FFFFFF ;
+}
+h1.Service-heading{
+    text-align: center;
+    color: #DC2626;
+    font-size: 2rem;
+    font-weight: 700;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.service-paragraph{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1e3e8a;
+    margin-top: 10px;
+}
+
+.para{
+     color: #64748b;
+    font-size: 0.9rem;
+    flex-grow: 1;
+    margin-bottom: 18px;
+}
+
+.filter-chips{
+   display: flex;
+   justify-content: center;
+   gap: 20px;
+   flex-wrap: wrap;
+   line-height: 1.6;
+}
+.filter-chips.active {
+    background-color: #1e3a8a; /* navy blue */
+    color: white;
+}
+.service-control{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+     margin: 36px 0 38px;
+     align-items: center;
+}
+button{
+    padding: 9px 18px;
+    border-radius: 999px;
+    border:1.5px solid #e2e8f0;
+    font-weight: 500;
+    font-size: 0.85rem;
+    color:#64748b;
+   
+}
+
+.chip:hover{
+    cursor: pointer;
+    border-color: #1e3e8a;
+}
+
+.chip.active{
+    background-color: #1e3e8a;
+    color:#F8FAFC;
+    font-weight: 600;
+}
+
+.service-grid{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:24px;
+}
+.service-card{
+    background-color: #F8FAFC;
+    border: 1px solid #e2e8f0 ;
+    border-radius: 14px;
+    cursor:pointer;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin-top: 22px;
+    margin-bottom: 22px;
+}
+
+
+.service-duration{
+    font-family: monospace;
+    font-size: 0.78rem;
+    background-color:#eef2ff ;
+    padding:5px 10px;
+    border-radius: 6px;
+    margin-right: auto;
+    margin-top: 20px;
+}
+@media (max-width: 760px) {
+    .service-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 521px) {
+    .service-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+ .info-container{
+    background-color:#eef2ff ;
+    /* same light indigo used in the hero section, keeps the site's overall theme
+       instead of merging into the navy footer */
+ }
+
+.Testimonials{
+    display: block;
+    padding-bottom: 10px;
+  box-sizing: border-box;
+  color:#dc2626;
+  text-align: center;
+  font-size: 20px;
+  font-family: sans-serif;
+  font-weight: 500;
+  line-height: 1.2em;
+}
+.Testimonials-img{
+    border-radius: 50%;
+}
+
+@media (max-width:2000px) {
+    .white-text{
+    color: #14275c;
+    font-size: 42px;
+    font-family: sans-serif;
+    font-weight: 900;
+    line-height: 1.2em;
+    text-align: center; margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 50px;
+}
+}
+@media (max-width:991px){
+    .white-text{
+        color: #14275c;
+        font-size: 32px;
+        text-align: center;
+         font-weight: 900;
+    line-height: 1.2em;
+    text-align: center; margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 50px;
+    }
+}
+
+.base-container{ 
+    max-width: 1180px;
+    margin: 0 auto;
+    padding:0 24px ;
+   
+    
+}
+.gird-layout{
+  display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:24px;
+}
+
+
+.student-card{
+     display: flex;
+    background-color: #fff9f4;
+    border-radius: 14px;
+    border: 2px solid #ffffff;
+    padding: 20px;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.Student-name{
+    text-align: center;
+    font-size: 22px;
+    color: #1e3a8a;
+    letter-spacing: 2px;
+    font-family: sans-serif;
+    font-weight: 900;
+    line-height: 1.2em;
+}
+.info-client{
+   
+   align-items: center;
+   text-align: center; 
+}
+
+.info-para{
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-family: sans-serif;
+    font-weight: 500;
+    line-height: 1.6em;
+}
+
+@media (max-width: 760px) {
+    .gird-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 521px) {
+    .gird-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* SERVICE MODAL CSS */
+
+.service-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.service-modal.open {
+  display: flex;
+}
+
+.service-modal-content {
+  background: #F8FAFC;
+  border-radius: 14px;
+  border-left: 5px solid #dc2626;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 36px 32px 32px;
+  box-sizing: border-box;
+  transform: scale(0.96);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.service-modal.open .service-modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.service-modal-category {
+  display: inline-block;
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  margin-right: 90px;
+}
+
+.service-modal-content h3 {
+  font-family: sans-serif;
+  color: #1e3e8a;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.service-modal-content p {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.service-modal-duration {
+  font-family: monospace;
+  font-size: 0.78rem;
+  background-color: #eef2ff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.service-modal-enroll {
+  display: block;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.service-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #1e293b;
+  color: #fff;
+  border: none;
+  width: auto;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: monospace;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  line-height: 1.8;
+  white-space: nowrap;
+}
+
+.service-modal-close span {
+  font-size: 0.9rem;
+  margin-left: 2px;
+}
+
+.service-modal-close:hover {
+  background: #0f172a;
+}
+.service-empty {
+    text-align: center;
+    color: #64748b;
+    padding: 40px 0;
+}
+
+/* Testimonial placeholder (when no photo is set) */
+.testimonial-placeholder {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #1e3a8a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 auto 8px;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+/* Small service tag under student name */
+.testimonial-service-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    color: #1e3a8a;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-top: 4px;
+    background: #eef2ff;
+}
