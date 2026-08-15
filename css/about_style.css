@@ -30,6 +30,7 @@ body {
   line-height: 1.65;
 }
 
+
 /* --- Hero Section --- */
 .about-hero {
   background: linear-gradient(135deg, var(--primary-blue) 0%, #0c183d 100%);
