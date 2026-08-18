@@ -128,7 +128,44 @@ if (document.querySelector("[data-contact]")) {
     .catch(() => {});
 }
 
-// Footer copyright year — was previously never actually set by anything.
+// ============================================================
+// About Us page content — pulled from the "About Us" section
+// of the admin panel. Any element opts in with data-about="fieldName".
+// Multi-line fields (founderMessage) additionally carry
+// data-about-multiline; the value is escape+nl2br'd so line breaks
+// in the stored text become visible paragraph breaks on the page.
+// Guarded so this does nothing on pages that have no [data-about] elements.
+// ============================================================
+function escapeAboutHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
+}
+
+function applyAboutContent(data) {
+  document.querySelectorAll("[data-about]").forEach((el) => {
+    const field = el.getAttribute("data-about");
+    const value = data[field];
+    if (value === undefined || value === null) return;
+
+    if (el.hasAttribute("data-about-multiline")) {
+      // Render newlines as <br> tags inside the existing element so the
+      // surrounding CSS (font, spacing) still applies. Each \n\n in the
+      // stored text produces a double-break, visually separating paragraphs.
+      el.innerHTML = escapeAboutHtml(String(value)).replace(/\n/g, "<br>");
+    } else {
+      el.textContent = String(value);
+    }
+  });
+}
+
+if (document.querySelector("[data-about]")) {
+  fetch("/api/public/about")
+    .then((res) => res.json())
+    .then(applyAboutContent)
+    .catch(() => {}); // silently fall back to hardcoded HTML if fetch fails
+}
+
 document.querySelectorAll("#year").forEach((el) => {
   el.textContent = new Date().getFullYear();
 });
