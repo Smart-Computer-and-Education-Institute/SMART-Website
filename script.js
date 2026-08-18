@@ -99,6 +99,10 @@ function applyContactSettings(settings) {
       } else if (field === "email") {
         el.href = "mailto:" + value;
         el.textContent = value;
+      } else if (value) {
+        // Generic link fields (e.g. mapDirectionsUrl): set href and show the element.
+        el.href = value;
+        el.style.display = "";
       }
       return;
     }
@@ -262,7 +266,7 @@ if (publicNoticeList) {
               <h3>${escapeNoticeHtml(n.title)}</h3>
               <span class="notice-public-date">${formatNoticeDate(n.date)}</span>
             </div>
-            <p>${escapeNoticeHtml(n.content)}</p>
+            <p>${nl2br(escapeNoticeHtml(n.content))}</p>
           `;
           publicNoticeList.appendChild(card);
         });
@@ -283,6 +287,14 @@ function escapeNoticeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
+}
+
+/* Converts newline characters to <br> tags in an already-HTML-escaped
+   string. Always HTML-escape first, then call nl2br() — that way
+   user-typed line breaks show as real breaks while injected HTML tags
+   remain inert plain text. */
+function nl2br(escapedStr) {
+  return escapedStr.replace(/\n/g, "<br>");
 }
 
 // 7. Public Services Loader + Filtering + Detail Modal (Services.html only)
@@ -317,7 +329,7 @@ if (publicServiceGrid) {
       card.setAttribute("data-category", s.category);
       card.innerHTML = `
         <h3>${escapeServiceHtml(s.name)}</h3>
-        <div class="para">${escapeServiceHtml(s.desc)}</div>
+        <div class="para">${nl2br(escapeServiceHtml(s.desc))}</div>
         <span class="service-duration">${escapeServiceHtml(s.duration)}</span>
       `;
       card.addEventListener("click", () => openServiceDetailModal(s));
@@ -419,7 +431,7 @@ if (publicGalleryGrid) {
         </div>
         <div class="gallery-info">
           <h3 class="gallery-title">${escapeGalleryHtml(p.title)}</h3>
-          <p class="gallery-desc">${escapeGalleryHtml(p.desc)}</p>
+          <p class="gallery-desc">${nl2br(escapeGalleryHtml(p.desc))}</p>
         </div>
       `;
       card.addEventListener("click", () => {
@@ -489,7 +501,7 @@ if (publicTestimonialsGrid) {
             <h5 class="Student-name">${escapeTestHtml(t.name)}</h5>
             ${t.service ? `<span class="testimonial-service-tag">${escapeTestHtml(t.service)}</span>` : ""}
           </div>
-          <p class="info-para">${escapeTestHtml(t.text)}</p>
+          <p class="info-para">${nl2br(escapeTestHtml(t.text))}</p>
         `;
         publicTestimonialsGrid.appendChild(card);
       });

@@ -36,7 +36,7 @@ function renderTestimonials() {
           ${t.service ? `<span class="badge badge-blue">${escapeHtml(t.service)}</span>` : ""}
         </div>
       </div>
-      <p class="testimonial-admin-text">"${escapeHtml(t.text)}"</p>
+      <p class="testimonial-admin-text">"${nl2br(escapeHtml(t.text))}"</p>
       <div class="testimonial-admin-actions">
         <button class="btn btn-secondary btn-sm" onclick="openTestimonialModal('${t.id}')">Edit</button>
         <button class="btn btn-danger-ghost btn-sm" onclick="deleteTestimonial('${t.id}')">Delete</button>

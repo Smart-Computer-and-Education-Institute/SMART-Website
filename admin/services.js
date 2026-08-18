@@ -81,7 +81,7 @@ function renderServices() {
     tr.innerHTML = `
       <td>
         <div class="cell-title">${escapeHtml(s.name)}</div>
-        <div class="cell-sub">${escapeHtml(s.desc)}</div>
+        <div class="cell-sub">${nl2br(escapeHtml(s.desc))}</div>
       </td>
       <td><span class="badge badge-blue">${escapeHtml(s.category)}</span></td>
       <td>${escapeHtml(s.duration)}</td>

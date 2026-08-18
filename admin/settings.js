@@ -26,6 +26,7 @@ async function loadSettings() {
   document.getElementById("settingsHours").value = settings.hours || "";
   document.getElementById("settingsWhatsapp").value = settings.whatsapp || "";
   document.getElementById("settingsMap").value = settings.mapEmbedUrl || "";
+  document.getElementById("settingsMapDirections").value = settings.mapDirectionsUrl || "";
 }
 
 settingsForm.addEventListener("submit", async (e) => {
@@ -38,6 +39,7 @@ settingsForm.addEventListener("submit", async (e) => {
     hours: document.getElementById("settingsHours").value.trim(),
     whatsapp: document.getElementById("settingsWhatsapp").value.trim(),
     mapEmbedUrl: document.getElementById("settingsMap").value.trim(),
+    mapDirectionsUrl: document.getElementById("settingsMapDirections").value.trim(),
   };
 
   settingsSaveBtn.disabled = true;

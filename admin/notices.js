@@ -49,7 +49,7 @@ function renderNotices() {
             }
             <span class="notice-item-date">${formatDate(n.date)}</span>
           </div>
-          <p>${escapeHtml(n.content)}</p>
+          <p>${nl2br(escapeHtml(n.content))}</p>
         </div>
         <div class="notice-item-actions">
           <button class="btn btn-secondary btn-sm" onclick="toggleNoticeStatus('${n.id}')">

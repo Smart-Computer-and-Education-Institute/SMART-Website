@@ -32,7 +32,7 @@
     try {
       await fetch("/api/logout", { method: "POST" });
     } finally {
-      window.location.href = "/login.html";
+      window.location.href = "/index.html";
     }
   });
 })();
@@ -290,4 +290,12 @@ function confirmDelete(message) {
   return window.confirm(message);
 }
 
+/* ---------- nl2br ----------
+   Converts newline characters to <br> tags in an already-HTML-escaped
+   string. Always call escapeHtml() first, then pass the result here —
+   that way user-typed line breaks render as real line breaks while
+   user-typed HTML tags are still shown as plain text. */
+function nl2br(escapedStr) {
+  return escapedStr.replace(/\n/g, "<br>");
+}
 

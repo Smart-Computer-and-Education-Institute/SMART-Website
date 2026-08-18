@@ -44,7 +44,7 @@ function renderGallery() {
       </div>
       <div class="gallery-admin-body">
         <h3>${escapeHtml(p.title)}</h3>
-        <p>${escapeHtml(p.desc)}</p>
+        <p>${nl2br(escapeHtml(p.desc))}</p>
         <div class="gallery-admin-actions">
           <button class="btn btn-secondary btn-sm" onclick="openPhotoModal('${p.id}')">Edit</button>
           <button class="btn btn-danger-ghost btn-sm" onclick="deletePhoto('${p.id}')">Delete</button>

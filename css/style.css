@@ -241,6 +241,30 @@ body {
   color: var(--muted);
 }
 
+/* "Get Directions" button — matches the site's red primary button style,
+   sized to fit inside the .map-card overlay without overwhelming it. */
+.map-directions-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: center;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: var(--red);
+  color: var(--white);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.map-directions-btn:hover {
+  background: var(--red-dark);
+  transform: translateY(-2px);
+}
+
 .map-card .rating {
   font-size: 0.82rem;
   color: var(--ink);

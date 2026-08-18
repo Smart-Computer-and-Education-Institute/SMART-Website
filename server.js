@@ -205,6 +205,8 @@ const DEFAULT_SETTINGS = {
   whatsapp: "",
   mapEmbedUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d445.7349500066516!2d88.05294745192597!3d26.65233713027649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e5b10076063541%3A0x576f4e4164aade03!2sSmart%20Computer%20%26%20Education%20Institute!5e0!3m2!1sen!2snp!4v1782028540603!5m2!1sen!2snp",
+  mapDirectionsUrl:
+    "https://www.google.com/maps/place/Smart+Computer+%26+Education+Institute/@26.6523371,88.0529474,19z",
 };
 
 async function getContactSettings() {
@@ -231,7 +233,7 @@ app.put(
   "/api/settings",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const { address, phones, email, hours, whatsapp, mapEmbedUrl } = req.body || {};
+    const { address, phones, email, hours, whatsapp, mapEmbedUrl, mapDirectionsUrl } = req.body || {};
     const changes = {};
 
     if (address !== undefined) changes.address = String(address).slice(0, 300);
@@ -239,6 +241,7 @@ app.put(
     if (hours !== undefined) changes.hours = String(hours).slice(0, 200);
     if (whatsapp !== undefined) changes.whatsapp = String(whatsapp).slice(0, 300);
     if (mapEmbedUrl !== undefined) changes.mapEmbedUrl = String(mapEmbedUrl).slice(0, 1500);
+    if (mapDirectionsUrl !== undefined) changes.mapDirectionsUrl = String(mapDirectionsUrl).slice(0, 500);
     if (phones !== undefined) {
       const list = Array.isArray(phones) ? phones : String(phones).split("\n");
       changes.phones = list
