@@ -260,6 +260,98 @@ app.put(
 );
 
 // ---------------------------------------------------------
+// About Page API (singleton document — one editable copy of every
+// text block on the public About Us page). Mirrors the Settings API
+// pattern exactly: one fixed document id ("about"), a DEFAULT_ABOUT
+// fallback, a public GET, a protected GET and PUT.
+// Use "\n" in multi-line fields to separate paragraphs; the public
+// page renders them with the same escape+nl2br helper used elsewhere.
+// ---------------------------------------------------------
+
+const DEFAULT_ABOUT = {
+  id: "about",
+  founderName: "Bikash Pokharel",
+  founderRole: "Founder & CEO,",
+  founderOrg: "Smart Computer and Education Institute.",
+  founderExp: "7+ years in Smart Computer and Education Institute.",
+  founderMessage:
+    "Dear Partners,\n\nWrite your opening paragraph here — introduce yourself, your role, and the story of how your organization began.\n\nWrite a second paragraph describing your mission, the services you offer, and what sets your organization apart.\n\nWrite a third paragraph about your vision for partnerships, growth, and the impact you aim to create for the people you serve.",
+  founderSignoff: "Warm regards,",
+  founderSignature: "Bikash Pokharel",
+  ourStoryHeading: "Our Story",
+  ourStoryText:
+    "At Smart Computer & Education Institute, we believe education should be practical, affordable, and career-focused. For over 12 years, we have been helping students build confidence through quality computer training, language classes, and skill-based services.",
+  ourMissionHeading: "Our Mission",
+  ourMissionText:
+    "We believe education changes lives. Our mission is to make quality computer and language education accessible to everyone by providing practical training, experienced instructors, and real-world learning that prepares students for academic and career success.",
+  ourVisionHeading: "Our Vision",
+  ourVisionText:
+    "To be the leading skill-development hub in Jhapa, empowering individuals with cutting-edge digital literacy, vocational proficiency, and global career opportunities.",
+  whyChooseUsHeading: "Why Choose Us",
+  whyChooseUsText:
+    "With 12+ years of teaching experience, flexible shift timings, hands-on lab access, and dedicated job placement assistance, we ensure every student transforms learning into success.",
+};
+
+async function getAboutContent() {
+  const existing = await db.findOne("about", "about");
+  return existing || DEFAULT_ABOUT;
+}
+
+app.get(
+  "/api/public/about",
+  asyncHandler(async (req, res) => {
+    res.json(await getAboutContent());
+  })
+);
+
+app.get(
+  "/api/about",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    res.json(await getAboutContent());
+  })
+);
+
+app.put(
+  "/api/about",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const {
+      founderName, founderRole, founderOrg, founderExp,
+      founderMessage, founderSignoff, founderSignature,
+      ourStoryHeading, ourStoryText,
+      ourMissionHeading, ourMissionText,
+      ourVisionHeading, ourVisionText,
+      whyChooseUsHeading, whyChooseUsText,
+    } = req.body || {};
+    const changes = {};
+
+    if (founderName      !== undefined) changes.founderName      = String(founderName).slice(0, 150);
+    if (founderRole      !== undefined) changes.founderRole      = String(founderRole).slice(0, 150);
+    if (founderOrg       !== undefined) changes.founderOrg       = String(founderOrg).slice(0, 200);
+    if (founderExp       !== undefined) changes.founderExp       = String(founderExp).slice(0, 200);
+    if (founderMessage   !== undefined) changes.founderMessage   = String(founderMessage).slice(0, 5000);
+    if (founderSignoff   !== undefined) changes.founderSignoff   = String(founderSignoff).slice(0, 200);
+    if (founderSignature !== undefined) changes.founderSignature = String(founderSignature).slice(0, 150);
+    if (ourStoryHeading  !== undefined) changes.ourStoryHeading  = String(ourStoryHeading).slice(0, 200);
+    if (ourStoryText     !== undefined) changes.ourStoryText     = String(ourStoryText).slice(0, 3000);
+    if (ourMissionHeading!== undefined) changes.ourMissionHeading= String(ourMissionHeading).slice(0, 200);
+    if (ourMissionText   !== undefined) changes.ourMissionText   = String(ourMissionText).slice(0, 3000);
+    if (ourVisionHeading !== undefined) changes.ourVisionHeading = String(ourVisionHeading).slice(0, 200);
+    if (ourVisionText    !== undefined) changes.ourVisionText    = String(ourVisionText).slice(0, 3000);
+    if (whyChooseUsHeading!==undefined) changes.whyChooseUsHeading=String(whyChooseUsHeading).slice(0, 200);
+    if (whyChooseUsText  !== undefined) changes.whyChooseUsText  = String(whyChooseUsText).slice(0, 3000);
+
+    const existing = await db.findOne("about", "about");
+    const updated = existing
+      ? await db.updateOne("about", "about", changes)
+      : await db.insertOne("about", { ...DEFAULT_ABOUT, ...changes, id: "about" });
+
+    res.json(updated);
+  })
+);
+
+// ---------------------------------------------------------
 // Categories API (the filter chips shown on the Services page and
 // used as the "Category" dropdown when adding/editing a service)
 // Public GET stays open (nothing sensitive about a list of category
