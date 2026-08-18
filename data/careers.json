@@ -1,0 +1,62 @@
+[
+  {
+    "id": "job1000000000001",
+    "title": "Senior Python Instructor",
+    "category": "teaching",
+    "location": "Jhapa, Nepal",
+    "employmentType": "Full-time",
+    "experience": "5+ Years",
+    "description": "Lead advanced Python programming courses and mentor students in web development, data science, and software engineering.",
+    "status": "open"
+  },
+  {
+    "id": "job1000000000002",
+    "title": "Web Development Trainer",
+    "category": "teaching",
+    "location": "Jhapa, Nepal",
+    "employmentType": "Full-time",
+    "experience": "3+ Years",
+    "description": "Train students in modern web technologies including React, JavaScript, HTML/CSS, and responsive design principles.",
+    "status": "open"
+  },
+  {
+    "id": "job1000000000003",
+    "title": "IT Support & System Administrator",
+    "category": "it",
+    "location": "Jhapa, Nepal",
+    "employmentType": "Full-time",
+    "experience": "2+ Years",
+    "description": "Maintain and support computer infrastructure, troubleshoot technical issues, and ensure seamless operations.",
+    "status": "open"
+  },
+  {
+    "id": "job1000000000004",
+    "title": "HR & Administrative Coordinator",
+    "category": "admin",
+    "location": "Jhapa, Nepal",
+    "employmentType": "Full-time",
+    "experience": "1+ Years",
+    "description": "Manage administrative operations, handle HR functions, and support organizational growth and excellence.",
+    "status": "open"
+  },
+  {
+    "id": "job1000000000005",
+    "title": "Database Administrator",
+    "category": "it",
+    "location": "Jhapa, Nepal",
+    "employmentType": "Full-time",
+    "experience": "3+ Years",
+    "description": "Design and maintain database solutions, ensure data security, perform backups, and optimize database performance.",
+    "status": "open"
+  },
+  {
+    "id": "job1000000000006",
+    "title": "Digital Marketing Specialist",
+    "category": "marketing",
+    "location": "Jhapa, Nepal",
+    "employmentType": "Full-time",
+    "experience": "2+ Years",
+    "description": "Develop and execute digital marketing strategies, manage social media campaigns, and analyze marketing performance metrics.",
+    "status": "open"
+  }
+]

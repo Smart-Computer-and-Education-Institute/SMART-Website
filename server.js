@@ -638,6 +638,104 @@ app.delete(
 );
 
 // ---------------------------------------------------------
+// Careers API
+// Same public/admin split as notices and services: public sees only
+// open (active) jobs; the protected admin routes see and manage
+// everything. Category is locked to the four values the public
+// Career page's filter buttons already know about, so they can
+// never drift out of sync.
+// ---------------------------------------------------------
+
+const CAREER_CATEGORIES = ["teaching", "it", "admin", "marketing"];
+
+app.get(
+  "/api/public/careers",
+  asyncHandler(async (req, res) => {
+    const careers = await db.findAll("careers");
+    res.json(careers.filter((c) => c.status === "open"));
+  })
+);
+
+app.get(
+  "/api/careers",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    res.json(await db.findAll("careers"));
+  })
+);
+
+app.post(
+  "/api/careers",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { title, category, location, employmentType, experience, description, status } =
+      req.body || {};
+
+    if (!title || !category || !description) {
+      return res.status(400).json({ error: "title, category, and description are required" });
+    }
+    if (!CAREER_CATEGORIES.includes(category)) {
+      return res
+        .status(400)
+        .json({ error: `category must be one of: ${CAREER_CATEGORIES.join(", ")}` });
+    }
+
+    const newCareer = {
+      id: "job" + Date.now(),
+      title: String(title).slice(0, 150),
+      category,
+      location: String(location || "Jhapa, Nepal").slice(0, 100),
+      employmentType: String(employmentType || "Full-time").slice(0, 60),
+      experience: String(experience || "").slice(0, 60),
+      description: String(description).slice(0, 3000),
+      status: status === "closed" ? "closed" : "open",
+    };
+
+    await db.insertOne("careers", newCareer);
+    res.status(201).json(newCareer);
+  })
+);
+
+app.put(
+  "/api/careers/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { title, category, location, employmentType, experience, description, status } =
+      req.body || {};
+    const changes = {};
+
+    if (title !== undefined) changes.title = String(title).slice(0, 150);
+    if (category !== undefined) {
+      if (!CAREER_CATEGORIES.includes(category)) {
+        return res
+          .status(400)
+          .json({ error: `category must be one of: ${CAREER_CATEGORIES.join(", ")}` });
+      }
+      changes.category = category;
+    }
+    if (location !== undefined) changes.location = String(location).slice(0, 100);
+    if (employmentType !== undefined) changes.employmentType = String(employmentType).slice(0, 60);
+    if (experience !== undefined) changes.experience = String(experience).slice(0, 60);
+    if (description !== undefined) changes.description = String(description).slice(0, 3000);
+    if (status !== undefined) changes.status = status === "closed" ? "closed" : "open";
+
+    const career = await db.updateOne("careers", req.params.id, changes);
+    if (!career) return res.status(404).json({ error: "Career not found" });
+    res.json(career);
+  })
+);
+
+app.delete(
+  "/api/careers/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const deleted = await db.deleteOne("careers", req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Career not found" });
+    res.status(204).end();
+  })
+);
+
+// ---------------------------------------------------------
 // Photo uploads (Vercel Blob in production, local disk in dev)
 //
 // Uploaded files are read into memory (not written straight to disk)
