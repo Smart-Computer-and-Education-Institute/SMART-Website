@@ -55,8 +55,36 @@ async function loadCategories() {
 // so the screen always matches what's actually saved.
 async function loadServices() {
   const res = await fetch("/api/services");
+  if (!res.ok) {
+    services = [];
+    renderServices();
+    return;
+  }
   services = await res.json();
   renderServices();
+}
+
+function showServicePhotoPreview(url) {
+  const img = document.getElementById("preview-servicePhoto");
+  if (!img) return;
+  if (url) {
+    img.src = url;
+    img.style.display = "block";
+  } else {
+    img.src = "";
+    img.style.display = "none";
+  }
+}
+
+const serviceFileInput = document.getElementById("file-servicePhoto");
+if (serviceFileInput) {
+  serviceFileInput.addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      showServicePhotoPreview(url);
+    }
+  });
 }
 
 function renderServices() {
@@ -75,13 +103,21 @@ function renderServices() {
     serviceCountEl.textContent = `${total} service${total === 1 ? "" : "s"} total`;
   }
 
-
   rows.forEach((s) => {
     const tr = document.createElement("tr");
+    const thumbHtml = s.image
+      ? `<img src="${escapeHtml(s.image)}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
+      : `<div style="width:38px;height:38px;border-radius:6px;background:var(--color-primary-soft,#eff6ff);color:var(--color-primary,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">📚</div>`;
+
     tr.innerHTML = `
       <td>
-        <div class="cell-title">${escapeHtml(s.name)}</div>
-        <div class="cell-sub">${nl2br(escapeHtml(s.desc))}</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          ${thumbHtml}
+          <div>
+            <div class="cell-title">${escapeHtml(s.name)}</div>
+            <div class="cell-sub">${nl2br(escapeHtml(s.desc))}</div>
+          </div>
+        </div>
       </td>
       <td><span class="badge badge-blue">${escapeHtml(s.category)}</span></td>
       <td>${escapeHtml(s.duration)}</td>
@@ -108,7 +144,7 @@ function renderServices() {
 
 function escapeHtml(str) {
   const div = document.createElement("div");
-  div.textContent = str;
+  div.textContent = str == null ? "" : String(str);
   return div.innerHTML;
 }
 
@@ -134,20 +170,25 @@ function openServiceModal(id) {
   const form = document.getElementById("serviceForm");
   form.reset();
   clearErrors();
+  showServicePhotoPreview("");
+  const fileInput = document.getElementById("file-servicePhoto");
+  if (fileInput) fileInput.value = "";
 
   if (id) {
     const s = services.find((x) => x.id === id);
     document.getElementById("serviceModalTitle").textContent = "Edit service";
-    document.getElementById("serviceId").value = s.id;
-    document.getElementById("serviceName").value = s.name;
-    document.getElementById("serviceCategory").value = s.category;
-    document.getElementById("serviceDuration").value = s.duration;
-    document.getElementById("serviceDesc").value = s.desc;
-    document.getElementById("serviceEnrolled").value = s.enrolled;
-    document.getElementById("serviceStatus").value = s.status;
+    document.getElementById("serviceId").value               = s.id;
+    document.getElementById("serviceName").value             = s.name;
+    document.getElementById("serviceCategory").value         = s.category;
+    document.getElementById("serviceDuration").value         = s.duration;
+    document.getElementById("serviceDesc").value             = s.desc;
+    document.getElementById("serviceEnrolled").value         = s.enrolled;
+    document.getElementById("serviceStatus").value           = s.status;
+    showServicePhotoPreview(s.image || "");
   } else {
     document.getElementById("serviceModalTitle").textContent = "Add service";
-    document.getElementById("serviceId").value = "";
+    document.getElementById("serviceId").value               = "";
+    showServicePhotoPreview("");
   }
 
   openModal("serviceModalOverlay");
@@ -155,6 +196,48 @@ function openServiceModal(id) {
 
 function clearErrors() {
   document.querySelectorAll("#serviceForm .form-field").forEach((f) => f.classList.remove("has-error"));
+}
+
+async function uploadServicePhoto() {
+  const fileInput = document.getElementById("file-servicePhoto");
+  if (!fileInput || !fileInput.files.length) {
+    showToast("Please choose a photo first.", "danger");
+    return;
+  }
+
+  const id = document.getElementById("serviceId").value;
+  if (!id) {
+    showToast("Photo will be uploaded automatically when you save the service.", "neutral");
+    return;
+  }
+
+  const btn = document.getElementById("servicePhotoUploadBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "Uploading…"; }
+
+  try {
+    const fd = new FormData();
+    fd.append("photo", fileInput.files[0]);
+
+    const res = await fetch(`/api/services/${id}/photo`, {
+      method: "POST",
+      body: fd,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || "Upload failed");
+    }
+
+    const data = await res.json();
+    showServicePhotoPreview(data.image);
+    fileInput.value = "";
+    showToast("Photo updated successfully");
+    await loadServices();
+  } catch (err) {
+    showToast(err.message || "Upload failed — please try again.", "danger");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Upload"; }
+  }
 }
 
 document.getElementById("serviceForm").addEventListener("submit", async (e) => {
@@ -181,22 +264,56 @@ document.getElementById("serviceForm").addEventListener("submit", async (e) => {
     status: document.getElementById("serviceStatus").value,
   };
 
+  let savedService = null;
+
   if (id) {
     // Editing an existing service
-    await fetch(`/api/services/${id}`, {
+    const res = await fetch(`/api/services/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    showToast("Service updated");
+    if (res.ok) {
+      savedService = await res.json();
+      showToast("Service updated");
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || "Update failed — please try again.", "danger");
+      return;
+    }
   } else {
     // Creating a new one
-    await fetch("/api/services", {
+    const res = await fetch("/api/services", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    showToast("Service added");
+    if (res.ok) {
+      savedService = await res.json();
+      showToast("Service added");
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || "Could not add service — please try again.", "danger");
+      return;
+    }
+  }
+
+  // Upload photo file if one was selected
+  const fileInput = document.getElementById("file-servicePhoto");
+  if (savedService && fileInput && fileInput.files.length > 0) {
+    try {
+      const fd = new FormData();
+      fd.append("photo", fileInput.files[0]);
+      const photoRes = await fetch(`/api/services/${savedService.id}/photo`, {
+        method: "POST",
+        body: fd,
+      });
+      if (photoRes.ok) {
+        showToast("Service and photo saved");
+      }
+    } catch (err) {
+      console.error("Could not upload service photo", err);
+    }
   }
 
   closeModal("serviceModalOverlay");
@@ -206,8 +323,13 @@ document.getElementById("serviceForm").addEventListener("submit", async (e) => {
 async function deleteService(id) {
   const s = services.find((x) => x.id === id);
   if (!confirmDelete(`Delete "${s.name}"? This can't be undone.`)) return;
-  await fetch(`/api/services/${id}`, { method: "DELETE" });
-  showToast("Service deleted", "danger");
+  const res = await fetch(`/api/services/${id}`, { method: "DELETE" });
+  if (res.ok || res.status === 204) {
+    showToast("Service deleted", "danger");
+  } else {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || "Delete failed — please try again.", "danger");
+  }
   await loadServices();
 }
 

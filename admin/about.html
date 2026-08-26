@@ -32,6 +32,14 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Services
       </a>
+      <a href="offers.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Offers
+      </a>
+      <a href="careers.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        Careers
+      </a>
       <a href="gallery.html" class="nav-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
         Gallery
@@ -78,7 +86,7 @@
         </button>
         <div>
           <div class="topbar-title">About Us</div>
-          <div class="topbar-breadcrumb">Text shown on the public About Us page</div>
+          <div class="topbar-breadcrumb">Photos &amp; text shown on the public About Us page</div>
         </div>
       </div>
       <div class="topbar-right">
@@ -114,13 +122,25 @@
         </div>
       </div>
 
-      <div class="dash-grid">
+      <form id="aboutForm" style="display:flex;flex-direction:column;gap:20px;max-width:960px;">
 
+        <!-- ── Division 1: Founder message & photo ─────────────────── -->
         <div class="card">
           <div class="panel-header">
-            <h2>Founder message</h2>
+            <h2>1. Founder message &amp; photo</h2>
           </div>
-          <form id="aboutForm" style="padding: 4px 22px 22px;">
+          <div style="padding: 18px 22px; display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Founder Photo -->
+            <div class="form-field" id="field-founderPhoto">
+              <label>Founder photo</label>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <img id="preview-founderPhoto" src="" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--color-border);display:none;">
+                <input type="file" id="file-founderPhoto" accept="image/*" style="flex:1;min-width:0;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="uploadAboutPhoto('founderPhoto')">Upload Photo</button>
+              </div>
+              <span class="hint" style="display:block;margin-top:4px;">Shown in the founder card on the left side of the About page.</span>
+            </div>
 
             <div class="form-row">
               <div class="form-field" id="field-founderName">
@@ -146,7 +166,7 @@
 
             <div class="form-field" id="field-founderMessage">
               <label for="aboutFounderMessage">Founder message</label>
-              <textarea id="aboutFounderMessage" placeholder="Dear Partners,&#10;&#10;Opening paragraph…&#10;&#10;Second paragraph…" style="min-height:180px;"></textarea>
+              <textarea id="aboutFounderMessage" placeholder="Dear Partners,&#10;&#10;Opening paragraph…&#10;&#10;Second paragraph…" style="min-height:160px;"></textarea>
               <span class="hint" style="display:block;margin-top:4px;">Each blank line between paragraphs is preserved on the public page.</span>
             </div>
 
@@ -161,10 +181,27 @@
               </div>
             </div>
 
-            <!-- Our Story -->
-            <div class="panel-header" style="margin: 24px -22px 0; padding: 14px 22px 10px; border-top: 1px solid var(--color-border, #e2e8f0);">
-              <h2 style="font-size:14px;">Our Story</h2>
+          </div>
+        </div>
+
+        <!-- ── Division 2: Our Story ───────────────────────────────── -->
+        <div class="card">
+          <div class="panel-header">
+            <h2>2. Our Story</h2>
+          </div>
+          <div style="padding: 18px 22px; display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Story Photo -->
+            <div class="form-field" id="field-storyPhoto">
+              <label>Our Story photo</label>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <img id="preview-storyPhoto" src="" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--color-border);display:none;">
+                <input type="file" id="file-storyPhoto" accept="image/*" style="flex:1;min-width:0;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="uploadAboutPhoto('storyPhoto')">Upload Photo</button>
+              </div>
+              <span class="hint" style="display:block;margin-top:4px;">Shown alongside the Our Story section text.</span>
             </div>
+
             <div class="form-field" id="field-ourStoryHeading">
               <label for="aboutOurStoryHeading">Heading</label>
               <input type="text" id="aboutOurStoryHeading" placeholder="e.g. Our Story">
@@ -174,10 +211,27 @@
               <textarea id="aboutOurStoryText" style="min-height:90px;" placeholder="Describe your story…"></textarea>
             </div>
 
-            <!-- Our Mission -->
-            <div class="panel-header" style="margin: 24px -22px 0; padding: 14px 22px 10px; border-top: 1px solid var(--color-border, #e2e8f0);">
-              <h2 style="font-size:14px;">Our Mission</h2>
+          </div>
+        </div>
+
+        <!-- ── Division 3: Our Mission ─────────────────────────────── -->
+        <div class="card">
+          <div class="panel-header">
+            <h2>3. Our Mission</h2>
+          </div>
+          <div style="padding: 18px 22px; display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Mission Photo -->
+            <div class="form-field" id="field-missionPhoto">
+              <label>Our Mission photo</label>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <img id="preview-missionPhoto" src="" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--color-border);display:none;">
+                <input type="file" id="file-missionPhoto" accept="image/*" style="flex:1;min-width:0;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="uploadAboutPhoto('missionPhoto')">Upload Photo</button>
+              </div>
+              <span class="hint" style="display:block;margin-top:4px;">Shown alongside the Our Mission section text.</span>
             </div>
+
             <div class="form-field" id="field-ourMissionHeading">
               <label for="aboutOurMissionHeading">Heading</label>
               <input type="text" id="aboutOurMissionHeading" placeholder="e.g. Our Mission">
@@ -187,10 +241,27 @@
               <textarea id="aboutOurMissionText" style="min-height:90px;" placeholder="Describe your mission…"></textarea>
             </div>
 
-            <!-- Our Vision -->
-            <div class="panel-header" style="margin: 24px -22px 0; padding: 14px 22px 10px; border-top: 1px solid var(--color-border, #e2e8f0);">
-              <h2 style="font-size:14px;">Our Vision</h2>
+          </div>
+        </div>
+
+        <!-- ── Division 4: Our Vision ──────────────────────────────── -->
+        <div class="card">
+          <div class="panel-header">
+            <h2>4. Our Vision</h2>
+          </div>
+          <div style="padding: 18px 22px; display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Vision Photo -->
+            <div class="form-field" id="field-visionPhoto">
+              <label>Our Vision photo</label>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <img id="preview-visionPhoto" src="" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--color-border);display:none;">
+                <input type="file" id="file-visionPhoto" accept="image/*" style="flex:1;min-width:0;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="uploadAboutPhoto('visionPhoto')">Upload Photo</button>
+              </div>
+              <span class="hint" style="display:block;margin-top:4px;">Shown alongside the Our Vision section text.</span>
             </div>
+
             <div class="form-field" id="field-ourVisionHeading">
               <label for="aboutOurVisionHeading">Heading</label>
               <input type="text" id="aboutOurVisionHeading" placeholder="e.g. Our Vision">
@@ -200,10 +271,27 @@
               <textarea id="aboutOurVisionText" style="min-height:90px;" placeholder="Describe your vision…"></textarea>
             </div>
 
-            <!-- Why Choose Us -->
-            <div class="panel-header" style="margin: 24px -22px 0; padding: 14px 22px 10px; border-top: 1px solid var(--color-border, #e2e8f0);">
-              <h2 style="font-size:14px;">Why Choose Us</h2>
+          </div>
+        </div>
+
+        <!-- ── Division 5: Why Choose Us ───────────────────────────── -->
+        <div class="card">
+          <div class="panel-header">
+            <h2>5. Why Choose Us</h2>
+          </div>
+          <div style="padding: 18px 22px; display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Why Choose Us Photo -->
+            <div class="form-field" id="field-whyPhoto">
+              <label>Why Choose Us photo</label>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <img id="preview-whyPhoto" src="" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--color-border);display:none;">
+                <input type="file" id="file-whyPhoto" accept="image/*" style="flex:1;min-width:0;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="uploadAboutPhoto('whyPhoto')">Upload Photo</button>
+              </div>
+              <span class="hint" style="display:block;margin-top:4px;">Shown alongside the Why Choose Us section text.</span>
             </div>
+
             <div class="form-field" id="field-whyChooseUsHeading">
               <label for="aboutWhyChooseUsHeading">Heading</label>
               <input type="text" id="aboutWhyChooseUsHeading" placeholder="e.g. Why Choose Us">
@@ -213,11 +301,15 @@
               <textarea id="aboutWhyChooseUsText" style="min-height:90px;" placeholder="Describe what makes you stand out…"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="aboutSaveBtn" style="margin-top:8px;">Save About Us</button>
-          </form>
+          </div>
         </div>
 
-      </div>
+        <!-- Submit Button -->
+        <div style="margin-top: 4px; margin-bottom: 24px;">
+          <button type="submit" class="btn btn-primary" id="aboutSaveBtn" style="padding:10px 24px;font-size:14px;">Save About Us text</button>
+        </div>
+
+      </form>
     </main>
   </div>
 </div>

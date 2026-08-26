@@ -1,13 +1,26 @@
 /* ============================================
    About Us admin page
    Backed by /api/about (singleton document).
-   On load: GET /api/about → populate form.
+   On load: GET /api/about → populate form + photo previews.
    On submit: PUT /api/about → toast success/error.
-   Mirrors admin/settings.js exactly.
+   Photo uploads: POST /api/about/photo/:slot → toast + preview update.
    ============================================ */
 
 const aboutForm    = document.getElementById("aboutForm");
 const aboutSaveBtn = document.getElementById("aboutSaveBtn");
+
+const PHOTO_SLOTS = ["founderPhoto", "storyPhoto", "missionPhoto", "visionPhoto", "whyPhoto"];
+
+function showPhotoPreview(slot, url) {
+  const img = document.getElementById("preview-" + slot);
+  if (!img) return;
+  if (url) {
+    img.src = url;
+    img.style.display = "block";
+  } else {
+    img.style.display = "none";
+  }
+}
 
 async function loadAbout() {
   const res  = await fetch("/api/about");
@@ -28,6 +41,9 @@ async function loadAbout() {
   document.getElementById("aboutOurVisionText").value    = data.ourVisionText    || "";
   document.getElementById("aboutWhyChooseUsHeading").value = data.whyChooseUsHeading || "";
   document.getElementById("aboutWhyChooseUsText").value  = data.whyChooseUsText  || "";
+
+  // Populate photo previews for any slot that already has an uploaded image
+  PHOTO_SLOTS.forEach(slot => showPhotoPreview(slot, data[slot] || ""));
 }
 
 aboutForm.addEventListener("submit", async (e) => {
@@ -75,5 +91,43 @@ aboutForm.addEventListener("submit", async (e) => {
     aboutSaveBtn.textContent = "Save About Us";
   }
 });
+
+// Upload a single photo for one About Us section slot.
+// Sends multipart/form-data to POST /api/about/photo/:slot.
+async function uploadAboutPhoto(slot) {
+  const fileInput = document.getElementById("file-" + slot);
+  if (!fileInput || !fileInput.files.length) {
+    showToast("Please choose a photo first.", "danger");
+    return;
+  }
+
+  const fieldDiv = document.getElementById("field-" + slot);
+  const btn = fieldDiv ? fieldDiv.querySelector("button") : null;
+  if (btn) { btn.disabled = true; btn.textContent = "Uploading…"; }
+
+  try {
+    const fd = new FormData();
+    fd.append("photo", fileInput.files[0]);
+
+    const res = await fetch(`/api/about/photo/${slot}`, {
+      method: "POST",
+      body:   fd,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || "Upload failed");
+    }
+
+    const data = await res.json();
+    showPhotoPreview(slot, data[slot]);
+    fileInput.value = ""; // clear picker so the same file can be re-selected if needed
+    showToast("Photo updated successfully");
+  } catch (err) {
+    showToast(err.message || "Upload failed — please try again.", "danger");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Upload"; }
+  }
+}
 
 loadAbout();

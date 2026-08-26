@@ -1,0 +1,13 @@
+# Task Checklist
+- [x] Open http://localhost:3000/login.html -> FAILED (Playwright driver download error: 404 Not Found)
+- [ ] Inspect login page and find login credentials / try candidate passwords
+- [ ] Log in and redirect to admin careers page (or navigate to http://localhost:3000/admin/careers.html)
+- [ ] List network requests for GET /api/careers
+- [ ] Attempt to edit a career entry and observe PUT network request
+- [ ] Attempt to delete a career entry and observe DELETE network request
+- [ ] Report status codes and console errors
+
+## Errors Encountered
+- `open_browser_url` failed with:
+  `failed to create browser context: failed to run playwright manager: failed to install playwright: could not install driver: could not install driver: error: got non 200 status code: 404 (404 Not Found) from https://playwright.azureedge.net/builds/driver/playwright-1.57.0-win32_x64.zip`
+

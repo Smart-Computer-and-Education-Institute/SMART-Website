@@ -59,172 +59,22 @@
  
         <!-- Content Container -->
         <div class="content-wrapper">
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <button class="filter-btn active" onclick="filterJobs('all')">All Positions</button>
-                <button class="filter-btn" onclick="filterJobs('teaching')">Teaching</button>
-                <button class="filter-btn" onclick="filterJobs('it')">IT & Support</button>
-                <button class="filter-btn" onclick="filterJobs('admin')">Administration</button>
-                <button class="filter-btn" onclick="filterJobs('marketing')">Marketing</button>
+            <!-- Filter Section — populated dynamically from /api/public/career-categories -->
+            <div class="filter-section" id="filterSection">
+                <button class="filter-btn active" data-filter="all" onclick="filterJobs('all', this)">All Positions</button>
             </div>
  
-            <!-- Jobs Grid -->
-            <div class="jobs-grid">
-                <!-- Job Card 1 -->
-                <div class="job-card" data-category="teaching">
-                    <div class="pin-icon">📌</div>
-                    <div class="job-tag">TEACHING</div>
-                    <div class="job-image">
-                        <div class="job-image-text">Senior Python Instructor</div>
-                    </div>
-                    <div class="job-content">
-                        <h3 class="job-title">Senior Python Instructor</h3>
-                        <div class="job-meta">
-                            <span class="meta-item">📍 Jhapa, Nepal</span>
-                            <span class="meta-item">💼 Full-time</span>
-                            <span class="meta-item">⭐ 5+ Years</span>
-                        </div>
-                        <p class="job-description">Lead advanced Python programming courses and mentor students in web development, data science, and software engineering.</p>
-                        <div class="job-details">
-                            <p><strong>Salary:</strong> NPR 40,000 - 60,000</p>
-                            <p><strong>Requirements:</strong> Degree in CS/IT, 5+ years teaching experience, expertise in Python frameworks (Django, Flask).</p>
-                        </div>
-                        <div class="job-footer">
-                            <span class="job-type-badge">Full-time • Permanent</span>
-                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
-                        </div>
-                    </div>
-                </div>
- 
-                <!-- Job Card 2 -->
-                <div class="job-card" data-category="teaching">
-                    <div class="pin-icon">📌</div>
-                    <div class="job-tag">TEACHING</div>
-                    <div class="job-image">
-                        <div class="job-image-text">Web Development Trainer</div>
-                    </div>
-                    <div class="job-content">
-                        <h3 class="job-title">Web Development Trainer</h3>
-                        <div class="job-meta">
-                            <span class="meta-item">📍 Jhapa, Nepal</span>
-                            <span class="meta-item">💼 Full-time</span>
-                            <span class="meta-item">⭐ 3+ Years</span>
-                        </div>
-                        <p class="job-description">Train students in modern web technologies including React, JavaScript, HTML/CSS, and responsive design principles.</p>
-                        <div class="job-details">
-                            <p><strong>Salary:</strong> NPR 35,000 - 50,000</p>
-                            <p><strong>Requirements:</strong> Proficiency in React/Vue/Angular, strong JavaScript fundamentals, teaching ability, portfolio showcase.</p>
-                        </div>
-                        <div class="job-footer">
-                            <span class="job-type-badge">Full-time • Permanent</span>
-                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
-                        </div>
-                    </div>
-                </div>
- 
-                <!-- Job Card 3 -->
-                <div class="job-card" data-category="it">
-                    <div class="pin-icon">📌</div>
-                    <div class="job-tag">IT & SUPPORT</div>
-                    <div class="job-image">
-                        <div class="job-image-text">IT Support & System Admin</div>
-                    </div>
-                    <div class="job-content">
-                        <h3 class="job-title">IT Support & System Administrator</h3>
-                        <div class="job-meta">
-                            <span class="meta-item">📍 Jhapa, Nepal</span>
-                            <span class="meta-item">💼 Full-time</span>
-                            <span class="meta-item">⭐ 2+ Years</span>
-                        </div>
-                        <p class="job-description">Maintain and support computer infrastructure, troubleshoot technical issues, and ensure seamless operations.</p>
-                        <div class="job-details">
-                            <p><strong>Salary:</strong> NPR 30,000 - 45,000</p>
-                            <p><strong>Requirements:</strong> CompTIA A+ or equivalent, Windows/Linux knowledge, networking basics, problem-solving skills.</p>
-                        </div>
-                        <div class="job-footer">
-                            <span class="job-type-badge">Full-time • Permanent</span>
-                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
-                        </div>
-                    </div>
-                </div>
- 
-                <!-- Job Card 4 -->
-                <div class="job-card" data-category="admin">
-                    <div class="pin-icon">📌</div>
-                    <div class="job-tag">ADMINISTRATION</div>
-                    <div class="job-image">
-                        <div class="job-image-text">HR & Admin Coordinator</div>
-                    </div>
-                    <div class="job-content">
-                        <h3 class="job-title">HR & Administrative Coordinator</h3>
-                        <div class="job-meta">
-                            <span class="meta-item">📍 Jhapa, Nepal</span>
-                            <span class="meta-item">💼 Full-time</span>
-                            <span class="meta-item">⭐ 1+ Years</span>
-                        </div>
-                        <p class="job-description">Manage administrative operations, handle HR functions, and support organizational growth and excellence.</p>
-                        <div class="job-details">
-                            <p><strong>Salary:</strong> NPR 25,000 - 38,000</p>
-                            <p><strong>Requirements:</strong> Diploma in HR or Business, excellent organizational skills, MS Office proficiency, communication skills.</p>
-                        </div>
-                        <div class="job-footer">
-                            <span class="job-type-badge">Full-time • Permanent</span>
-                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
-                        </div>
-                    </div>
-                </div>
- 
-                <!-- Job Card 5 -->
-                <div class="job-card" data-category="it">
-                    <div class="pin-icon">📌</div>
-                    <div class="job-tag">IT & SUPPORT</div>
-                    <div class="job-image">
-                        <div class="job-image-text">Database Administrator</div>
-                    </div>
-                    <div class="job-content">
-                        <h3 class="job-title">Database Administrator</h3>
-                        <div class="job-meta">
-                            <span class="meta-item">📍 Jhapa, Nepal</span>
-                            <span class="meta-item">💼 Full-time</span>
-                            <span class="meta-item">⭐ 3+ Years</span>
-                        </div>
-                        <p class="job-description">Design and maintain database solutions, ensure data security, perform backups, and optimize database performance.</p>
-                        <div class="job-details">
-                            <p><strong>Salary:</strong> NPR 38,000 - 55,000</p>
-                            <p><strong>Requirements:</strong> SQL Server/MySQL/MongoDB expertise, database design knowledge, backup & recovery experience.</p>
-                        </div>
-                        <div class="job-footer">
-                            <span class="job-type-badge">Full-time • Permanent</span>
-                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
-                        </div>
-                    </div>
-                </div>
- 
-                <!-- Job Card 6 -->
-                <div class="job-card" data-category="marketing">
-                    <div class="pin-icon">📌</div>
-                    <div class="job-tag">MARKETING</div>
-                    <div class="job-image">
-                        <div class="job-image-text">Digital Marketing Specialist</div>
-                    </div>
-                    <div class="job-content">
-                        <h3 class="job-title">Digital Marketing Specialist</h3>
-                        <div class="job-meta">
-                            <span class="meta-item">📍 Jhapa, Nepal</span>
-                            <span class="meta-item">💼 Full-time</span>
-                            <span class="meta-item">⭐ 2+ Years</span>
-                        </div>
-                        <p class="job-description">Develop and execute digital marketing strategies, manage social media campaigns, and analyze marketing performance metrics.</p>
-                        <div class="job-details">
-                            <p><strong>Salary:</strong> NPR 28,000 - 42,000</p>
-                            <p><strong>Requirements:</strong> Digital Marketing certification, Google Analytics experience, social media campaign management expertise.</p>
-                        </div>
-                        <div class="job-footer">
-                            <span class="job-type-badge">Full-time • Permanent</span>
-                            <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
-                        </div>
-                    </div>
-                </div>
+            <!-- Jobs Grid — populated dynamically from /api/public/careers -->
+            <div class="jobs-grid" id="jobsGrid">
+              <!-- loading state -->
+              <p id="jobsLoading" style="grid-column:1/-1;text-align:center;padding:40px;color:#666;">
+                Loading open positions…
+              </p>
+            </div>
+            <!-- shown when no open positions exist in the DB -->
+            <div id="jobsEmpty" style="display:none;text-align:center;padding:60px 20px;color:#666;">
+              <p style="font-size:18px;margin-bottom:8px;">No open positions right now.</p>
+              <p>Check back soon or contact us to send a general application.</p>
             </div>
         </div>
  

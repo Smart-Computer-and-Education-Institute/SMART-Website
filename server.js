@@ -278,6 +278,12 @@ const DEFAULT_ABOUT = {
     "Dear Partners,\n\nWrite your opening paragraph here — introduce yourself, your role, and the story of how your organization began.\n\nWrite a second paragraph describing your mission, the services you offer, and what sets your organization apart.\n\nWrite a third paragraph about your vision for partnerships, growth, and the impact you aim to create for the people you serve.",
   founderSignoff: "Warm regards,",
   founderSignature: "Bikash Pokharel",
+  // Photos — store as URL strings; empty string means "use the hardcoded fallback in About.html"
+  founderPhoto: "",
+  storyPhoto: "",
+  missionPhoto: "",
+  visionPhoto: "",
+  whyPhoto: "",
   ourStoryHeading: "Our Story",
   ourStoryText:
     "At Smart Computer & Education Institute, we believe education should be practical, affordable, and career-focused. For over 12 years, we have been helping students build confidence through quality computer training, language classes, and skill-based services.",
@@ -348,6 +354,35 @@ app.put(
       : await db.insertOne("about", { ...DEFAULT_ABOUT, ...changes, id: "about" });
 
     res.json(updated);
+  })
+);
+
+// Photo-upload slots for About Us. Each POST replaces exactly one image field.
+// Accepted slot names match the field names stored in the about document.
+const ABOUT_PHOTO_SLOTS = ["founderPhoto", "storyPhoto", "missionPhoto", "visionPhoto", "whyPhoto"];
+
+app.post(
+  "/api/about/photo/:slot",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const { slot } = req.params;
+    if (!ABOUT_PHOTO_SLOTS.includes(slot)) {
+      return res.status(400).json({ error: `Unknown photo slot: ${slot}` });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose a photo to upload." });
+    }
+
+    const filename = safeUploadName("about-" + slot, req.file.mimetype);
+    const imageUrl = await blobStorage.saveUpload(req.file.buffer, "about", filename);
+
+    const existing = await db.findOne("about", "about");
+    const updated = existing
+      ? await db.updateOne("about", "about", { [slot]: imageUrl })
+      : await db.insertOne("about", { ...DEFAULT_ABOUT, [slot]: imageUrl, id: "about" });
+
+    res.json({ [slot]: imageUrl, ...updated });
   })
 );
 
@@ -588,7 +623,7 @@ app.post(
   "/api/services",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const { name, category, duration, desc, enrolled, status } = req.body || {};
+    const { name, category, duration, desc, enrolled, status, image } = req.body || {};
     if (!name || !duration || !desc) {
       return res.status(400).json({ error: "name, duration, and desc are required" });
     }
@@ -597,6 +632,7 @@ app.post(
       id: "s" + Date.now(),
       name: String(name).slice(0, 150),
       category: category || "Office",
+      image: image || "",
       duration: String(duration).slice(0, 60),
       desc: String(desc).slice(0, 2000),
       enrolled: Number.isFinite(Number(enrolled)) ? Number(enrolled) : 0,
@@ -612,10 +648,11 @@ app.put(
   "/api/services/:id",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const { name, category, duration, desc, enrolled, status } = req.body || {};
+    const { name, category, duration, desc, enrolled, status, image } = req.body || {};
     const changes = {};
     if (name !== undefined) changes.name = String(name).slice(0, 150);
     if (category !== undefined) changes.category = category;
+    if (image !== undefined) changes.image = image;
     if (duration !== undefined) changes.duration = String(duration).slice(0, 60);
     if (desc !== undefined) changes.desc = String(desc).slice(0, 2000);
     if (enrolled !== undefined) changes.enrolled = Number(enrolled) || 0;
@@ -631,8 +668,252 @@ app.delete(
   "/api/services/:id",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const deleted = await db.deleteOne("services", req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Service not found" });
+    const existing = await db.findOne("services", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Service not found" });
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+    await db.deleteOne("services", req.params.id);
+    res.status(204).end();
+  })
+);
+
+app.post(
+  "/api/services/:id/photo",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("services", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Service not found" });
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose a photo to upload." });
+    }
+
+    const filename = safeUploadName("service", req.file.mimetype);
+    const imageUrl = await blobStorage.saveUpload(req.file.buffer, "services", filename);
+
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+
+    const updated = await db.updateOne("services", req.params.id, { image: imageUrl });
+    res.json({ image: imageUrl, ...updated });
+  })
+);
+
+// ---------------------------------------------------------
+// Offers API
+// Public GET sees only active offers, sorted newest first.
+// Admin routes see and manage all offers.
+// ---------------------------------------------------------
+
+app.get(
+  "/api/public/offers",
+  asyncHandler(async (req, res) => {
+    const offers = await db.findAll("offers");
+    const active = offers.filter((o) => o.status === "active");
+    active.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    res.json(active);
+  })
+);
+
+app.get(
+  "/api/offers",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const offers = await db.findAll("offers");
+    offers.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    res.json(offers);
+  })
+);
+
+app.post(
+  "/api/offers",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { title, description, tag, image, ctaLabel, ctaLink, status } = req.body || {};
+    if (!title || !description) {
+      return res.status(400).json({ error: "title and description are required" });
+    }
+
+    const newOffer = {
+      id: "offer" + Date.now(),
+      title: String(title).slice(0, 150),
+      description: String(description).slice(0, 3000),
+      tag: String(tag || "Special Offer").slice(0, 50),
+      image: image || "",
+      ctaLabel: String(ctaLabel || "Learn more").slice(0, 60),
+      ctaLink: String(ctaLink || "").slice(0, 300),
+      status: status === "draft" ? "draft" : "active",
+      createdAt: new Date().toISOString(),
+    };
+
+    await db.insertOne("offers", newOffer);
+    res.status(201).json(newOffer);
+  })
+);
+
+app.put(
+  "/api/offers/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { title, description, tag, image, ctaLabel, ctaLink, status } = req.body || {};
+    const changes = {};
+    if (title !== undefined) changes.title = String(title).slice(0, 150);
+    if (description !== undefined) changes.description = String(description).slice(0, 3000);
+    if (tag !== undefined) changes.tag = String(tag || "Special Offer").slice(0, 50);
+    if (image !== undefined) changes.image = image;
+    if (ctaLabel !== undefined) changes.ctaLabel = String(ctaLabel || "Learn more").slice(0, 60);
+    if (ctaLink !== undefined) changes.ctaLink = String(ctaLink || "").slice(0, 300);
+    if (status !== undefined) changes.status = status === "draft" ? "draft" : "active";
+
+    const offer = await db.updateOne("offers", req.params.id, changes);
+    if (!offer) return res.status(404).json({ error: "Offer not found" });
+    res.json(offer);
+  })
+);
+
+app.delete(
+  "/api/offers/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("offers", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Offer not found" });
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+    await db.deleteOne("offers", req.params.id);
+    res.status(204).end();
+  })
+);
+
+app.post(
+  "/api/offers/:id/photo",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("offers", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Offer not found" });
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose a photo to upload." });
+    }
+
+    const filename = safeUploadName("offer", req.file.mimetype);
+    const imageUrl = await blobStorage.saveUpload(req.file.buffer, "offers", filename);
+
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+
+    const updated = await db.updateOne("offers", req.params.id, { image: imageUrl });
+    res.json({ image: imageUrl, ...updated });
+  })
+);
+
+// ---------------------------------------------------------
+// Career Categories ("Divisions") API
+// Public GET returns the array of division names for Career.html.
+// Admin routes allow creating, renaming, and deleting divisions.
+// Renaming cascades to all career records using that division.
+// ---------------------------------------------------------
+
+const DEFAULT_CAREER_CATEGORIES = ["Teaching", "IT & Support", "Administration", "Marketing"];
+
+async function ensureCareerCategoriesSeeded() {
+  const existing = await db.findAll("careerCategories");
+  if (existing.length) return existing;
+
+  const seeded = [];
+  for (let i = 0; i < DEFAULT_CAREER_CATEGORIES.length; i++) {
+    const category = { id: `ccat${Date.now()}${i}`, name: DEFAULT_CAREER_CATEGORIES[i] };
+    await db.insertOne("careerCategories", category);
+    seeded.push(category);
+  }
+  return seeded;
+}
+
+app.get(
+  "/api/public/career-categories",
+  asyncHandler(async (req, res) => {
+    const categories = await ensureCareerCategoriesSeeded();
+    res.json(sortByName(categories).map((c) => c.name));
+  })
+);
+
+app.get(
+  "/api/career-categories",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    res.json(sortByName(await ensureCareerCategoriesSeeded()));
+  })
+);
+
+app.post(
+  "/api/career-categories",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const name = String((req.body || {}).name || "").trim().slice(0, 40);
+    if (!name) return res.status(400).json({ error: "Enter a division name." });
+    if (name.toLowerCase() === "all") {
+      return res.status(400).json({ error: '"All" is reserved for the built-in "show everything" filter.' });
+    }
+
+    const existing = await ensureCareerCategoriesSeeded();
+    if (existing.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+      return res.status(409).json({ error: "That division already exists." });
+    }
+
+    const category = { id: "ccat" + Date.now(), name };
+    await db.insertOne("careerCategories", category);
+    res.status(201).json(category);
+  })
+);
+
+app.put(
+  "/api/career-categories/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const name = String((req.body || {}).name || "").trim().slice(0, 40);
+    if (!name) return res.status(400).json({ error: "Enter a division name." });
+    if (name.toLowerCase() === "all") {
+      return res.status(400).json({ error: '"All" is reserved for the built-in "show everything" filter.' });
+    }
+
+    await ensureCareerCategoriesSeeded();
+    const existing = await db.findOne("careerCategories", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Division not found" });
+
+    const all = await db.findAll("careerCategories");
+    const clashes = all.some(
+      (c) => c.id !== req.params.id && c.name.toLowerCase() === name.toLowerCase()
+    );
+    if (clashes) return res.status(409).json({ error: "That division already exists." });
+
+    const oldName = existing.name;
+    const updated = await db.updateOne("careerCategories", req.params.id, { name });
+
+    // Cascade the rename so careers keep pointing at a division that exists
+    if (oldName !== name) {
+      const careers = await db.findAll("careers");
+      await Promise.all(
+        careers
+          .filter((c) => c.category === oldName)
+          .map((c) => db.updateOne("careers", c.id, { category: name }))
+      );
+    }
+
+    res.json(updated);
+  })
+);
+
+app.delete(
+  "/api/career-categories/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    await ensureCareerCategoriesSeeded();
+    const existing = await db.findOne("careerCategories", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Division not found" });
+    await db.deleteOne("careerCategories", req.params.id);
     res.status(204).end();
   })
 );
@@ -641,12 +922,8 @@ app.delete(
 // Careers API
 // Same public/admin split as notices and services: public sees only
 // open (active) jobs; the protected admin routes see and manage
-// everything. Category is locked to the four values the public
-// Career page's filter buttons already know about, so they can
-// never drift out of sync.
+// everything.
 // ---------------------------------------------------------
-
-const CAREER_CATEGORIES = ["teaching", "it", "admin", "marketing"];
 
 app.get(
   "/api/public/careers",
@@ -668,22 +945,28 @@ app.post(
   "/api/careers",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const { title, category, location, employmentType, experience, description, status } =
+    const { title, category, location, employmentType, experience, description, status, image } =
       req.body || {};
 
     if (!title || !category || !description) {
       return res.status(400).json({ error: "title, category, and description are required" });
     }
-    if (!CAREER_CATEGORIES.includes(category)) {
+
+    const divisions = await ensureCareerCategoriesSeeded();
+    const matched = divisions.find(
+      (c) => c.name.toLowerCase() === String(category).trim().toLowerCase()
+    );
+    if (!matched) {
       return res
         .status(400)
-        .json({ error: `category must be one of: ${CAREER_CATEGORIES.join(", ")}` });
+        .json({ error: `category must be one of: ${divisions.map((c) => c.name).join(", ")}` });
     }
 
     const newCareer = {
       id: "job" + Date.now(),
       title: String(title).slice(0, 150),
-      category,
+      category: matched.name,
+      image: image || "",
       location: String(location || "Jhapa, Nepal").slice(0, 100),
       employmentType: String(employmentType || "Full-time").slice(0, 60),
       experience: String(experience || "").slice(0, 60),
@@ -700,19 +983,24 @@ app.put(
   "/api/careers/:id",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const { title, category, location, employmentType, experience, description, status } =
+    const { title, category, location, employmentType, experience, description, status, image } =
       req.body || {};
     const changes = {};
 
     if (title !== undefined) changes.title = String(title).slice(0, 150);
     if (category !== undefined) {
-      if (!CAREER_CATEGORIES.includes(category)) {
+      const divisions = await ensureCareerCategoriesSeeded();
+      const matched = divisions.find(
+        (c) => c.name.toLowerCase() === String(category).trim().toLowerCase()
+      );
+      if (!matched) {
         return res
           .status(400)
-          .json({ error: `category must be one of: ${CAREER_CATEGORIES.join(", ")}` });
+          .json({ error: `category must be one of: ${divisions.map((c) => c.name).join(", ")}` });
       }
-      changes.category = category;
+      changes.category = matched.name;
     }
+    if (image !== undefined) changes.image = image;
     if (location !== undefined) changes.location = String(location).slice(0, 100);
     if (employmentType !== undefined) changes.employmentType = String(employmentType).slice(0, 60);
     if (experience !== undefined) changes.experience = String(experience).slice(0, 60);
@@ -729,9 +1017,36 @@ app.delete(
   "/api/careers/:id",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const deleted = await db.deleteOne("careers", req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Career not found" });
+    const existing = await db.findOne("careers", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Career not found" });
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+    await db.deleteOne("careers", req.params.id);
     res.status(204).end();
+  })
+);
+
+app.post(
+  "/api/careers/:id/photo",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("careers", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Career not found" });
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose a photo to upload." });
+    }
+
+    const filename = safeUploadName("career", req.file.mimetype);
+    const imageUrl = await blobStorage.saveUpload(req.file.buffer, "careers", filename);
+
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+
+    const updated = await db.updateOne("careers", req.params.id, { image: imageUrl });
+    res.json({ image: imageUrl, ...updated });
   })
 );
 

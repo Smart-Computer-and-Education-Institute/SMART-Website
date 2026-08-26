@@ -4,6 +4,130 @@
    =================================== */
 
 // ===================================
+// DYNAMIC JOB LISTINGS (from admin panel)
+// ===================================
+let publicCareerCategories = []; // array of category names from /api/public/career-categories
+let allJobs = [];                // holds every open job from the API
+let currentFilter = 'all';       // tracks the active filter-btn
+
+function escapeH(str) {
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : String(str);
+  return d.innerHTML;
+}
+
+function buildJobCard(job) {
+  const tag = (job.category || 'GENERAL').toUpperCase();
+  const meta = [
+    job.location       ? `📍 ${job.location}`       : '',
+    job.employmentType ? `💼 ${job.employmentType}` : '',
+    job.experience     ? `⭐ ${job.experience}`      : '',
+  ].filter(Boolean).map(m => `<span class="meta-item">${escapeH(m)}</span>`).join('');
+
+  const imageInner = job.image
+    ? `<img src="${escapeH(job.image)}" alt="${escapeH(job.title)}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+    : `<div class="job-image-text">${escapeH(job.title)}</div>`;
+
+  const card = document.createElement('div');
+  card.className = 'job-card';
+  card.dataset.category = job.category || '';
+  card.innerHTML = `
+    <div class="pin-icon">📌</div>
+    <div class="job-tag">${escapeH(tag)}</div>
+    <div class="job-image" ${job.image ? 'style="padding:0;overflow:hidden;"' : ''}>
+      ${imageInner}
+    </div>
+    <div class="job-content">
+      <h3 class="job-title">${escapeH(job.title)}</h3>
+      <div class="job-meta">${meta}</div>
+      <p class="job-description">${escapeH(job.description)}</p>
+      <div class="job-footer">
+        <span class="job-type-badge">${escapeH(job.employmentType || 'Full-time')} • Permanent</span>
+        <button class="apply-btn" onclick="openApplication(this)">Apply Now →</button>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+function renderFilteredJobs() {
+  const grid  = document.getElementById('jobsGrid');
+  const empty = document.getElementById('jobsEmpty');
+  if (!grid) return;
+
+  const visible = currentFilter === 'all'
+    ? allJobs
+    : allJobs.filter(j => String(j.category || '').toLowerCase() === currentFilter.toLowerCase());
+
+  grid.innerHTML = '';
+  if (visible.length === 0) {
+    if (empty) empty.style.display = 'block';
+  } else {
+    if (empty) empty.style.display = 'none';
+    visible.forEach(job => grid.appendChild(buildJobCard(job)));
+  }
+}
+
+// Filter jobs by category, highlighting the matching button
+function filterJobs(category, btnElement) {
+  currentFilter = category;
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+
+  if (btnElement) {
+    btnElement.classList.add('active');
+  } else {
+    const matchingBtn = document.querySelector(`.filter-btn[data-filter="${category}"]`);
+    if (matchingBtn) matchingBtn.classList.add('active');
+  }
+
+  renderFilteredJobs();
+}
+
+async function loadPublicCareerCategories() {
+  const filterSection = document.getElementById('filterSection');
+  if (!filterSection) return;
+
+  try {
+    const res = await fetch('/api/public/career-categories');
+    if (!res.ok) return;
+    const cats = await res.json();
+    publicCareerCategories = Array.isArray(cats) ? cats : [];
+
+    // Keep the "All Positions" button, remove any existing category buttons
+    filterSection.querySelectorAll('.filter-btn:not([data-filter="all"])').forEach(b => b.remove());
+
+    publicCareerCategories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn' + (currentFilter.toLowerCase() === cat.toLowerCase() ? ' active' : '');
+      btn.setAttribute('data-filter', cat);
+      btn.textContent = cat;
+      btn.onclick = function() { filterJobs(cat, this); };
+      filterSection.appendChild(btn);
+    });
+  } catch (err) {
+    console.error('Could not load career categories', err);
+  }
+}
+
+function fetchAndRenderJobs() {
+  const grid    = document.getElementById('jobsGrid');
+  const loading = document.getElementById('jobsLoading');
+  const empty   = document.getElementById('jobsEmpty');
+  if (!grid) return; // not on the Career page
+
+  fetch('/api/public/careers')
+    .then(res => res.ok ? res.json() : [])
+    .then(jobs => {
+      allJobs = Array.isArray(jobs) ? jobs : [];
+      if (loading) loading.remove();
+      renderFilteredJobs();
+    })
+    .catch(() => {
+      if (loading) loading.textContent = 'Could not load positions — please refresh.';
+    });
+}
+
+// ===================================
 // GLOBAL VARIABLES
 // ===================================
 let selectedFile = null;
@@ -15,6 +139,7 @@ const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'applicatio
 // INITIALIZATION
 // ===================================
 document.addEventListener('DOMContentLoaded', function() {
+    loadPublicCareerCategories().then(fetchAndRenderJobs);
     initializeEventListeners();
     setupFileUploadDragDrop();
 });
@@ -355,30 +480,6 @@ function showErrorMessage(message) {
     }, 4000);
 }
 
-// ===================================
-// JOB FILTERING
-// ===================================
-function filterJobs(category) {
-    const cards = document.querySelectorAll('.job-card');
-    const buttons = document.querySelectorAll('.filter-btn');
-    
-    // Update active button
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    // Filter cards with animation
-    cards.forEach(card => {
-        if (category === 'all' || card.dataset.category === category) {
-            card.style.animation = 'none';
-            setTimeout(() => {
-                card.style.display = 'block';
-                card.style.animation = 'slideUp 0.3s ease';
-            }, 0);
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
 
 // ===================================
 // UTILITY FUNCTIONS

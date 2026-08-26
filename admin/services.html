@@ -32,6 +32,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Services
       </a>
+      <a href="offers.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Offers
+      </a>
       <a href="careers.html" class="nav-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
         Careers
@@ -200,6 +204,16 @@
           <label for="serviceDesc">Description</label>
           <textarea id="serviceDesc" placeholder="What students will learn from this service"></textarea>
           <span class="form-error-text">Enter a short description.</span>
+        </div>
+
+        <div class="form-field" id="field-servicePhoto">
+          <label>Service photo <span class="hint">optional</span></label>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <img id="preview-servicePhoto" src="" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--color-border);display:none;">
+            <input type="file" id="file-servicePhoto" accept="image/*" style="flex:1;min-width:0;">
+            <button type="button" class="btn btn-secondary btn-sm" id="servicePhotoUploadBtn" onclick="uploadServicePhoto()">Upload</button>
+          </div>
+          <span class="hint" style="display:block;margin-top:4px;">Shown on the service card on the public Services page.</span>
         </div>
 
         <div class="form-row">
