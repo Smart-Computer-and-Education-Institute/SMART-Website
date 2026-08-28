@@ -111,6 +111,9 @@
  
             <div class="modal-body">
                 <form id="applicationForm" onsubmit="handleSubmit(event)">
+                    <!-- Honeypot anti-spam field (hidden visually from humans, filled by bots) -->
+                    <input type="text" name="website" id="hpWebsite" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+
                     <!-- Personal Information Section -->
                     <div class="form-section">
                         <h3 class="section-title">Personal Information</h3>
@@ -178,7 +181,7 @@
                     <!-- CV/Resume Section -->
                     <div class="form-section">
                         <h3 class="section-title">Upload CV / Resume</h3>
-                        <p class="section-description">Upload your CV or Resume (PDF, DOC, DOCX, or TXT format. Max 5MB)</p>
+                        <p class="section-description">Upload your CV or Resume (PDF, DOC, or DOCX format. Max 5MB)</p>
                         
                         <div class="file-upload-wrapper">
                             <div class="file-upload-area" id="fileUploadArea">
@@ -188,8 +191,8 @@
                                     <line x1="12" y1="3" x2="12" y2="15"></line>
                                 </svg>
                                 <p class="upload-text">Drag and drop your CV here, or <span class="upload-link">click to browse</span></p>
-                                <p class="upload-hint">Supported formats: PDF, DOC, DOCX, TXT (Max 5MB)</p>
-                                <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                                <p class="upload-hint">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                                <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display: none;">
                             </div>
                             <div class="file-preview" id="filePreview" style="display: none;">
                                 <div class="file-item">
@@ -219,6 +222,9 @@
                             <label for="terms" class="checkbox-label">I agree to the terms and conditions and privacy policy</label>
                             <span class="form-error" id="termsError"></span>
                         </div>
+
+                        <!-- Turnstile CAPTCHA Widget Placeholder -->
+                        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="light" style="margin: 12px 0;"></div>
                     </div>
  
                     <!-- Form Actions -->
@@ -282,6 +288,7 @@
             </div>
         </div>
     </footer>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="script.js"></script>
     <script src="career.js"></script>
 </body>

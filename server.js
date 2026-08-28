@@ -1051,6 +1051,253 @@ app.post(
 );
 
 // ---------------------------------------------------------
+// Job Applications API & Hardening
+// ---------------------------------------------------------
+
+const ALLOWED_CV_TYPES = {
+  "application/pdf": ".pdf",
+  "application/msword": ".doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+};
+
+const cvMemoryUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  fileFilter: (req, file, cb) => {
+    if (!ALLOWED_CV_TYPES[file.mimetype]) {
+      return cb(new Error("Only PDF, DOC, or DOCX documents are allowed."));
+    }
+    cb(null, true);
+  },
+}).single("cvFile"); // matches formData.append("cvFile", file)
+
+function handleCvUpload(req, res, next) {
+  cvMemoryUpload(req, res, (err) => {
+    if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ error: "CV file is too large. Max size is 5MB." });
+    }
+    if (err) {
+      return res.status(400).json({ error: err.message || "CV upload failed." });
+    }
+    next();
+  });
+}
+
+const applicationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // max 5 submissions per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many applications submitted, please try again later." },
+});
+
+async function verifyTurnstileToken(token, remoteIp) {
+  const secretKey = process.env.TURNSTILE_SECRET_KEY;
+  if (!secretKey) {
+    // Optional fallback when running locally or without Turnstile keys configured
+    console.warn("TURNSTILE_SECRET_KEY is not configured; skipping CAPTCHA verification.");
+    return true;
+  }
+  if (!token) {
+    return false;
+  }
+  try {
+    const formData = new URLSearchParams();
+    formData.append("secret", secretKey);
+    formData.append("response", token);
+    if (remoteIp) formData.append("remoteip", remoteIp);
+
+    const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: formData,
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    });
+    const outcome = await verifyRes.json();
+    return !!outcome.success;
+  } catch (err) {
+    console.error("Turnstile verification error:", err);
+    return false;
+  }
+}
+
+app.post(
+  "/api/public/applications",
+  applicationLimiter,
+  handleCvUpload,
+  asyncHandler(async (req, res) => {
+    const {
+      fullName,
+      email,
+      phone,
+      experience,
+      currentPosition,
+      education,
+      field,
+      skills,
+      coverLetter,
+      jobTitle,
+      careerId,
+      website, // Honeypot field
+      cfTurnstileToken,
+    } = req.body || {};
+
+    // 1. Honeypot check: If bot filled the hidden 'website' field, silently succeed without storing
+    if (website && String(website).trim() !== "") {
+      return res.status(200).json({ success: true, message: "Application submitted successfully" });
+    }
+
+    // 2. Turnstile CAPTCHA verification
+    const remoteIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const isCaptchaValid = await verifyTurnstileToken(
+      cfTurnstileToken || req.body["cf-turnstile-response"],
+      remoteIp
+    );
+    if (!isCaptchaValid) {
+      return res.status(400).json({ error: "CAPTCHA verification failed. Please try again." });
+    }
+
+    // 3. Required field validation
+    if (!fullName || !email || !phone || (!jobTitle && !careerId)) {
+      return res.status(400).json({ error: "Full name, email, phone number, and job title are required." });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Please upload your CV/Resume (PDF, DOC, or DOCX)." });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanJobTitle = String(jobTitle || "").trim();
+    const cleanCareerId = String(careerId || "").trim();
+
+    // 4. Duplicate guard: check for same email + position within the last 24 hours
+    const existingApps = await db.findAll("applications");
+    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    const isDuplicate = existingApps.some((app) => {
+      const matchEmail = String(app.email || "").toLowerCase() === cleanEmail;
+      const matchJob =
+        (cleanCareerId && app.careerId === cleanCareerId) ||
+        (cleanJobTitle && app.jobTitle === cleanJobTitle);
+      const appTime = new Date(app.createdAt || 0).getTime();
+      return matchEmail && matchJob && appTime > oneDayAgo;
+    });
+
+    if (isDuplicate) {
+      return res.status(409).json({
+        error: "You've already applied for this position recently. We have received your application!",
+      });
+    }
+
+    // 5. Save CV upload to dedicated applications storage folder
+    const ext = ALLOWED_CV_TYPES[req.file.mimetype] || ".pdf";
+    const filename = `cv-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+    const cvUrl = await blobStorage.saveUpload(req.file.buffer, "applications", filename);
+
+    // 6. Insert new application record
+    const newApplication = {
+      id: "app" + Date.now(),
+      fullName: String(fullName).slice(0, 150),
+      email: cleanEmail.slice(0, 150),
+      phone: String(phone).slice(0, 50),
+      experience: String(experience || "").slice(0, 50),
+      currentPosition: String(currentPosition || "").slice(0, 150),
+      education: String(education || "").slice(0, 100),
+      field: String(field || "").slice(0, 150),
+      skills: String(skills || "").slice(0, 500),
+      coverLetter: String(coverLetter || "").slice(0, 4000),
+      jobTitle: cleanJobTitle.slice(0, 150),
+      careerId: cleanCareerId.slice(0, 100),
+      cvUrl,
+      cvOriginalName: String(req.file.originalname || "").slice(0, 200),
+      status: "pending", // "pending" | "reviewed" | "shortlisted" | "rejected"
+      createdAt: new Date().toISOString(),
+    };
+
+    await db.insertOne("applications", newApplication);
+    res.status(201).json({
+      success: true,
+      id: newApplication.id,
+      message: "Application submitted successfully",
+    });
+  })
+);
+
+app.get(
+  "/api/applications",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const apps = await db.findAll("applications");
+    apps.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    res.json(apps);
+  })
+);
+
+app.get(
+  "/api/applications/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const appItem = await db.findOne("applications", req.params.id);
+    if (!appItem) return res.status(404).json({ error: "Application not found" });
+    res.json(appItem);
+  })
+);
+
+app.put(
+  "/api/applications/:id/status",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { status } = req.body || {};
+    const validStatuses = ["pending", "reviewed", "shortlisted", "rejected"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: `status must be one of: ${validStatuses.join(", ")}` });
+    }
+
+    const updated = await db.updateOne("applications", req.params.id, { status });
+    if (!updated) return res.status(404).json({ error: "Application not found" });
+    res.json(updated);
+  })
+);
+
+app.delete(
+  "/api/applications/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("applications", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Application not found" });
+    if (existing.cvUrl) {
+      await blobStorage.deleteUpload(existing.cvUrl);
+    }
+    await db.deleteOne("applications", req.params.id);
+    res.status(204).end();
+  })
+);
+
+app.post(
+  "/api/applications/cleanup",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const rawDays = req.body && req.body.days !== undefined ? parseInt(req.body.days, 10) : 30;
+    const days = isNaN(rawDays) || rawDays < 0 ? 30 : rawDays;
+    const cutoff = days === 0 ? Date.now() + 1000 : Date.now() - days * 24 * 60 * 60 * 1000;
+
+    const allApps = await db.findAll("applications");
+    const toDelete = allApps.filter(
+      (a) => a.status === "rejected" && new Date(a.createdAt || 0).getTime() < cutoff
+    );
+
+    let deletedCount = 0;
+    for (const item of toDelete) {
+      if (item.cvUrl) {
+        await blobStorage.deleteUpload(item.cvUrl);
+      }
+      await db.deleteOne("applications", item.id);
+      deletedCount++;
+    }
+
+    res.json({ success: true, deletedCount, days });
+  })
+);
+
+// ---------------------------------------------------------
 // Photo uploads (Vercel Blob in production, local disk in dev)
 //
 // Uploaded files are read into memory (not written straight to disk)

@@ -133,7 +133,11 @@ function fetchAndRenderJobs() {
 let selectedFile = null;
 let currentJobTitle = '';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+const ALLOWED_FILE_TYPES = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+];
 
 // ===================================
 // INITIALIZATION
@@ -243,9 +247,13 @@ function validateAndSetFile(file) {
         return;
     }
 
-    // Check file type
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-        errorElement.textContent = 'Invalid file format. Please upload PDF, DOC, DOCX, or TXT file.';
+    // Check file type / extension
+    const fileName = file.name.toLowerCase();
+    const hasValidExt = fileName.endsWith('.pdf') || fileName.endsWith('.doc') || fileName.endsWith('.docx');
+    const hasValidMime = ALLOWED_FILE_TYPES.includes(file.type);
+
+    if (!hasValidExt && !hasValidMime) {
+        errorElement.textContent = 'Invalid file format. Please upload a PDF, DOC, or DOCX document.';
         clearFileInput();
         return;
     }
@@ -292,7 +300,8 @@ function formatFileSize(bytes) {
 // APPLICATION MODAL
 // ===================================
 function openApplication(buttonElement) {
-    const jobTitle = buttonElement.closest('.job-card').querySelector('.job-title').textContent;
+    const jobCard = buttonElement.closest('.job-card');
+    const jobTitle = jobCard ? jobCard.querySelector('.job-title').textContent : '';
     currentJobTitle = jobTitle;
     document.getElementById('modalJobTitle').textContent = `Apply for ${jobTitle}`;
     document.getElementById('applicationModal').classList.add('show');
@@ -391,62 +400,77 @@ function handleSubmit(event) {
 
     // Collect form data
     const formData = new FormData();
-    formData.append('fullName', document.getElementById('fullName').value);
-    formData.append('email', document.getElementById('email').value);
-    formData.append('phone', document.getElementById('phone').value);
+    formData.append('fullName', document.getElementById('fullName').value.trim());
+    formData.append('email', document.getElementById('email').value.trim());
+    formData.append('phone', document.getElementById('phone').value.trim());
     formData.append('experience', document.getElementById('experience').value);
-    formData.append('currentPosition', document.getElementById('currentPosition').value);
+    formData.append('currentPosition', document.getElementById('currentPosition').value.trim());
     formData.append('education', document.getElementById('education').value);
-    formData.append('field', document.getElementById('field').value);
-    formData.append('skills', document.getElementById('skills').value);
-    formData.append('coverLetter', document.getElementById('coverLetter').value);
+    formData.append('field', document.getElementById('field').value.trim());
+    formData.append('skills', document.getElementById('skills').value.trim());
+    formData.append('coverLetter', document.getElementById('coverLetter').value.trim());
     formData.append('jobTitle', currentJobTitle);
+
+    // Honeypot field
+    const hp = document.getElementById('hpWebsite');
+    if (hp && hp.value) {
+        formData.append('website', hp.value);
+    }
     
     if (selectedFile) {
         formData.append('cvFile', selectedFile);
     }
 
-    // Simulate form submission (replace with actual API call)
     submitApplication(formData);
 }
 
-function submitApplication(formData) {
+async function submitApplication(formData) {
     // Show loading state
     const submitBtn = document.querySelector('.submit-btn');
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
 
-    // Simulate API delay
-    setTimeout(() => {
+    // Turnstile token if present
+    const turnstileToken = window.turnstile
+        ? window.turnstile.getResponse()
+        : (document.querySelector('[name="cf-turnstile-response"]')?.value || '');
+    if (turnstileToken) {
+        formData.append('cfTurnstileToken', turnstileToken);
+    }
+
+    try {
+        const res = await fetch('/api/public/applications', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            const errorMsg = data.error || 'Failed to submit application. Please try again.';
+            showErrorMessage(errorMsg);
+            if (window.turnstile) {
+                try { window.turnstile.reset(); } catch (e) {}
+            }
+            return;
+        }
+
         const fullName = formData.get('fullName');
         const email = formData.get('email');
         const jobTitle = formData.get('jobTitle');
 
-        // Show success message
         showSuccessMessage(fullName, email, jobTitle);
-
-        // Reset button state
+        closeApplication();
+    } catch (err) {
+        showErrorMessage('Network error — please check your connection and try again.');
+        if (window.turnstile) {
+            try { window.turnstile.reset(); } catch (e) {}
+        }
+    } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
-
-        // Close modal
-        closeApplication();
-
-        // Log application data (for testing)
-        console.log('Application submitted:', {
-            fullName: formData.get('fullName'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            experience: formData.get('experience'),
-            education: formData.get('education'),
-            jobTitle: formData.get('jobTitle'),
-            file: selectedFile ? selectedFile.name : 'No file'
-        });
-
-        // TODO: Send to backend API
-        // Example: fetch('/api/applications', { method: 'POST', body: formData })
-    }, 1500);
+    }
 }
 
 // ===================================
