@@ -14,6 +14,7 @@ function nl2br(str) {
   return (str || "").replace(/\n/g, "<br>");
 }
 
+
 const tilts = ["-1.2deg", "0.8deg", "-0.6deg", "1.4deg", "-1deg", "1.1deg"];
 
 async function loadPublicOffers() {
