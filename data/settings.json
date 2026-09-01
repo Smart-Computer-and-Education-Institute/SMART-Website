@@ -1,5 +1,18 @@
 [
   {
+    "id": "sitePopup",
+    "enabled": true,
+    "source": "notice",
+    "refId": "n1787678783961",
+    "title": "",
+    "message": "",
+    "image": "",
+    "ctaLabel": "Learn more",
+    "ctaLink": "hello.com",
+    "frequency": "everyLoad",
+    "updatedAt": "2026-08-30T16:05:18.373Z"
+  },
+  {
     "id": "contact",
     "address": "",
     "phones": [],

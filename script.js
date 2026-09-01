@@ -169,10 +169,47 @@ function applyAboutPhotos(data) {
   });
 }
 
-if (document.querySelector("[data-about]") || document.querySelector("[data-about-img]")) {
+function applyCustomAboutSections(data) {
+  const container = document.getElementById("customAboutSections");
+  if (!container) return;
+
+  const sections = Array.isArray(data.customSections) ? data.customSections : [];
+  if (!sections.length) {
+    container.innerHTML = "";
+    return;
+  }
+
+  // Render each custom section using the same .about-grid styling
+  container.innerHTML = sections
+    .map((sec, idx) => {
+      // Fixed section 4 ended on reverse, so custom section 0 is regular (text left, photo right), section 1 reverse, etc.
+      const isReverse = idx % 2 === 1;
+      const photoHtml = sec.photo
+        ? `<div class="about-img"><img src="${escapeAboutHtml(sec.photo)}" alt="${escapeAboutHtml(sec.heading)}"></div>`
+        : "";
+      const textHtml = `
+        <div class="about-text" style="${!sec.photo ? 'flex: 1; width: 100%; max-width: 100%;' : ''}">
+          <h2>${escapeAboutHtml(sec.heading)}</h2>
+          <p>${escapeAboutHtml(sec.text || "").replace(/\n/g, "<br>")}</p>
+        </div>`;
+
+      if (isReverse && sec.photo) {
+        return `<div class="about-grid reverse" style="margin-top: 48px;">${photoHtml}${textHtml}</div>`;
+      } else {
+        return `<div class="about-grid" style="margin-top: 48px;">${textHtml}${photoHtml}</div>`;
+      }
+    })
+    .join("");
+}
+
+if (document.querySelector("[data-about]") || document.querySelector("[data-about-img]") || document.getElementById("customAboutSections")) {
   fetch("/api/public/about")
     .then((res) => res.json())
-    .then((data) => { applyAboutContent(data); applyAboutPhotos(data); })
+    .then((data) => {
+      applyAboutContent(data);
+      applyAboutPhotos(data);
+      applyCustomAboutSections(data);
+    })
     .catch(() => {}); // silently fall back to hardcoded HTML if fetch fails
 }
 

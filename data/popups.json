@@ -1,0 +1,71 @@
+[
+  {
+    "id": "pop1788230503191",
+    "name": "3",
+    "enabled": true,
+    "priority": 10,
+    "source": "notice",
+    "refId": "n1787678783961",
+    "title": "",
+    "message": "",
+    "image": "",
+    "ctaLabel": "Learn more",
+    "ctaLink": "hello.com",
+    "frequency": "everyLoad",
+    "schedule": {
+      "startDate": null,
+      "endDate": null,
+      "daysOfWeek": [],
+      "startTime": null,
+      "endTime": null
+    },
+    "createdAt": "2026-09-01T02:41:43.191Z",
+    "updatedAt": "2026-09-01T02:42:12.524Z"
+  },
+  {
+    "id": "pop1788228529171",
+    "name": "1",
+    "enabled": true,
+    "priority": 20,
+    "source": "offer",
+    "refId": "offer1788105714970",
+    "title": "",
+    "message": "",
+    "image": "",
+    "ctaLabel": "Learn more",
+    "ctaLink": "hello.com",
+    "frequency": "everyLoad",
+    "schedule": {
+      "startDate": "2026-08-31",
+      "endDate": null,
+      "daysOfWeek": [],
+      "startTime": null,
+      "endTime": null
+    },
+    "createdAt": "2026-09-01T02:08:49.171Z",
+    "updatedAt": "2026-09-01T02:42:12.523Z"
+  },
+  {
+    "id": "pop1788228494162",
+    "name": "2",
+    "enabled": true,
+    "priority": 30,
+    "source": "custom",
+    "refId": null,
+    "title": "asdf asd",
+    "message": "sfasdfasd",
+    "image": "",
+    "ctaLabel": "Learn more",
+    "ctaLink": "hello.com",
+    "frequency": "everyLoad",
+    "schedule": {
+      "startDate": null,
+      "endDate": null,
+      "daysOfWeek": [],
+      "startTime": null,
+      "endTime": null
+    },
+    "createdAt": "2026-09-01T02:08:14.162Z",
+    "updatedAt": "2026-09-01T02:42:11.567Z"
+  }
+]

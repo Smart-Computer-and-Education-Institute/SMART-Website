@@ -260,6 +260,407 @@ app.put(
 );
 
 // ---------------------------------------------------------
+// Popups API (multi-record collection with scheduling & priority)
+// Unlike the singleton Contact Settings, Popups supports multiple
+// independent, schedulable announcement & promo dialogs.
+// Public GET /api/public/site-popups returns an array of currently
+// active, scheduled, and resolved popups sorted by priority ascending.
+// Admin routes allow full CRUD management with date, time, and weekday scheduling.
+// ---------------------------------------------------------
+
+function isPopupActiveNow(popup, now = new Date()) {
+  if (!popup.enabled) return false;
+
+  const schedule = popup.schedule || {};
+
+  // 1. Date range check (YYYY-MM-DD)
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+
+  if (schedule.startDate && todayStr < schedule.startDate) return false;
+  if (schedule.endDate && todayStr > schedule.endDate) return false;
+
+  // 2. Day of week check (0=Sun, 1=Mon, ..., 6=Sat)
+  if (Array.isArray(schedule.daysOfWeek) && schedule.daysOfWeek.length > 0) {
+    const currentDay = now.getDay();
+    if (!schedule.daysOfWeek.includes(currentDay)) return false;
+  }
+
+  // 3. Time of day check (HH:MM 24h)
+  if (schedule.startTime || schedule.endTime) {
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const currentTimeStr = `${hours}:${minutes}`;
+
+    if (schedule.startTime && currentTimeStr < schedule.startTime) return false;
+    if (schedule.endTime && currentTimeStr > schedule.endTime) return false;
+  }
+
+  return true;
+}
+
+async function parseAndValidatePopup(body = {}, isUpdate = false, existing = null) {
+  const {
+    name,
+    enabled,
+    priority,
+    source = "custom",
+    refId,
+    title,
+    message,
+    image,
+    ctaLabel,
+    ctaLink,
+    frequency,
+    schedule,
+  } = body;
+
+  const rawName = name !== undefined ? String(name).trim() : (existing ? existing.name : "");
+  if (!rawName) {
+    return { ok: false, error: "Popup name is required." };
+  }
+
+  const ALLOWED_SOURCES = ["custom", "offer", "notice"];
+  const popupSource = source !== undefined ? source : (existing ? existing.source : "custom");
+  if (!ALLOWED_SOURCES.includes(popupSource)) {
+    return { ok: false, error: "Invalid source. Allowed values: custom, offer, notice." };
+  }
+
+  const ALLOWED_FREQUENCIES = ["everyLoad", "oncePerSession", "oncePerDay"];
+  const popupFrequency = frequency !== undefined ? frequency : (existing ? existing.frequency : "everyLoad");
+  if (!ALLOWED_FREQUENCIES.includes(popupFrequency)) {
+    return { ok: false, error: "Invalid frequency. Allowed values: everyLoad, oncePerSession, oncePerDay." };
+  }
+
+  let resolvedRefId = null;
+  if (popupSource === "offer" || popupSource === "notice") {
+    const targetRefId = refId !== undefined ? refId : (existing ? existing.refId : null);
+    if (!targetRefId) {
+      return { ok: false, error: `refId is required when source is "${popupSource}".` };
+    }
+    const collection = popupSource === "offer" ? "offers" : "notices";
+    const target = await db.findOne(collection, String(targetRefId));
+    if (!target) {
+      return { ok: false, error: `Referenced ${popupSource} not found.` };
+    }
+    resolvedRefId = String(targetRefId);
+  }
+
+  let parsedPriority = 10;
+  if (priority !== undefined) {
+    const num = parseInt(priority, 10);
+    parsedPriority = isNaN(num) ? 10 : num;
+  } else if (existing && typeof existing.priority === "number") {
+    parsedPriority = existing.priority;
+  }
+
+  const rawSchedule = schedule || (existing ? existing.schedule : {}) || {};
+  const parsedSchedule = {
+    startDate: null,
+    endDate: null,
+    daysOfWeek: [],
+    startTime: null,
+    endTime: null,
+  };
+
+  const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+  if (rawSchedule.startDate) {
+    const sDate = String(rawSchedule.startDate).trim();
+    if (!DATE_REGEX.test(sDate) || isNaN(Date.parse(sDate))) {
+      return { ok: false, error: "schedule.startDate must be in YYYY-MM-DD format." };
+    }
+    parsedSchedule.startDate = sDate;
+  }
+
+  if (rawSchedule.endDate) {
+    const eDate = String(rawSchedule.endDate).trim();
+    if (!DATE_REGEX.test(eDate) || isNaN(Date.parse(eDate))) {
+      return { ok: false, error: "schedule.endDate must be in YYYY-MM-DD format." };
+    }
+    parsedSchedule.endDate = eDate;
+  }
+
+  if (parsedSchedule.startDate && parsedSchedule.endDate) {
+    if (parsedSchedule.startDate > parsedSchedule.endDate) {
+      return { ok: false, error: "schedule.startDate must be less than or equal to endDate." };
+    }
+  }
+
+  if (rawSchedule.daysOfWeek !== undefined && rawSchedule.daysOfWeek !== null) {
+    if (!Array.isArray(rawSchedule.daysOfWeek)) {
+      return { ok: false, error: "schedule.daysOfWeek must be an array." };
+    }
+    for (const d of rawSchedule.daysOfWeek) {
+      const num = Number(d);
+      if (!Number.isInteger(num) || num < 0 || num > 6) {
+        return { ok: false, error: "schedule.daysOfWeek entries must be numbers between 0 and 6." };
+      }
+    }
+    parsedSchedule.daysOfWeek = Array.from(new Set(rawSchedule.daysOfWeek.map(Number))).sort((a, b) => a - b);
+  }
+
+  const TIME_REGEX = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+  if (rawSchedule.startTime) {
+    const sTime = String(rawSchedule.startTime).trim();
+    if (!TIME_REGEX.test(sTime)) {
+      return { ok: false, error: "schedule.startTime must be a valid HH:MM time." };
+    }
+    parsedSchedule.startTime = sTime;
+  }
+
+  if (rawSchedule.endTime) {
+    const eTime = String(rawSchedule.endTime).trim();
+    if (!TIME_REGEX.test(eTime)) {
+      return { ok: false, error: "schedule.endTime must be a valid HH:MM time." };
+    }
+    parsedSchedule.endTime = eTime;
+  }
+
+  if (parsedSchedule.startTime && parsedSchedule.endTime) {
+    if (parsedSchedule.startTime >= parsedSchedule.endTime) {
+      return { ok: false, error: "schedule.startTime must be before endTime when both are set." };
+    }
+  }
+
+  const data = {
+    name: rawName.slice(0, 100),
+    enabled: enabled !== undefined ? Boolean(enabled) : (existing ? Boolean(existing.enabled) : false),
+    priority: parsedPriority,
+    source: popupSource,
+    refId: resolvedRefId,
+    title: title !== undefined ? String(title).slice(0, 100) : (existing ? (existing.title || "") : ""),
+    message: message !== undefined ? String(message).slice(0, 500) : (existing ? (existing.message || "") : ""),
+    image: image !== undefined ? String(image) : (existing ? (existing.image || "") : ""),
+    ctaLabel: ctaLabel !== undefined ? String(ctaLabel).slice(0, 40) : (existing ? (existing.ctaLabel || "Learn more") : "Learn more"),
+    ctaLink: ctaLink !== undefined ? String(ctaLink).slice(0, 500) : (existing ? (existing.ctaLink || "") : ""),
+    frequency: popupFrequency,
+    schedule: parsedSchedule,
+  };
+
+  return { ok: true, data };
+}
+
+app.get(
+  "/api/public/site-popups",
+  asyncHandler(async (req, res) => {
+    const allPopups = await db.findAll("popups");
+    const now = new Date();
+    const qualifying = [];
+
+    for (const p of allPopups) {
+      if (!isPopupActiveNow(p, now)) continue;
+
+      if (p.source === "offer") {
+        if (!p.refId) continue;
+        const offer = await db.findOne("offers", p.refId);
+        if (!offer) continue; // Referenced offer was deleted -> exclude popup
+        qualifying.push({
+          id: p.id,
+          name: p.name || "",
+          priority: typeof p.priority === "number" ? p.priority : 10,
+          source: "offer",
+          refId: p.refId,
+          title: offer.title || "",
+          message: offer.description || "",
+          image: offer.image || "",
+          tag: offer.tag || "",
+          ctaLabel: p.ctaLabel || "Learn more",
+          ctaLink: p.ctaLink || "",
+          frequency: p.frequency || "everyLoad",
+        });
+      } else if (p.source === "notice") {
+        if (!p.refId) continue;
+        const notice = await db.findOne("notices", p.refId);
+        if (!notice) continue; // Referenced notice was deleted -> exclude popup
+        qualifying.push({
+          id: p.id,
+          name: p.name || "",
+          priority: typeof p.priority === "number" ? p.priority : 10,
+          source: "notice",
+          refId: p.refId,
+          title: notice.title || "",
+          message: notice.content || "",
+          image: "",
+          tag: "Notice",
+          ctaLabel: p.ctaLabel || "Learn more",
+          ctaLink: p.ctaLink || "",
+          frequency: p.frequency || "everyLoad",
+        });
+      } else {
+        // "custom"
+        qualifying.push({
+          id: p.id,
+          name: p.name || "",
+          priority: typeof p.priority === "number" ? p.priority : 10,
+          source: "custom",
+          title: p.title || "",
+          message: p.message || "",
+          image: p.image || "",
+          tag: "",
+          ctaLabel: p.ctaLabel || "Learn more",
+          ctaLink: p.ctaLink || "",
+          frequency: p.frequency || "everyLoad",
+        });
+      }
+    }
+
+    qualifying.sort((a, b) => (a.priority ?? 10) - (b.priority ?? 10));
+    res.json(qualifying);
+  })
+);
+
+app.get(
+  "/api/popups",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const popups = await db.findAll("popups");
+    popups.sort((a, b) => (a.priority ?? 10) - (b.priority ?? 10));
+    res.json(popups);
+  })
+);
+
+app.post(
+  "/api/popups",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = await parseAndValidatePopup(req.body);
+    if (!parsed.ok) {
+      return res.status(400).json({ error: parsed.error });
+    }
+
+    const allPopups = await db.findAll("popups");
+    const maxPriority = allPopups.reduce(
+      (max, p) => Math.max(max, typeof p.priority === "number" ? p.priority : 0),
+      0
+    );
+
+    const newPopup = {
+      id: "pop" + Date.now(),
+      ...parsed.data,
+      priority: maxPriority + 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.insertOne("popups", newPopup);
+    res.status(201).json(newPopup);
+  })
+);
+
+app.post(
+  "/api/popups/:id/reorder",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { direction } = req.body || {};
+    if (direction !== "up" && direction !== "down") {
+      return res.status(400).json({ error: 'Direction must be "up" or "down".' });
+    }
+
+    const popups = await db.findAll("popups");
+    popups.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+
+    const idx = popups.findIndex((p) => p.id === req.params.id);
+    if (idx === -1) {
+      return res.status(404).json({ error: "Popup not found." });
+    }
+
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= popups.length) {
+      return res.json(popups);
+    }
+
+    // Normalize and swap priority values
+    popups.forEach((p, i) => {
+      p.priority = (i + 1) * 10;
+    });
+
+    const temp = popups[idx].priority;
+    popups[idx].priority = popups[targetIdx].priority;
+    popups[targetIdx].priority = temp;
+
+    await Promise.all([
+      db.updateOne("popups", popups[idx].id, {
+        priority: popups[idx].priority,
+        updatedAt: new Date().toISOString(),
+      }),
+      db.updateOne("popups", popups[targetIdx].id, {
+        priority: popups[targetIdx].priority,
+        updatedAt: new Date().toISOString(),
+      }),
+    ]);
+
+    popups.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+    res.json(popups);
+  })
+);
+
+app.put(
+  "/api/popups/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("popups", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Popup not found" });
+
+    const parsed = await parseAndValidatePopup(req.body, true, existing);
+    if (!parsed.ok) {
+      return res.status(400).json({ error: parsed.error });
+    }
+
+    const changes = {
+      ...parsed.data,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const updated = await db.updateOne("popups", req.params.id, changes);
+    res.json(updated);
+  })
+);
+
+app.delete(
+  "/api/popups/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("popups", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Popup not found" });
+
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+
+    await db.deleteOne("popups", req.params.id);
+    res.status(204).end();
+  })
+);
+
+app.post(
+  "/api/popups/:id/photo",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("popups", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Popup not found" });
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose a photo to upload." });
+    }
+
+    const filename = safeUploadName("popup", req.file.mimetype);
+    const imageUrl = await blobStorage.saveUpload(req.file.buffer, "popups", filename);
+
+    if (existing.image) {
+      await blobStorage.deleteUpload(existing.image);
+    }
+
+    const updated = await db.updateOne("popups", req.params.id, {
+      image: imageUrl,
+      updatedAt: new Date().toISOString(),
+    });
+    res.json({ image: imageUrl, ...updated });
+  })
+);
+
+// ---------------------------------------------------------
 // About Page API (singleton document — one editable copy of every
 // text block on the public About Us page). Mirrors the Settings API
 // pattern exactly: one fixed document id ("about"), a DEFAULT_ABOUT
@@ -296,11 +697,17 @@ const DEFAULT_ABOUT = {
   whyChooseUsHeading: "Why Choose Us",
   whyChooseUsText:
     "With 12+ years of teaching experience, flexible shift timings, hands-on lab access, and dedicated job placement assistance, we ensure every student transforms learning into success.",
+  customSections: [],
 };
 
 async function getAboutContent() {
   const existing = await db.findOne("about", "about");
-  return existing || DEFAULT_ABOUT;
+  const content = existing ? { ...DEFAULT_ABOUT, ...existing } : { ...DEFAULT_ABOUT };
+  if (!Array.isArray(content.customSections)) {
+    content.customSections = [];
+  }
+  content.customSections.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  return content;
 }
 
 app.get(
@@ -383,6 +790,145 @@ app.post(
       : await db.insertOne("about", { ...DEFAULT_ABOUT, [slot]: imageUrl, id: "about" });
 
     res.json({ [slot]: imageUrl, ...updated });
+  })
+);
+
+// ---------------------------------------------------------
+// Custom Sections for About Page
+// Allows admins to dynamically add, edit, reorder, and remove
+// arbitrary sections beyond the fixed 5 sections.
+// ---------------------------------------------------------
+
+app.get(
+  "/api/about/sections",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const about = await getAboutContent();
+    res.json(about.customSections || []);
+  })
+);
+
+app.post(
+  "/api/about/sections",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { heading, text } = req.body || {};
+    if (!heading || !String(heading).trim()) {
+      return res.status(400).json({ error: "Section heading is required." });
+    }
+
+    const about = await getAboutContent();
+    const sections = Array.isArray(about.customSections) ? about.customSections.slice() : [];
+    const maxOrder = sections.reduce(
+      (max, s) => Math.max(max, typeof s.order === "number" ? s.order : 0),
+      0
+    );
+
+    const newSection = {
+      id: "sec" + Date.now(),
+      heading: String(heading).trim().slice(0, 200),
+      text: text ? String(text).slice(0, 5000) : "",
+      photo: "",
+      order: maxOrder + 1,
+    };
+
+    sections.push(newSection);
+
+    const existing = await db.findOne("about", "about");
+    if (existing) {
+      await db.updateOne("about", "about", { customSections: sections });
+    } else {
+      await db.insertOne("about", { ...DEFAULT_ABOUT, customSections: sections, id: "about" });
+    }
+
+    res.status(201).json(newSection);
+  })
+);
+
+app.put(
+  "/api/about/sections/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { heading, text, order } = req.body || {};
+    const about = await getAboutContent();
+    const sections = Array.isArray(about.customSections) ? about.customSections.slice() : [];
+    const idx = sections.findIndex((s) => s.id === req.params.id);
+
+    if (idx === -1) {
+      return res.status(404).json({ error: "Section not found." });
+    }
+
+    if (heading !== undefined) {
+      if (!String(heading).trim()) {
+        return res.status(400).json({ error: "Heading cannot be empty." });
+      }
+      sections[idx].heading = String(heading).trim().slice(0, 200);
+    }
+    if (text !== undefined) {
+      sections[idx].text = String(text).slice(0, 5000);
+    }
+    if (order !== undefined) {
+      const num = parseInt(order, 10);
+      if (!isNaN(num)) {
+        sections[idx].order = num;
+      }
+    }
+
+    await db.updateOne("about", "about", { customSections: sections });
+    res.json(sections[idx]);
+  })
+);
+
+app.delete(
+  "/api/about/sections/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const about = await getAboutContent();
+    const sections = Array.isArray(about.customSections) ? about.customSections.slice() : [];
+    const idx = sections.findIndex((s) => s.id === req.params.id);
+
+    if (idx === -1) {
+      return res.status(404).json({ error: "Section not found." });
+    }
+
+    const [removed] = sections.splice(idx, 1);
+    if (removed.photo) {
+      await blobStorage.deleteUpload(removed.photo);
+    }
+
+    await db.updateOne("about", "about", { customSections: sections });
+    res.status(204).end();
+  })
+);
+
+app.post(
+  "/api/about/sections/:id/photo",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    const about = await getAboutContent();
+    const sections = Array.isArray(about.customSections) ? about.customSections.slice() : [];
+    const idx = sections.findIndex((s) => s.id === req.params.id);
+
+    if (idx === -1) {
+      return res.status(404).json({ error: "Section not found." });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose a photo to upload." });
+    }
+
+    const filename = safeUploadName("about-sec", req.file.mimetype);
+    const photoUrl = await blobStorage.saveUpload(req.file.buffer, "about-sections", filename);
+
+    if (sections[idx].photo) {
+      await blobStorage.deleteUpload(sections[idx].photo);
+    }
+
+    sections[idx].photo = photoUrl;
+    await db.updateOne("about", "about", { customSections: sections });
+
+    res.json({ photo: photoUrl, ...sections[idx] });
   })
 );
 
