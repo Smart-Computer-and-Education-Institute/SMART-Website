@@ -9,11 +9,32 @@
 
 const settingsForm = document.getElementById("settingsForm");
 const settingsSaveBtn = document.getElementById("settingsSaveBtn");
+const weeklyHoursGrid = document.getElementById("weeklyHoursGrid");
 
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str == null ? "" : str;
   return div.innerHTML;
+}
+
+function updateWeeklyHourRowState(row) {
+  const checkbox = row.querySelector(".hour-closed");
+  const openInput = row.querySelector(".hour-open");
+  const closeInput = row.querySelector(".hour-close");
+  const isClosed = checkbox.checked;
+
+  openInput.disabled = isClosed;
+  closeInput.disabled = isClosed;
+  row.classList.toggle("is-closed", isClosed);
+}
+
+if (weeklyHoursGrid) {
+  weeklyHoursGrid.addEventListener("change", (e) => {
+    if (e.target.classList.contains("hour-closed")) {
+      const row = e.target.closest(".weekly-hours-row");
+      if (row) updateWeeklyHourRowState(row);
+    }
+  });
 }
 
 async function loadSettings() {
@@ -27,16 +48,46 @@ async function loadSettings() {
   document.getElementById("settingsWhatsapp").value = settings.whatsapp || "";
   document.getElementById("settingsMap").value = settings.mapEmbedUrl || "";
   document.getElementById("settingsMapDirections").value = settings.mapDirectionsUrl || "";
+
+  if (settings.weeklyHours && weeklyHoursGrid) {
+    document.querySelectorAll(".weekly-hours-row").forEach((row) => {
+      const day = row.getAttribute("data-day");
+      const config = settings.weeklyHours[day];
+      if (config) {
+        const openInput = row.querySelector(".hour-open");
+        const closeInput = row.querySelector(".hour-close");
+        const closedCheckbox = row.querySelector(".hour-closed");
+
+        if (openInput && config.open) openInput.value = config.open;
+        if (closeInput && config.close) closeInput.value = config.close;
+        if (closedCheckbox) closedCheckbox.checked = Boolean(config.closed);
+
+        updateWeeklyHourRowState(row);
+      }
+    });
+  }
 }
 
 settingsForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  const weeklyHours = {};
+  if (weeklyHoursGrid) {
+    document.querySelectorAll(".weekly-hours-row").forEach((row) => {
+      const day = row.getAttribute("data-day");
+      const open = row.querySelector(".hour-open")?.value || "06:00";
+      const close = row.querySelector(".hour-close")?.value || "18:00";
+      const closed = Boolean(row.querySelector(".hour-closed")?.checked);
+      weeklyHours[day] = { open, close, closed };
+    });
+  }
 
   const data = {
     address: document.getElementById("settingsAddress").value.trim(),
     phones: document.getElementById("settingsPhones").value,
     email: document.getElementById("settingsEmail").value.trim(),
     hours: document.getElementById("settingsHours").value.trim(),
+    weeklyHours,
     whatsapp: document.getElementById("settingsWhatsapp").value.trim(),
     mapEmbedUrl: document.getElementById("settingsMap").value.trim(),
     mapDirectionsUrl: document.getElementById("settingsMapDirections").value.trim(),
@@ -46,18 +97,23 @@ settingsForm.addEventListener("submit", async (e) => {
   settingsSaveBtn.textContent = "Saving...";
 
   try {
-    await fetch("/api/settings", {
+    const res = await fetch("/api/settings", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    showToast("Contact info updated");
-    await loadSettings(); // re-pull so the phone list, etc. reflects exactly what was saved
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      showToast(result.error || "Couldn't save settings", "danger");
+      return;
+    }
+    showToast("Settings & business hours updated");
+    await loadSettings(); // re-pull so everything reflects exactly what was saved
   } catch (err) {
     showToast("Couldn't save contact info", "danger");
   } finally {
     settingsSaveBtn.disabled = false;
-    settingsSaveBtn.textContent = "Save contact info";
+    settingsSaveBtn.textContent = "Save contact info & hours";
   }
 });
 

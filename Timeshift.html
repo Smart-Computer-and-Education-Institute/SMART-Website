@@ -4,124 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Computer & Education Institute</title>
+    <title>Working Hours & Timeshift | Smart Computer & Education Institute</title>
+    <meta name="description" content="Check our regular operating hours, daily class shifts, and live open schedule at Smart Computer & Education Institute, Jhapa.">
     <link rel="stylesheet" href="style.css">
-     <style>
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.07);
-            }
-        }
-
-        @keyframes glow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 18px 4px #fbbf2488;
-            }
-
-            50% {
-                box-shadow: 0 0 36px 10px #fbbf2466;
-            }
-        }
-
-        @keyframes signSwing {
-
-            0%,
-            100% {
-                transform: rotate(-3deg);
-            }
-
-            50% {
-                transform: rotate(3deg);
-            }
-        }
-
-        @keyframes dotBlink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.3;
-            }
-        }
-
-        @keyframes sunRise {
-            0% {
-                transform: translateY(60px);
-                opacity: 0;
-            }
-
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes starFade {
-            0% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="timeshift.css">
 </head>
 
-<body style="background-color: rgb(232, 240, 235);">
+<body>
     <header class="primary-header">
         <div class="container">
             <a href="index.html"><img src="Smart-Logo.png" alt="smart_computer" class="logo"></a>
             <nav class="primary-navigation">
                 <ul class="nav-list">
-<li><a href="index.html" class="nav-links">Home</a></li>
+                    <li><a href="index.html" class="nav-links">Home</a></li>
                     <li><a href="About.html" class="nav-links">About Us</a></li>
                     <li><a href="Services.html" class="nav-links">Services</a></li>
                     <li><a href="offer.html" class="nav-links">Offers</a></li>
@@ -152,63 +47,59 @@
         </div>
     </header>
 
-   
+    <main class="timeshift-page">
+        <div class="timeshift-container">
 
-    <div style="text-align:center; padding: 2.5rem 1rem 2rem; font-family: var(--font-sans);">
-
-        <div style="display:inline-block; animation: sunRise 1s ease-out 0.2s both;">
-            <div style="font-size: 56px; animation: pulse 3s ease-in-out infinite; display:inline-block;">☀️</div>
-        </div>
-
-        <div style="animation: fadeInDown 0.8s ease-out 0.6s both;">
-            <h1
-                style="font-size: 2.2rem; font-weight: 500; color:rgb(0, 0, 0); margin: 0.5rem 0 0.25rem; letter-spacing: -0.5px;">
-                We Are</h1>
-        </div>
-
-        <div
-            style="margin: 0.75rem auto; animation: glow 2s ease-in-out infinite, fadeInDown 0.8s ease-out 0.9s both; display:inline-block; background: #fef08a; color: #92400e; font-size: 3rem; font-weight: 500; padding: 0.25rem 2rem; border-radius: 12px;">
-            OPEN
-            <span style="display:inline-flex; gap:4px; vertical-align:middle; margin-left:6px;">
-                <span
-                    style="width:8px;height:8px;background:#16a34a;border-radius:50%;display:inline-block; animation: dotBlink 1.2s ease-in-out infinite;"></span>
-                <span
-                    style="width:8px;height:8px;background:#16a34a;border-radius:50%;display:inline-block; animation: dotBlink 1.2s ease-in-out 0.4s infinite;"></span>
-                <span
-                    style="width:8px;height:8px;background:#16a34a;border-radius:50%;display:inline-block; animation: dotBlink 1.2s ease-in-out 0.8s infinite;"></span>
-            </span>
-        </div>
-
-        <div style="animation: fadeInUp 0.8s ease-out 1.2s both;">
-            <div
-                style="display:flex; justify-content:center; align-items:center; gap:0.5rem; margin: 1.5rem auto 0.5rem;">
-                <i class="ti ti-clock" style="font-size:22px; color: var(--color-text-secondary);"
-                    aria-hidden="true"></i>
-                <span
-                    style="font-size: 1.4rem; font-weight: 500; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif;">6:00
-                    AM – 6:00 PM</span>
+            <div class="timeshift-hero">
+                <span class="timeshift-eyebrow">Operating Schedule</span>
+                <h1 class="timeshift-title">Working Hours & Timeshift</h1>
+                <p class="timeshift-subtitle">Plan your study sessions, laboratory practice, or admissions consultation with our live institute schedule.</p>
             </div>
 
-            <div style="display:flex; justify-content:center; align-items:center; gap:0.5rem; margin: 0.4rem auto 0;">
-                <i class="ti ti-calendar" style="font-size:22px; color: var(--color-text-secondary);"
-                    aria-hidden="true"></i>
-                <span
-                    style="font-size: 1.4rem; font-weight: 500; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif;">Sunday
-                    –
-                    Friday</span>
+            <!-- Live Status Hero Card -->
+            <div class="timeshift-card status-card">
+                <div class="status-main">
+                    <div class="status-badge-row">
+                        <div class="live-status-pill is-open" id="liveStatusPill">
+                            <span class="status-dot"></span>
+                            <span>Open Now</span>
+                        </div>
+                        <span class="current-time-text" id="currentTimeText"></span>
+                    </div>
+                    <h2 class="status-heading" id="statusHeading">We are currently open for classes & visits</h2>
+                    <p class="status-detail" id="statusDetail">Regular classes and admissions desk operate Sunday through Friday.</p>
+                </div>
+                <div class="status-quick-action">
+                    <a href="Contact.html" class="btn-secondary">Visit Contact Page</a>
+                </div>
             </div>
+
+            <!-- Weekly Schedule Card -->
+            <div class="timeshift-card">
+                <div class="schedule-header">
+                    <h2 class="schedule-title">Weekly Schedule</h2>
+                    <p class="schedule-sub">Standard operating timings for our computer lab and administrative desk.</p>
+                </div>
+                <div id="dayContainer" class="days-grid">
+                    <!-- Populated dynamically by timeshift.js from /api/public/settings -->
+                </div>
+            </div>
+
+            <!-- Additional Helpful Info Cards -->
+            <div class="info-cards-grid">
+                <div class="info-box">
+                    <h3>Flexible Shifts</h3>
+                    <p>Computer training and practice shifts run continuously from early morning through late afternoon to accommodate school and working students.</p>
+                </div>
+                <div class="info-box">
+                    <h3>Holidays & Updates</h3>
+                    <p>Any special closures for festivals or official public holidays will be posted in advance on our <a href="Notice.html" style="color:#1e3a8a;font-weight:600;text-decoration:underline;">Notice Board</a>.</p>
+                </div>
+            </div>
+
         </div>
+    </main>
 
-        <div id="dayContainer"
-            style="margin: 2rem auto 0; display:flex;justify-content:center; gap:8px; flex-wrap:wrap; animation: fadeInUp 0.8s ease-out 1.6s both;">
-        </div>
-
-        <p
-            style="font-size:13px; color:rgb(2, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: x-large; margin:1.5rem 0 0; animation: fadeInUp 0.8s ease-out 2.5s both;">
-            Closed on Saturday
-        </p>
-
-    </div>
     <footer>
         <div class="section-container">
             <div class="footer-grid">
@@ -243,7 +134,9 @@
             </div>
         </div>
     </footer>
+
     <script src="script.js"></script>
+    <script src="timeshift.js"></script>
 </body>
 
 </html>

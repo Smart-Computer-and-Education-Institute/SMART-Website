@@ -173,13 +173,98 @@
               <span class="hint" style="display:block;margin-top:4px;">From Google Maps: Share → Embed a map → copy the src="..." URL.</span>
             </div>
 
-            <div class="form-field" id="field-map-directions">
-              <label for="settingsMapDirections">Google Maps directions link <span class="hint">optional</span></label>
-              <input type="text" id="settingsMapDirections" placeholder="https://www.google.com/maps/place/...">
-              <span class="hint" style="display:block;margin-top:4px;">From Google Maps: click the institute name → copy the URL from the address bar. Used for the "Get Directions" button on the Contact page.</span>
+            <div class="form-field" id="field-weekly-hours" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--color-border,#e2e8f0);">
+              <label style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Weekly Business Hours (Timeshift)</label>
+              <span class="hint" style="display:block;margin:0 0 12px;">Configure opening and closing times for each day. These dynamically drive the live status and schedule on Timeshift.html.</span>
+              <div class="weekly-hours-grid" id="weeklyHoursGrid">
+                <div class="weekly-hours-row" data-day="monday">
+                  <span class="day-name">Monday</span>
+                  <div class="time-inputs">
+                    <input type="time" class="hour-open" value="06:00" aria-label="Monday opening time">
+                    <span class="time-sep">to</span>
+                    <input type="time" class="hour-close" value="18:00" aria-label="Monday closing time">
+                  </div>
+                  <label class="closed-toggle">
+                    <input type="checkbox" class="hour-closed">
+                    <span>Closed</span>
+                  </label>
+                </div>
+                <div class="weekly-hours-row" data-day="tuesday">
+                  <span class="day-name">Tuesday</span>
+                  <div class="time-inputs">
+                    <input type="time" class="hour-open" value="06:00" aria-label="Tuesday opening time">
+                    <span class="time-sep">to</span>
+                    <input type="time" class="hour-close" value="18:00" aria-label="Tuesday closing time">
+                  </div>
+                  <label class="closed-toggle">
+                    <input type="checkbox" class="hour-closed">
+                    <span>Closed</span>
+                  </label>
+                </div>
+                <div class="weekly-hours-row" data-day="wednesday">
+                  <span class="day-name">Wednesday</span>
+                  <div class="time-inputs">
+                    <input type="time" class="hour-open" value="06:00" aria-label="Wednesday opening time">
+                    <span class="time-sep">to</span>
+                    <input type="time" class="hour-close" value="18:00" aria-label="Wednesday closing time">
+                  </div>
+                  <label class="closed-toggle">
+                    <input type="checkbox" class="hour-closed">
+                    <span>Closed</span>
+                  </label>
+                </div>
+                <div class="weekly-hours-row" data-day="thursday">
+                  <span class="day-name">Thursday</span>
+                  <div class="time-inputs">
+                    <input type="time" class="hour-open" value="06:00" aria-label="Thursday opening time">
+                    <span class="time-sep">to</span>
+                    <input type="time" class="hour-close" value="18:00" aria-label="Thursday closing time">
+                  </div>
+                  <label class="closed-toggle">
+                    <input type="checkbox" class="hour-closed">
+                    <span>Closed</span>
+                  </label>
+                </div>
+                <div class="weekly-hours-row" data-day="friday">
+                  <span class="day-name">Friday</span>
+                  <div class="time-inputs">
+                    <input type="time" class="hour-open" value="06:00" aria-label="Friday opening time">
+                    <span class="time-sep">to</span>
+                    <input type="time" class="hour-close" value="18:00" aria-label="Friday closing time">
+                  </div>
+                  <label class="closed-toggle">
+                    <input type="checkbox" class="hour-closed">
+                    <span>Closed</span>
+                  </label>
+                </div>
+                <div class="weekly-hours-row" data-day="saturday">
+                  <span class="day-name">Saturday</span>
+                  <div class="time-inputs">
+                    <input type="time" class="hour-open" value="06:00" aria-label="Saturday opening time">
+                    <span class="time-sep">to</span>
+                    <input type="time" class="hour-close" value="18:00" aria-label="Saturday closing time">
+                  </div>
+                  <label class="closed-toggle">
+                    <input type="checkbox" class="hour-closed" checked>
+                    <span>Closed</span>
+                  </label>
+                </div>
+                <div class="weekly-hours-row" data-day="sunday">
+                  <span class="day-name">Sunday</span>
+                  <div class="time-inputs">
+                    <input type="time" class="hour-open" value="06:00" aria-label="Sunday opening time">
+                    <span class="time-sep">to</span>
+                    <input type="time" class="hour-close" value="18:00" aria-label="Sunday closing time">
+                  </div>
+                  <label class="closed-toggle">
+                    <input type="checkbox" class="hour-closed">
+                    <span>Closed</span>
+                  </label>
+                </div>
+              </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="settingsSaveBtn">Save contact info</button>
+            <button type="submit" class="btn btn-primary" id="settingsSaveBtn" style="margin-top:16px;">Save contact info & hours</button>
           </form>
         </div>
 

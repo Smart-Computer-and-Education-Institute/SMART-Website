@@ -1,0 +1,344 @@
+/* ============================================================
+   Smart Computer & Education Institute — Timeshift Stylesheet
+   Design Tokens match style.css (Navy #1e3a8a, Red #dc2626, Slate #64748b, Light BG #eef2ff)
+   ============================================================ */
+
+.timeshift-page {
+  background-color: #eef2ff;
+  min-height: calc(100vh - 100px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #1e293b;
+  padding: 40px 20px 70px;
+}
+
+.timeshift-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  animation: timeshiftFadeIn 0.3s ease-out;
+}
+
+@keyframes timeshiftFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Hero / Page Header ---------- */
+
+.timeshift-hero {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.timeshift-eyebrow {
+  display: inline-block;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.timeshift-title {
+  color: #14275c;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+
+.timeshift-subtitle {
+  color: #64748b;
+  font-size: 1rem;
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* ---------- Card Base (matching site-wide card style) ---------- */
+
+.timeshift-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+/* ---------- Live Status Hero Card ---------- */
+
+.status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-left: 5px solid #1e3a8a;
+}
+
+.status-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.status-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.live-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.live-status-pill .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.live-status-pill.is-open {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.live-status-pill.is-open .status-dot {
+  background-color: #16a34a;
+}
+
+.live-status-pill.is-closed {
+  background-color: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.live-status-pill.is-closed .status-dot {
+  background-color: #94a3b8;
+}
+
+.current-time-text {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.status-heading {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #14275c;
+  margin: 4px 0 0;
+}
+
+.status-detail {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.status-quick-action .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background-color: #f8fafc;
+  color: #1e3a8a;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.status-quick-action .btn-secondary:hover {
+  border-color: #1e3a8a;
+  background-color: #f1f5f9;
+}
+
+/* ---------- Weekly Schedule Section ---------- */
+
+.schedule-header {
+  margin-bottom: 20px;
+}
+
+.schedule-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #14275c;
+  margin: 0 0 4px;
+}
+
+.schedule-sub {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 7 Days Container */
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.day-chip {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.day-chip:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(20, 39, 92, 0.05);
+}
+
+.day-chip.is-today {
+  background-color: #f0f4ff;
+  border-color: #1e3a8a;
+  border-width: 1.5px;
+  box-shadow: 0 3px 10px rgba(30, 58, 138, 0.08);
+}
+
+.day-header-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.day-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.today-tag {
+  display: inline-block;
+  background-color: #1e3a8a;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.day-hours {
+  font-size: 0.82rem;
+  color: #475569;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.day-chip.is-closed .day-hours {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Fallback / Error Message */
+.schedule-fallback {
+  text-align: center;
+  padding: 30px 16px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* ---------- Info / Notice Footer Grid ---------- */
+
+.info-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.info-box {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+}
+
+.info-box h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #14275c;
+  margin: 0 0 8px;
+}
+
+.info-box p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ---------- Responsive Breakpoints ---------- */
+
+@media (max-width: 900px) {
+  .days-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+
+  .info-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .timeshift-page {
+    padding: 28px 14px 50px;
+  }
+
+  .timeshift-card {
+    padding: 20px 16px;
+  }
+
+  .status-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-quick-action {
+    width: 100%;
+  }
+
+  .status-quick-action .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .days-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .day-chip {
+    padding: 12px 8px;
+  }
+}

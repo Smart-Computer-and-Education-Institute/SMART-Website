@@ -202,6 +202,15 @@ const DEFAULT_SETTINGS = {
   phones: ["+977-9700071948", "+977-9700071958", "+977-9700071968"],
   email: "smartinstitute@gmail.com",
   hours: "6:00 AM – 6:00 PM\nSunday – Friday",
+  weeklyHours: {
+    sunday: { open: "06:00", close: "18:00", closed: false },
+    monday: { open: "06:00", close: "18:00", closed: false },
+    tuesday: { open: "06:00", close: "18:00", closed: false },
+    wednesday: { open: "06:00", close: "18:00", closed: false },
+    thursday: { open: "06:00", close: "18:00", closed: false },
+    friday: { open: "06:00", close: "18:00", closed: false },
+    saturday: { open: "06:00", close: "18:00", closed: true },
+  },
   whatsapp: "",
   mapEmbedUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d445.7349500066516!2d88.05294745192597!3d26.65233713027649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e5b10076063541%3A0x576f4e4164aade03!2sSmart%20Computer%20%26%20Education%20Institute!5e0!3m2!1sen!2snp!4v1782028540603!5m2!1sen!2snp",
@@ -211,7 +220,15 @@ const DEFAULT_SETTINGS = {
 
 async function getContactSettings() {
   const existing = await db.findOne("settings", "contact");
-  return existing || DEFAULT_SETTINGS;
+  if (!existing) return DEFAULT_SETTINGS;
+  return {
+    ...DEFAULT_SETTINGS,
+    ...existing,
+    weeklyHours: {
+      ...DEFAULT_SETTINGS.weeklyHours,
+      ...(existing.weeklyHours || {}),
+    },
+  };
 }
 
 app.get(
@@ -233,7 +250,7 @@ app.put(
   "/api/settings",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const { address, phones, email, hours, whatsapp, mapEmbedUrl, mapDirectionsUrl } = req.body || {};
+    const { address, phones, email, hours, weeklyHours, whatsapp, mapEmbedUrl, mapDirectionsUrl } = req.body || {};
     const changes = {};
 
     if (address !== undefined) changes.address = String(address).slice(0, 300);
@@ -248,6 +265,36 @@ app.put(
         .map((p) => String(p).trim())
         .filter(Boolean)
         .slice(0, 10);
+    }
+
+    if (weeklyHours !== undefined) {
+      if (typeof weeklyHours !== "object" || weeklyHours === null) {
+        return res.status(400).json({ error: "weeklyHours must be an object." });
+      }
+      const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+      const cleanHours = {};
+      const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+      for (const day of days) {
+        const item = weeklyHours[day] || {};
+        const closed = Boolean(item.closed);
+        const open = String(item.open || "06:00").trim();
+        const close = String(item.close || "18:00").trim();
+
+        if (!closed) {
+          if (!timeRegex.test(open) || !timeRegex.test(close)) {
+            return res.status(400).json({ error: `Invalid time format (HH:MM) for ${day}.` });
+          }
+          if (open >= close) {
+            return res.status(400).json({ error: `Open time (${open}) must be before close time (${close}) for ${day}.` });
+          }
+        }
+        cleanHours[day] = {
+          open: timeRegex.test(open) ? open : "06:00",
+          close: timeRegex.test(close) ? close : "18:00",
+          closed,
+        };
+      }
+      changes.weeklyHours = cleanHours;
     }
 
     const existing = await db.findOne("settings", "contact");
