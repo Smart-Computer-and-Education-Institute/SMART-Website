@@ -339,9 +339,16 @@ if (publicNoticeList) {
         return;
       }
 
+      // Optional data-limit attribute: when present (e.g. on index.html preview
+      // sections), only the first N records are rendered. Pages without the
+      // attribute (Notice.html) keep showing everything — fully backward-compatible.
+      const limitAttr = publicNoticeList.getAttribute("data-limit");
+      const limit = limitAttr ? parseInt(limitAttr, 10) : Infinity;
+
       notices
         .slice()
         .sort((a, b) => (a.date < b.date ? 1 : -1))
+        .slice(0, limit)
         .forEach((n) => {
           const card = document.createElement("div");
           card.className = "notice-public-card";
@@ -401,9 +408,15 @@ if (publicServiceGrid) {
   const serviceFilterChips = document.getElementById("serviceFilterChips");
 
   function renderPublicServices() {
-    const rows = allServices.filter(
+    const rawRows = allServices.filter(
       (s) => serviceFilter === "all" || s.category === serviceFilter
     );
+    // Optional data-limit attribute: when present (e.g. on index.html preview
+    // sections), only the first N records are rendered. Pages without the
+    // attribute (Services.html) keep showing everything — fully backward-compatible.
+    const limitAttr = publicServiceGrid.getAttribute("data-limit");
+    const limit = limitAttr ? parseInt(limitAttr, 10) : Infinity;
+    const rows = rawRows.slice(0, limit);
     publicServiceGrid.innerHTML = "";
     if (publicServiceEmpty) publicServiceEmpty.style.display = rows.length ? "none" : "block";
 
@@ -512,7 +525,13 @@ if (publicGalleryGrid) {
     publicGalleryGrid.innerHTML = "";
     if (publicGalleryEmpty) publicGalleryEmpty.style.display = photos.length ? "none" : "block";
 
-    photos.forEach((p) => {
+    // Optional data-limit attribute: when present (e.g. on index.html preview
+    // sections), only the first N photos are rendered. Pages without the
+    // attribute (Gallery.html) keep showing everything — fully backward-compatible.
+    const limitAttr = publicGalleryGrid.getAttribute("data-limit");
+    const limit = limitAttr ? parseInt(limitAttr, 10) : Infinity;
+
+    photos.slice(0, limit).forEach((p) => {
       const card = document.createElement("div");
       card.className = "gallery-card";
       card.innerHTML = `

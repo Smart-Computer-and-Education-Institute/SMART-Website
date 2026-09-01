@@ -1031,3 +1031,79 @@ footer {
     height: 180px;
   }
 }
+
+/* ============================================================
+   Homepage preview section wrappers (index.html only)
+   Each content section below the hero is wrapped in
+   .preview-section; the header row holds a title + optional
+   "view all" link side-by-side; the footer row right-aligns
+   the call-to-action link. All widths/padding mirror the
+   max-width and padding of the page's existing sections.
+   ============================================================ */
+
+.preview-section {
+  padding: 60px 0;
+}
+
+/* Zebra-stripe alternate sections for visual rhythm */
+.preview-section:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.preview-section:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.preview-header {
+  max-width: 1180px;
+  margin: 0 auto 28px;
+  padding: 0 24px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.preview-header h2 {
+  font-family: sans-serif;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  font-weight: 700;
+  color: #14275c;
+  margin: 0;
+}
+
+.preview-header .preview-all-link {
+  white-space: nowrap;
+}
+
+.preview-footer {
+  max-width: 1180px;
+  margin: 28px auto 0;
+  padding: 0 24px;
+  text-align: right;
+}
+
+.preview-all-link {
+  font-family: monospace;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #dc2626;
+  text-decoration: none;
+  border-bottom: 1.5px solid transparent;
+  padding-bottom: 1px;
+  transition: border-color 0.2s;
+}
+
+.preview-all-link:hover {
+  border-bottom-color: #dc2626;
+}
+
+@media (max-width: 640px) {
+  .preview-section {
+    padding: 44px 0;
+  }
+  .preview-header {
+    margin-bottom: 20px;
+  }
+}
