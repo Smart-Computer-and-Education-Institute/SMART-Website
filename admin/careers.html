@@ -131,11 +131,7 @@
           <h1>Careers</h1>
           <p id="careerCount" style="margin:0;color:var(--color-text-secondary);font-size:13.5px;">— positions</p>
         </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-secondary" onclick="openDivisionsModal()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            Manage divisions
-          </button>
+        <div>
           <button class="btn btn-primary" onclick="openCareerModal()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
             Add position
@@ -248,31 +244,6 @@
         <button type="submit" class="btn btn-primary">Save position</button>
       </div>
     </form>
-  </div>
-</div>
-
-<!-- Manage Divisions modal -->
-<div class="modal-overlay" id="divisionsModalOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Manage career divisions</h2>
-      <button class="modal-close" data-close-modal aria-label="Close">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p style="margin: 0 0 14px; font-size: 13px; color: var(--color-text-secondary);">
-        These divisions appear as filter buttons on the public Career page and as options when adding a position. Renaming a division updates every position already using it.
-      </p>
-      <div id="divisionList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:260px;overflow-y:auto;"></div>
-      <form id="addDivisionForm" style="display:flex;gap:8px;">
-        <input type="text" id="newDivisionName" placeholder="New division name" style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
-        <button type="submit" class="btn btn-primary">Add</button>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-close-modal>Done</button>
-    </div>
   </div>
 </div>
 

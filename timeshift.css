@@ -282,6 +282,22 @@
   border-radius: 14px;
   padding: 24px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.info-box.is-clickable {
+  cursor: pointer;
+}
+
+.info-box.is-clickable:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(20, 39, 92, 0.07);
+  transform: translateY(-2px);
+}
+
+.info-box.is-clickable:focus-visible {
+  outline: 2px solid #1e3a8a;
+  outline-offset: 2px;
 }
 
 .info-box h3 {
@@ -297,6 +313,37 @@
   line-height: 1.55;
   margin: 0;
 }
+
+.holiday-notice-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.holiday-notice-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  line-height: 1.4;
+}
+
+.holiday-notice-date {
+  display: inline-block;
+  font-size: 0.82rem;
+  color: #dc2626;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.holiday-notice-hint {
+  display: block;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
 
 /* ---------- Responsive Breakpoints ---------- */
 
@@ -342,3 +389,13 @@
     padding: 12px 8px;
   }
 }
+
+/* ---------- Homepage Preview Context ---------- */
+.preview-section .timeshift-container {
+  padding: 0 24px;
+}
+
+.preview-section .timeshift-card {
+  margin-bottom: 0;
+}
+

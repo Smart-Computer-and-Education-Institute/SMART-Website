@@ -14,9 +14,6 @@ const careerEmptyState = document.getElementById("careerEmptyState");
 const careerCountEl    = document.getElementById("careerCount");
 const careerChipRow    = document.getElementById("careerChipRow");
 const categorySelect   = document.getElementById("careerCategory");
-const divisionList     = document.getElementById("divisionList");
-const addDivisionForm  = document.getElementById("addDivisionForm");
-const newDivisionNameInput = document.getElementById("newDivisionName");
 
 // Pulls division list from the server and updates filter chips,
 // the form select dropdown, and the Manage Divisions modal list.
@@ -53,26 +50,6 @@ async function loadCareerCategories() {
     });
     if (careerCategories.some((c) => c.name === previousValue)) {
       categorySelect.value = previousValue;
-    }
-  }
-
-  // Render modal division list
-  if (divisionList) {
-    divisionList.innerHTML = "";
-    if (!careerCategories.length) {
-      divisionList.innerHTML = `<p class="hint" style="margin:0;">No divisions yet — add one below.</p>`;
-    } else {
-      careerCategories.forEach((cat) => {
-        const row = document.createElement("div");
-        row.style.cssText = "display:flex;align-items:center;gap:8px;";
-        row.innerHTML = `
-          <input type="text" value="${escapeHtml(cat.name)}" data-id="${cat.id}" data-original="${escapeHtml(cat.name)}"
-            style="flex:1;padding:8px 10px;border:1px solid var(--color-border);border-radius:var(--radius-sm);font-size:13.5px;">
-          <button type="button" class="btn btn-secondary btn-sm" data-rename="${cat.id}">Rename</button>
-          <button type="button" class="btn btn-danger-ghost btn-sm" data-delete="${cat.id}" data-name="${escapeHtml(cat.name)}">Remove</button>
-        `;
-        divisionList.appendChild(row);
-      });
     }
   }
 }
@@ -361,79 +338,7 @@ async function deleteCareer(id) {
   await loadCareers();
 }
 
-/* ---------- Manage Divisions modal ---------- */
 
-function openDivisionsModal() {
-  openModal("divisionsModalOverlay");
-}
-
-if (divisionList) {
-  divisionList.addEventListener("click", async (e) => {
-    const renameId = e.target.getAttribute && e.target.getAttribute("data-rename");
-    const deleteId = e.target.getAttribute && e.target.getAttribute("data-delete");
-
-    if (renameId) {
-      const input = divisionList.querySelector(`input[data-id="${renameId}"]`);
-      const newName = input.value.trim();
-      const original = input.getAttribute("data-original");
-      if (!newName || newName === original) return;
-
-      const res = await fetch(`/api/career-categories/${renameId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newName }),
-      });
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        showToast(data.error || "Couldn't rename division", "danger");
-        return;
-      }
-      showToast("Division renamed");
-      await loadCareerCategories();
-      await loadCareers();
-    }
-
-    if (deleteId) {
-      const name = e.target.getAttribute("data-name");
-      if (!confirmDelete(`Remove division "${name}"? Positions already using it will keep their division name, but the filter chip will disappear.`)) return;
-
-      const res = await fetch(`/api/career-categories/${deleteId}`, { method: "DELETE" });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        showToast(data.error || "Couldn't remove division", "danger");
-        return;
-      }
-      showToast("Division removed", "danger");
-      await loadCareerCategories();
-      await loadCareers();
-    }
-  });
-}
-
-if (addDivisionForm) {
-  addDivisionForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = newDivisionNameInput.value.trim();
-    if (!name) return;
-
-    const res = await fetch("/api/career-categories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    });
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      showToast(data.error || "Couldn't add division", "danger");
-      return;
-    }
-
-    newDivisionNameInput.value = "";
-    showToast("Division added");
-    await loadCareerCategories();
-  });
-}
 
 loadCareerCategories().then(loadCareers);
 

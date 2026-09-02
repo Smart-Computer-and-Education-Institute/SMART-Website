@@ -1,3 +1,21 @@
+/* =============================================================
+   gallery.css — Gallery page styles
+   Smart Computer & Education Institute
+
+   CHANGE LOG
+   ----------
+   2026-09 Audit pass: no bare body/*/button selector collisions
+   found. All selectors are prefixed with .gallery-* or
+   .lightbox* which are unique to this component and do not
+   conflict with style.css when both files are loaded together
+   on index.html.
+
+   The .gallery-section padding (60px 24px) is intentionally
+   preserved on the standalone page. The homepage preview wraps
+   this section in a .preview-section div whose own padding
+   provides the spacing context, so no override is needed.
+   ============================================================= */
+
 /* GALLERY SECTION CSS */
 
 .gallery-section {

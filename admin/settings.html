@@ -264,29 +264,62 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="settingsSaveBtn" style="margin-top:16px;">Save contact info & hours</button>
+            <div class="form-field" id="field-next-holiday" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--color-border,#e2e8f0);">
+              <label for="settingsNextHoliday" style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Next Holiday Notice (Timeshift)</label>
+              <span class="hint" style="display:block;margin:0 0 10px;">Select an upcoming holiday notice to feature on Timeshift.html. Visitors will see the title, date, and can click to read the full notice.</span>
+              <select id="settingsNextHoliday" style="width:100%;padding:10px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;background:#fff;color:var(--color-text,#1e293b);">
+                <option value="">None selected</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="settingsSaveBtn" style="margin-top:16px;">Save contact info &amp; hours</button>
           </form>
         </div>
 
-        <!-- Categories -->
-        <div class="card">
-          <div class="panel-header">
-            <h2>Service categories</h2>
-          </div>
-          <div style="padding: 4px 22px 22px;">
-            <p style="margin: 0 0 14px; font-size: 12.5px; color: var(--color-text-secondary);">
-              These are the filter chips shown on the public Services page and the
-              category options when adding a service. Renaming one updates every
-              service already using it.
-            </p>
+        <div style="display:flex;flex-direction:column;gap:20px;">
 
-            <div id="categoryList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+          <!-- Service Categories -->
+          <div class="card">
+            <div class="panel-header">
+              <h2>Service categories</h2>
+            </div>
+            <div style="padding: 4px 22px 22px;">
+              <p style="margin: 0 0 14px; font-size: 12.5px; color: var(--color-text-secondary);">
+                These are the filter chips shown on the public Services page and the
+                category options when adding a service. Renaming one updates every
+                service already using it.
+              </p>
 
-            <form id="addCategoryForm" style="display:flex;gap:8px;">
-              <input type="text" id="newCategoryName" placeholder="New category name" style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
-              <button type="submit" class="btn btn-primary">Add</button>
-            </form>
+              <div id="categoryList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
+              <form id="addCategoryForm" style="display:flex;gap:8px;">
+                <input type="text" id="newCategoryName" placeholder="New category name" style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
+                <button type="submit" class="btn btn-primary">Add</button>
+              </form>
+            </div>
           </div>
+
+          <!-- Career Divisions -->
+          <div class="card">
+            <div class="panel-header">
+              <h2>Career divisions</h2>
+            </div>
+            <div style="padding: 4px 22px 22px;">
+              <p style="margin: 0 0 14px; font-size: 12.5px; color: var(--color-text-secondary);">
+                These divisions appear as filter buttons on the public Career page and as
+                options when adding a position. Renaming a division updates every position
+                already using it.
+              </p>
+
+              <div id="divisionList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
+              <form id="addDivisionForm" style="display:flex;gap:8px;">
+                <input type="text" id="newDivisionName" placeholder="New division name" style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
+                <button type="submit" class="btn btn-primary">Add</button>
+              </form>
+            </div>
+          </div>
+
         </div>
 
       </div>

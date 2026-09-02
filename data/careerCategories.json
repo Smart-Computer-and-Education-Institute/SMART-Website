@@ -1,18 +1,6 @@
 [
   {
     "id": "ccat1000000001",
-    "name": "Teaching"
-  },
-  {
-    "id": "ccat1000000002",
-    "name": "IT & Support"
-  },
-  {
-    "id": "ccat1000000003",
-    "name": "Administration"
-  },
-  {
-    "id": "ccat1000000004",
-    "name": "Marketing"
+    "name": "Test"
   }
 ]

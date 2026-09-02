@@ -16,279 +16,12 @@
   <!-- Notice section styles (notice-public-card) -->
   <link rel="stylesheet" href="notice.css">
 
-  <!-- Offer / Flyer board styles (inlined here same as offer.html) -->
-  <style>
-    #flyers, #flyers * { box-sizing: border-box; }
-
-    .flyer-board {
-      background: #eef1fa;
-      padding: 0 24px;
-      font-family: Georgia, 'Times New Roman', serif;
-    }
-
-    .flyer-board__inner { max-width: 1240px; margin: 0 auto; }
-
-    .flyer-board__head { max-width: 640px; margin-bottom: 40px; }
-
-    .flyer-board__eyebrow {
-      font-family: 'Courier New', ui-monospace, monospace;
-      color: #dc2626;
-      font-size: 14px;
-      letter-spacing: .04em;
-      margin: 0 0 14px;
-    }
-
-    .flyer-board__title {
-      font-size: clamp(28px, 3.5vw, 38px);
-      font-weight: 800;
-      color: #1a2760;
-      margin: 0 0 10px;
-      line-height: 1.15;
-    }
-
-    .flyer-board__sub {
-      font-family: Georgia, serif;
-      color: #5b6478;
-      font-size: 16px;
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .flyer-board__grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 34px 28px;
-      background-image: radial-gradient(#c7cee6 1.2px, transparent 1.2px);
-      background-size: 22px 22px;
-      border-radius: 18px;
-      padding: 44px 30px;
-      border: 1px solid #dbe0f2;
-    }
-
-    .flyer-card {
-      position: relative;
-      background: #fffdf9;
-      border: 1px solid #e3e2da;
-      box-shadow: 0 10px 24px -12px rgba(26,39,96,.28), 0 2px 4px rgba(0,0,0,.04);
-      padding: 22px 20px 20px;
-      transform: rotate(var(--tilt, -1deg));
-      transition: transform .18s ease, box-shadow .18s ease;
-    }
-
-    .flyer-card:hover {
-      transform: rotate(0deg) translateY(-4px);
-      box-shadow: 0 18px 34px -14px rgba(26,39,96,.38), 0 4px 8px rgba(0,0,0,.06);
-      z-index: 2;
-    }
-
-    .flyer-card::before {
-      content: "";
-      position: absolute;
-      top: -9px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #ff6b5c, #dc2626 60%, #9f1c1c 100%);
-      box-shadow: 0 3px 4px rgba(0,0,0,.35);
-    }
-
-    .flyer-card__tag {
-      display: inline-block;
-      font-family: 'Courier New', ui-monospace, monospace;
-      font-size: 11px;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      color: #dc2626;
-      background: #fdeaea;
-      border: 1px solid #f5c9c9;
-      padding: 3px 8px;
-      margin-bottom: 12px;
-    }
-
-    .flyer-card__thumb {
-      width: 100%;
-      aspect-ratio: 4 / 5;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(160deg, #1a2760, #2c3f8f);
-      color: #fff;
-      text-align: center;
-      padding: 18px;
-      font-family: 'Courier New', ui-monospace, monospace;
-    }
-
-    .flyer-card__thumb-title {
-      font-size: 15px;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
-    .flyer-card__title {
-      font-size: 17px;
-      font-weight: 700;
-      color: #1a2760;
-      margin: 0 0 6px;
-      line-height: 1.3;
-    }
-
-    .flyer-card__desc {
-      font-family: Georgia, serif;
-      font-size: 14px;
-      color: #6a7186;
-      line-height: 1.5;
-      margin: 0 0 14px;
-    }
-
-    .flyer-card__meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: 'Courier New', ui-monospace, monospace;
-      font-size: 12px;
-      color: #8a90a3;
-      margin-bottom: 14px;
-    }
-
-    .flyer-card__cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      width: 100%;
-      justify-content: center;
-      background: #1a2760;
-      color: #fff;
-      border: none;
-      font-family: Georgia, serif;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 11px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background .15s ease;
-    }
-
-    .flyer-card__cta:hover { background: #dc2626; }
-
-    .flyer-board__empty {
-      text-align: center;
-      padding: 60px 20px;
-      color: #6a7186;
-    }
-
-    .flyer-board__empty-sub { font-size: 14px; margin-top: 6px; }
-
-    /* Founder section — inlined from About.html since css/about_style.css
-       doesn't include these rules (they're a <style> block in About.html itself). */
-    .founder-section {
-      background: white;
-      padding: 60px 20px;
-      display: flex;
-      justify-content: center;
-      font-family: Georgia, 'Times New Roman', serif;
-    }
-
-    .founder-card {
-      display: flex;
-      max-width: 1100px;
-      width: 100%;
-      background: #ffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      border-top: 4px solid #020957;
-    }
-
-    .founder-photo {
-      flex: 0 0 40%;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .founder-photo img {
-      width: 100%;
-      height: 420px;
-      object-fit: cover;
-      background: #171717;
-    }
-
-    .founder-photo-caption {
-      padding: 20px 24px 28px;
-    }
-
-    .founder-photo-caption h3 {
-      margin: 0 0 6px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 22px;
-      font-weight: 800;
-      color: #0b2f8c;
-    }
-
-    .founder-role,
-    .founder-org {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 15px;
-      font-weight: bold;
-      color: #0000004f;
-    }
-
-    .founder-exp {
-      margin: 8px 0 0;
-      font-weight: bold;
-      font-size: 13px;
-      color: #061a49;
-    }
-
-    .founder-message {
-      flex: 1;
-      padding: 40px 48px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .quote-icon {
-      display: inline-block;
-      background: #e0e3e4;
-      color: #000000;
-      font-size: 24px;
-      font-weight: 700;
-      width: 42px;
-      height: 42px;
-      line-height: 42px;
-      text-align: center;
-      border-radius: 8px;
-      margin-bottom: 16px;
-    }
-
-    .founder-message p {
-      margin: 0 0 16px;
-      font-size: 15px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: bold;
-      line-height: 1.7;
-      color: #000000;
-    }
-
-    .founder-signoff { margin-top: 8px !important; }
-
-    .founder-signature {
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: 700;
-      color: #164fd3;
-    }
-
-    @media (max-width: 800px) {
-      .founder-card { flex-direction: column; }
-      .founder-photo img { height: 320px; }
-      .founder-message { padding: 32px 24px; }
-    }
-  </style>
+  <!-- Offer / Flyer board styles -->
+  <link rel="stylesheet" href="offer-board.css">
+  <!-- Founder message card styles -->
+  <link rel="stylesheet" href="founder-section.css">
+  <!-- Timeshift live status styles -->
+  <link rel="stylesheet" href="timeshift.css">
 </head>
 
 <body>
@@ -336,7 +69,7 @@
       <div class="Hero">
         <div class="even-columns">
           <div class="hero-content">
-            <p class="eyebrow">Smart Computer & Education Institute · Jhapa, Nepal</p>
+            <p class="eyebrow">Smart Computer &amp; Education Institute · Jhapa, Nepal</p>
             <h1 class="index-heading">Practical computer skills that <span class="text-accent">get you hired.</span>
             </h1>
             <p class="hero-sub">Hands-on classes in office tools, design, marketing, and accounting software
@@ -437,7 +170,7 @@
       </section>
 
       <!-- Our Story block — first about-grid from About.html only (no Mission/Vision/Why) -->
-      <section class="about-wrap" style="margin-top: 0;">
+      <section class="about-wrap">
         <div class="about-grid">
           <div class="about-text">
             <h2 data-about="ourStoryHeading">Our Story</h2>
@@ -514,7 +247,7 @@
         <h2>Notices</h2>
         <a href="Notice.html" class="preview-all-link">View all notices →</a>
       </div>
-      <section class="notice-section" style="padding: 0;">
+      <section class="notice-section">
         <div class="notice-container">
           <h2 class="notice-subheading">Admission deadlines, exam dates, holidays and updates from the institute.</h2>
           <!-- Populated by script.js; data-limit="4" caps preview at 4 notices -->
@@ -538,7 +271,7 @@
         <h2>Gallery</h2>
         <a href="Gallery.html" class="preview-all-link">View full gallery →</a>
       </div>
-      <section class="gallery-section" style="padding-top: 0; padding-bottom: 0;">
+      <section class="gallery-section">
         <div class="gallery-header">
           <p class="eyebrow">Our Moments</p>
           <h2 class="gallery-heading">Life at Smart Computer &amp; Education Institute</h2>
@@ -556,10 +289,11 @@
          Populated by the publicTestimonialsGrid loader in script.js.
          ===================================================== -->
     <section class="preview-section" id="preview-testimonials">
+      <div class="preview-header">
+        <h2>What Our Students Say</h2>
+      </div>
       <section class="info-container">
         <div class="base-container">
-          <h6 class="Testimonials">Testimonials</h6>
-          <h2 class="white-text">See What our Students Say</h2>
           <!-- Filled by script.js -->
           <div class="gird-layout" id="publicTestimonialsGrid"></div>
           <p class="testimonial-empty" id="publicTestimonialsEmpty" style="display:none;color:#64748b;text-align:center;padding:30px 0;">
@@ -567,6 +301,39 @@
           </p>
         </div>
       </section>
+    </section>
+
+    <!-- =====================================================
+         (g) TIMESHIFT PREVIEW — live status snapshot only
+         Reuses the exact element IDs that timeshift.js writes:
+           liveStatusPill, statusHeading, statusDetail, currentTimeText
+         The 7-day #dayContainer is intentionally omitted here;
+         timeshift.js guards it with if (dayContainer) so absence
+         is silently skipped. Full schedule → Timeshift.html.
+         ===================================================== -->
+    <section class="preview-section" id="preview-timeshift">
+      <div class="preview-header">
+        <h2>Working Hours</h2>
+        <a href="Timeshift.html" class="preview-all-link">View full schedule →</a>
+      </div>
+      <div class="timeshift-container">
+        <div class="timeshift-card status-card">
+          <div class="status-main">
+            <div class="status-badge-row">
+              <div class="live-status-pill is-open" id="liveStatusPill">
+                <span class="status-dot"></span>
+                <span>Open Now</span>
+              </div>
+              <span class="current-time-text" id="currentTimeText"></span>
+            </div>
+            <h2 class="status-heading" id="statusHeading">We are currently open for classes &amp; visits</h2>
+            <p class="status-detail" id="statusDetail">Regular classes and admissions desk operate Sunday through Friday.</p>
+          </div>
+          <div class="status-quick-action">
+            <a href="Timeshift.html" class="btn-secondary">View Full Schedule</a>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -645,6 +412,7 @@
 
   <script src="script.js"></script>
   <script src="offer.js"></script>
+  <script src="timeshift.js"></script>
   <script src="popup.js"></script>
 </body>
 

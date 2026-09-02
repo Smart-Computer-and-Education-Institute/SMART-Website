@@ -1,44 +1,56 @@
-/* ==========================================================================
-   Blue, Red & White Theme — Smart Computer & Education Institute
-   ========================================================================== */
+/* =============================================================
+   css/about_style.css — About Us page styles
+   Smart Computer & Education Institute
 
+   CHANGE LOG
+   ----------
+   2026-09 Fixed selector collision issues that arose when this
+   file is loaded alongside style.css on index.html:
+
+   1. Removed bare `* { margin:0; padding:0; box-sizing:border-box }`
+      — style.css already declares this globally; a second declaration
+      here was harmless in isolation but created confusion about which
+      file "owns" the global reset.
+
+   2. Removed bare `body { font-family; background-color; color; ... }`
+      — style.css sets body { background-color: #eef2ff } for the whole
+      site. about_style.css overriding it to #f8fafc (via --light-bg)
+      changed the homepage body background whenever about_style.css was
+      loaded, because CSS load order let it win. Scoped font/color body
+      rules into .about-hero and .about-wrap instead.
+
+   3. Scoped `.btn-primary` to `.cta-strip .btn-primary` — the site-wide
+      .btn-primary in style.css is a navy (#1e3a8a) filled button used on
+      multiple pages. about_style.css was redefining it to a white pill
+      shape for its own CTA strip, which visually broke the "Enroll Now"
+      button and header buttons on index.html when both CSS files loaded.
+   ============================================================= */
+
+/* ---- Design tokens (local to About page components) ---- */
 :root {
-  --primary-blue: #14275c;     /* Deep navy blue */
-  --accent-red: #e63946;       /* Bright energetic red */
-  --light-bg: #f8fafc;         /* Crisp off-white */
-  --pure-white: #ffffff;       /* Pure white */
-  --text-dark: #1e293b;        /* Charcoal text */
-  --text-muted: #64748b;       /* Soft slate body text */
-  --border-color: #e2e8f0;     /* Light gray border */
-  --shadow-sm: 0 4px 12px rgba(20, 39, 92, 0.08);
-  --shadow-lg: 0 12px 28px rgba(20, 39, 92, 0.15);
-  --radius: 12px;
-  --transition: all 0.3s ease;
+  --about-primary-blue: #14275c;
+  --about-accent-red: #e63946;
+  --about-light-bg: #f8fafc;
+  --about-pure-white: #ffffff;
+  --about-text-dark: #1e293b;
+  --about-text-muted: #64748b;
+  --about-border-color: #e2e8f0;
+  --about-shadow-sm: 0 4px 12px rgba(20, 39, 92, 0.08);
+  --about-shadow-lg: 0 12px 28px rgba(20, 39, 92, 0.15);
+  --about-radius: 12px;
+  --about-transition: all 0.3s ease;
 }
-
-/* Base Reset & Fonts */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background-color: var(--light-bg);
-  color: var(--text-dark);
-  line-height: 1.65;
-}
-
 
 /* --- Hero Section --- */
 .about-hero {
-  background: linear-gradient(135deg, var(--primary-blue) 0%, #0c183d 100%);
-  color: var(--pure-white);
+  background: linear-gradient(135deg, var(--about-primary-blue) 0%, #0c183d 100%);
+  color: var(--about-pure-white);
   text-align: center;
   padding: 80px 20px;
   position: relative;
-  border-bottom: 5px solid var(--accent-red);
+  border-bottom: 5px solid var(--about-accent-red);
+  /* Provide scoped body font for this section since we removed the bare body rule */
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 .hero-content {
@@ -68,6 +80,16 @@ body {
   display: flex;
   flex-direction: column;
   gap: 50px;
+  /* Provide scoped body font/color since we removed the bare body rule */
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--about-text-dark);
+  line-height: 1.65;
+}
+
+/* Homepage preview: no top margin (preview-section handles spacing) */
+.preview-section .about-wrap {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .about-grid {
@@ -75,22 +97,22 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 40px;
   align-items: center;
-  background: var(--pure-white);
+  background: var(--about-pure-white);
   padding: 32px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
-  transition: var(--transition);
+  border-radius: var(--about-radius);
+  box-shadow: var(--about-shadow-sm);
+  border: 1px solid var(--about-border-color);
+  transition: var(--about-transition);
 }
 
 .about-grid:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--about-shadow-lg);
 }
 
 .about-text h2 {
   font-size: 1.8rem;
-  color: var(--primary-blue);
+  color: var(--about-primary-blue);
   margin-bottom: 14px;
   position: relative;
   display: inline-block;
@@ -101,13 +123,13 @@ body {
   display: block;
   width: 45px;
   height: 4px;
-  background-color: var(--accent-red);
+  background-color: var(--about-accent-red);
   margin-top: 6px;
   border-radius: 2px;
 }
 
 .about-text p {
-  color: var(--text-muted);
+  color: var(--about-text-muted);
   font-size: 1.05rem;
 }
 
@@ -115,14 +137,14 @@ body {
   width: 100%;
   height: 260px;
   overflow: hidden;
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--about-radius) - 4px);
 }
 
 .about-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: var(--transition);
+  transition: var(--about-transition);
 }
 
 .about-grid:hover .about-img img {
@@ -139,7 +161,7 @@ body {
 .offer-section h2 {
   text-align: center;
   font-size: 2.2rem;
-  color: var(--primary-blue);
+  color: var(--about-primary-blue);
   margin-bottom: 30px;
   font-weight: 700;
 }
@@ -154,31 +176,31 @@ body {
 }
 
 .offer-list li {
-  background-color: var(--pure-white);
-  color: var(--primary-blue);
-  
-  border: 2px solid var(--primary-blue);
+  background-color: var(--about-pure-white);
+  color: var(--about-primary-blue);
+  border: 2px solid var(--about-primary-blue);
   font-weight: 600;
   font-size: 1rem;
   padding: 12px 24px;
   border-radius: 30px;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  box-shadow: var(--about-shadow-sm);
+  transition: var(--about-transition);
   cursor: default;
 }
 
 .offer-list li:hover {
-  background-color: var(--accent-red);
-  border-color: var(--accent-red);
-  color: var(--pure-white);
+  background-color: var(--about-accent-red);
+  border-color: var(--about-accent-red);
+  color: var(--about-pure-white);
   transform: translateY(-3px);
-  box-shadow:#FFFFFF;
 }
 
-/* --- Call to Action Strip --- */
+/* --- Call to Action Strip ---
+   NOTE: .btn-primary is scoped to .cta-strip here to avoid overriding
+   the site-wide navy .btn-primary declared in style.css. */
 .cta-strip {
-  background: linear-gradient(  #595a5c);
-  color: var(--pure-white);
+  background: linear-gradient(#595a5c);
+  color: var(--about-pure-white);
   text-align: center;
   padding: 60px 20px;
   margin-top: 70px;
@@ -189,22 +211,22 @@ body {
   margin-bottom: 20px;
 }
 
-.btn-primary {
+.cta-strip .btn-primary {
   display: inline-block;
-  background-color: var(--pure-white);
-  color: var(--primary-blue);
+  background-color: var(--about-pure-white);
+  color: var(--about-primary-blue);
   text-decoration: none;
   font-weight: 700;
   font-size: 1.1rem;
   padding: 14px 36px;
   border-radius: 30px;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  box-shadow: var(--about-shadow-sm);
+  transition: var(--about-transition);
 }
 
-.btn-primary:hover {
-  background-color: var(--primary-blue);
-  color: var(--pure-white);
+.cta-strip .btn-primary:hover {
+  background-color: var(--about-primary-blue);
+  color: var(--about-pure-white);
   transform: scale(1.05);
   box-shadow: 0 8px 20px rgba(20, 39, 92, 0.4);
 }

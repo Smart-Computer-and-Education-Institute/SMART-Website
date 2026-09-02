@@ -211,6 +211,7 @@ const DEFAULT_SETTINGS = {
     friday: { open: "06:00", close: "18:00", closed: false },
     saturday: { open: "06:00", close: "18:00", closed: true },
   },
+  nextHolidayNoticeId: null,
   whatsapp: "",
   mapEmbedUrl:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d445.7349500066516!2d88.05294745192597!3d26.65233713027649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e5b10076063541%3A0x576f4e4164aade03!2sSmart%20Computer%20%26%20Education%20Institute!5e0!3m2!1sen!2snp!4v1782028540603!5m2!1sen!2snp",
@@ -224,6 +225,7 @@ async function getContactSettings() {
   return {
     ...DEFAULT_SETTINGS,
     ...existing,
+    nextHolidayNoticeId: existing.nextHolidayNoticeId || null,
     weeklyHours: {
       ...DEFAULT_SETTINGS.weeklyHours,
       ...(existing.weeklyHours || {}),
@@ -234,7 +236,25 @@ async function getContactSettings() {
 app.get(
   "/api/public/settings",
   asyncHandler(async (req, res) => {
-    res.json(await getContactSettings());
+    const settings = await getContactSettings();
+    let nextHoliday = null;
+
+    if (settings.nextHolidayNoticeId) {
+      const notice = await db.findOne("notices", settings.nextHolidayNoticeId);
+      if (notice) {
+        nextHoliday = {
+          id: notice.id,
+          title: notice.title,
+          date: notice.date,
+          content: notice.content,
+        };
+      }
+    }
+
+    res.json({
+      ...settings,
+      nextHoliday,
+    });
   })
 );
 
@@ -250,7 +270,17 @@ app.put(
   "/api/settings",
   requireApiAuth,
   asyncHandler(async (req, res) => {
-    const { address, phones, email, hours, weeklyHours, whatsapp, mapEmbedUrl, mapDirectionsUrl } = req.body || {};
+    const {
+      address,
+      phones,
+      email,
+      hours,
+      weeklyHours,
+      nextHolidayNoticeId,
+      whatsapp,
+      mapEmbedUrl,
+      mapDirectionsUrl,
+    } = req.body || {};
     const changes = {};
 
     if (address !== undefined) changes.address = String(address).slice(0, 300);
@@ -265,6 +295,19 @@ app.put(
         .map((p) => String(p).trim())
         .filter(Boolean)
         .slice(0, 10);
+    }
+
+    if (nextHolidayNoticeId !== undefined) {
+      if (nextHolidayNoticeId === null || nextHolidayNoticeId === "") {
+        changes.nextHolidayNoticeId = null;
+      } else {
+        const noticeIdStr = String(nextHolidayNoticeId).trim();
+        const notice = await db.findOne("notices", noticeIdStr);
+        if (!notice) {
+          return res.status(400).json({ error: "Referenced holiday notice does not exist." });
+        }
+        changes.nextHolidayNoticeId = notice.id;
+      }
     }
 
     if (weeklyHours !== undefined) {

@@ -126,6 +126,102 @@
     }
   }
 
+  function formatIsoDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso + "T00:00:00");
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  function renderHolidayNotice(nextHoliday) {
+    const holidayBox = document.getElementById("holidayInfoBox");
+    const holidayText = document.getElementById("holidayInfoText");
+    const popupOverlay = document.getElementById("holidayPopupOverlay");
+    const popupTitle = document.getElementById("holidayPopupTitle");
+    const popupDate = document.getElementById("holidayPopupDate");
+    const popupBody = document.getElementById("holidayPopupBody");
+    const popupCta = document.getElementById("holidayPopupCta");
+    const popupClose = document.getElementById("holidayPopupClose");
+    const popupDismiss = document.getElementById("holidayPopupDismiss");
+
+    if (!holidayBox || !holidayText) return;
+
+    if (!nextHoliday || !nextHoliday.title) {
+      // Keep static text pointing to Notice Board when unset or deleted
+      holidayBox.classList.remove("is-clickable");
+      holidayBox.removeAttribute("role");
+      holidayBox.removeAttribute("tabindex");
+      holidayBox.removeAttribute("aria-label");
+      holidayText.innerHTML = `Any special closures for festivals or official public holidays will be posted in advance on our <a href="Notice.html" style="color:#1e3a8a;font-weight:600;text-decoration:underline;">Notice Board</a>.`;
+      holidayBox.onclick = null;
+      holidayBox.onkeydown = null;
+      return;
+    }
+
+    // Next holiday is active
+    const formattedDate = formatIsoDate(nextHoliday.date);
+    holidayBox.classList.add("is-clickable");
+    holidayBox.setAttribute("role", "button");
+    holidayBox.setAttribute("tabindex", "0");
+    holidayBox.setAttribute("aria-label", `View holiday notice: ${nextHoliday.title}`);
+
+    holidayText.innerHTML = `
+      <span class="holiday-notice-preview">
+        <span class="holiday-notice-title">${escapeHtml(nextHoliday.title)}</span>
+        ${formattedDate ? `<span class="holiday-notice-date">${escapeHtml(formattedDate)}</span>` : ""}
+        <span class="holiday-notice-hint">Click to read full holiday details &rarr;</span>
+      </span>
+    `;
+
+    function openPopup() {
+      if (!popupOverlay) return;
+      if (popupTitle) popupTitle.textContent = nextHoliday.title;
+      if (popupDate) popupDate.textContent = formattedDate ? `Notice Date: ${formattedDate}` : "";
+      if (popupBody) {
+        const bodyContent = nextHoliday.content ? escapeHtml(nextHoliday.content).replace(/\n/g, "<br>") : "";
+        popupBody.innerHTML = `<p>${bodyContent}</p>`;
+      }
+      if (popupCta) {
+        popupCta.href = nextHoliday.id ? `Notice.html#notice-${nextHoliday.id}` : "Notice.html";
+      }
+
+      popupOverlay.classList.add("active");
+      popupOverlay.setAttribute("aria-hidden", "false");
+      document.addEventListener("keydown", handleKeydown);
+    }
+
+    function closePopup() {
+      if (!popupOverlay) return;
+      popupOverlay.classList.remove("active");
+      popupOverlay.setAttribute("aria-hidden", "true");
+      document.removeEventListener("keydown", handleKeydown);
+    }
+
+    function handleKeydown(e) {
+      if (e.key === "Escape") {
+        closePopup();
+      }
+    }
+
+    holidayBox.onclick = openPopup;
+    holidayBox.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openPopup();
+      }
+    };
+
+    if (popupClose) popupClose.onclick = closePopup;
+    if (popupDismiss) popupDismiss.onclick = closePopup;
+    if (popupOverlay) {
+      popupOverlay.onclick = (e) => {
+        if (e.target === popupOverlay) {
+          closePopup();
+        }
+      };
+    }
+  }
+
   function initTimeshift() {
     fetch("/api/public/settings")
       .then((res) => {
@@ -134,10 +230,12 @@
       })
       .then((settings) => {
         renderTimeshift(settings.weeklyHours);
+        renderHolidayNotice(settings.nextHoliday);
       })
       .catch(() => {
         // Fallback gracefully to default hours so page is never empty
         renderTimeshift(DEFAULT_HOURS);
+        renderHolidayNotice(null);
       });
   }
 

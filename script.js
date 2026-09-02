@@ -352,6 +352,7 @@ if (publicNoticeList) {
         .forEach((n) => {
           const card = document.createElement("div");
           card.className = "notice-public-card";
+          if (n.id) card.id = "notice-" + n.id;
           card.innerHTML = `
             <div class="notice-public-top">
               <h3>${escapeNoticeHtml(n.title)}</h3>
@@ -361,6 +362,18 @@ if (publicNoticeList) {
           `;
           publicNoticeList.appendChild(card);
         });
+
+      // Handle anchor deep-linking (e.g. #notice-n12345) from Timeshift holiday popup
+      if (window.location.hash) {
+        const hashId = window.location.hash.replace("#", "");
+        const targetCard = document.getElementById(hashId);
+        if (targetCard) {
+          setTimeout(() => {
+            targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+            targetCard.classList.add("is-highlighted");
+          }, 100);
+        }
+      }
     })
     .catch(() => {
       const empty = document.getElementById("publicNoticeEmpty");

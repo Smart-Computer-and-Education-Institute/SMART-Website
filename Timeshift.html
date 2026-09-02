@@ -91,14 +91,35 @@
                     <h3>Flexible Shifts</h3>
                     <p>Computer training and practice shifts run continuously from early morning through late afternoon to accommodate school and working students.</p>
                 </div>
-                <div class="info-box">
-                    <h3>Holidays & Updates</h3>
-                    <p>Any special closures for festivals or official public holidays will be posted in advance on our <a href="Notice.html" style="color:#1e3a8a;font-weight:600;text-decoration:underline;">Notice Board</a>.</p>
+                <div class="info-box" id="holidayInfoBox">
+                    <h3 id="holidayInfoHeading">Holiday</h3>
+                    <p id="holidayInfoText">Any special closures for festivals or official public holidays will be posted in advance on our <a href="Notice.html" style="color:#1e3a8a;font-weight:600;text-decoration:underline;">Notice Board</a>.</p>
                 </div>
             </div>
 
         </div>
     </main>
+
+    <!-- Holiday Notice Popup Modal -->
+    <div class="site-popup-overlay" id="holidayPopupOverlay" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="site-popup-card" id="holidayPopupCard">
+            <button type="button" class="site-popup-close" id="holidayPopupClose" aria-label="Close holiday announcement">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+            
+            <div class="site-popup-content">
+                <span class="site-popup-tag" id="holidayPopupTag">Upcoming Holiday</span>
+                <h2 class="site-popup-title" id="holidayPopupTitle"></h2>
+                <div class="site-popup-date" id="holidayPopupDate" style="color:#64748b;font-size:0.85rem;margin-bottom:14px;font-family:monospace;font-weight:600;"></div>
+                <div class="site-popup-body" id="holidayPopupBody"></div>
+                
+                <div class="site-popup-actions">
+                    <a href="Notice.html" class="site-popup-cta" id="holidayPopupCta">Read more on Notice Board &rarr;</a>
+                    <button type="button" class="site-popup-dismiss" id="holidayPopupDismiss">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <div class="section-container">

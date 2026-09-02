@@ -1,7 +1,31 @@
+/* =============================================================
+   services.css — Services page styles
+   Smart Computer & Education Institute
+
+   CHANGE LOG
+   ----------
+   2026-09 Scoped bare `button {}` rule (line 56 previously) to
+   `.service-control button` and `.lightbox-close`. The original
+   bare rule matched every <button> on the page — including the
+   site header's "Log In" / hamburger buttons — blowing out their
+   shape whenever services.css was loaded alongside style.css on
+   index.html. The filter-chip and close button styles are the
+   only places that needed those pill/border overrides.
+
+   Also added `.preview-section .Service` to make the section
+   background transparent when this file is loaded on the
+   homepage so it does not paint a conflicting solid-white block
+   inside the homepage's alternating-stripe layout.
+   ============================================================= */
+
 .Service{
-    
-    background-color:#FFFFFF ;
-    
+    background-color:#FFFFFF;
+}
+
+/* Homepage preview: transparent background so the section blends
+   into the homepage's existing stripe/section colours. */
+.preview-section .Service {
+    background-color: transparent;
 }
 .service-container{
     max-width: 1180px;
@@ -53,14 +77,18 @@ h1.Service-heading{
      margin: 36px 0 38px;
      align-items: center;
 }
-button{
+/* Scoped to the services filter chip row only.
+   Previously this was a bare `button {}` selector that reset
+   every button on the page when loaded alongside style.css. */
+.service-control button {
     padding: 9px 18px;
     border-radius: 999px;
-    border:1.5px solid #e2e8f0;
+    border: 1.5px solid #e2e8f0;
     font-weight: 500;
     font-size: 0.85rem;
-    color:#64748b;
-   
+    color: #64748b;
+    background: transparent;
+    cursor: pointer;
 }
 
 .chip:hover{
@@ -120,6 +148,12 @@ button{
     /* same light indigo used in the hero section, keeps the site's overall theme
        instead of merging into the navy footer */
  }
+
+/* Homepage preview: let .preview-section's alternating stripe show through
+   instead of painting a fixed #eef2ff block inside it. */
+.preview-section .info-container {
+    background-color: transparent;
+}
 
 .Testimonials{
     display: block;
@@ -316,6 +350,8 @@ button{
   position: absolute;
   top: 16px;
   right: 16px;
+  /* Re-apply the pill shape here since the bare button{} rule
+     that used to set these values has been scoped away. */
   background: #1e293b;
   color: #fff;
   border: none;

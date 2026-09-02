@@ -1,25 +1,34 @@
 [
   {
     "id": "about",
-    "founderName": "",
-    "founderRole": "",
-    "founderOrg": "",
-    "founderExp": "",
-    "founderMessage": "",
-    "founderSignoff": "",
-    "founderSignature": "",
-    "founderPhoto": "",
-    "storyPhoto": "",
-    "missionPhoto": "",
-    "visionPhoto": "",
-    "whyPhoto": "",
-    "ourStoryHeading": "",
-    "ourStoryText": "",
-    "ourMissionHeading": "",
-    "ourMissionText": "",
-    "ourVisionHeading": "",
-    "ourVisionText": "",
-    "whyChooseUsHeading": "",
-    "whyChooseUsText": ""
+    "founderName": "Bikash Pokharel",
+    "founderRole": "Founder & CEO",
+    "founderOrg": "Smart Computer and Education Institute.",
+    "founderExp": "7+ years in Smart Computer and Education Institute.",
+    "founderMessage": "test test",
+    "founderSignoff": "Warm regards,",
+    "founderSignature": "Bikash Pokharel",
+    "founderPhoto": "img/about/about-founderPhoto-1788361573080-466285433.jpg",
+    "storyPhoto": "img/about/about-storyPhoto-1788361607396-33781702.jpg",
+    "missionPhoto": "img/about/about-missionPhoto-1788361626718-653012167.jpg",
+    "visionPhoto": "img/about/about-visionPhoto-1788361638373-590818878.jpg",
+    "whyPhoto": "img/about/about-whyPhoto-1788361648965-430583060.jpg",
+    "ourStoryHeading": "Our Story",
+    "ourStoryText": "test test",
+    "ourMissionHeading": "Our Mission",
+    "ourMissionText": "test",
+    "ourVisionHeading": "Our Vision",
+    "ourVisionText": "test",
+    "whyChooseUsHeading": "Why Choose Us",
+    "whyChooseUsText": "test",
+    "customSections": [
+      {
+        "id": "sec1788363634148",
+        "heading": "aditional section",
+        "text": "test",
+        "photo": "img/about-sections/about-sec-1788363634156-855256932.jpg",
+        "order": 1
+      }
+    ]
   }
 ]

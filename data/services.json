@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": "s1788361720640",
+    "name": "test",
+    "category": "Test",
+    "image": "img/services/service-1788361720647-239607629.jpg",
+    "duration": "3 Days",
+    "desc": "test",
+    "enrolled": 0,
+    "status": "active"
+  },
+  {
+    "id": "s1788360762832",
+    "name": "Graphics Design Mastery",
+    "category": "Test",
+    "image": "img/services/service-1788360762845-902158992.jpg",
+    "duration": "3 Months",
+    "desc": "Test",
+    "enrolled": 25,
+    "status": "active"
+  }
+]
