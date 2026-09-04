@@ -1953,7 +1953,7 @@ const ALLOWED_IMAGE_TYPES = {
 
 const memoryUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max for high-res photos
   fileFilter: (req, file, cb) => {
     if (!ALLOWED_IMAGE_TYPES[file.mimetype]) {
       return cb(new Error("Only JPG, PNG, WEBP, or GIF images are allowed."));
@@ -1965,7 +1965,7 @@ const memoryUpload = multer({
 function handlePhotoUpload(req, res, next) {
   memoryUpload(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({ error: "Photo is too large. Max size is 5MB." });
+      return res.status(400).json({ error: "Photo is too large. Max size is 10MB." });
     }
     if (err) {
       return res.status(400).json({ error: err.message || "Upload failed." });

@@ -549,7 +549,7 @@ if (publicGalleryGrid) {
       card.className = "gallery-card";
       card.innerHTML = `
         <div class="gallery-image">
-          <img src="${escapeGalleryHtml(p.image || "")}" alt="${escapeGalleryHtml(p.title)}">
+          <img src="${escapeGalleryHtml(p.image || "")}" alt="${escapeGalleryHtml(p.title)}" loading="lazy" decoding="async">
         </div>
         <div class="gallery-info">
           <h3 class="gallery-title">${escapeGalleryHtml(p.title)}</h3>
