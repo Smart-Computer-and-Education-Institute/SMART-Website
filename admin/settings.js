@@ -1,7 +1,7 @@
 /* ============================================
-   Settings — contact info + service categories
-   Backed by /api/settings (contact) and /api/categories.
-   Both take effect on the public site immediately — there's no
+   Settings — contact info, footer content, service categories, career divisions.
+   Backed by /api/settings (contact/footer) and /api/categories.
+   All changes take effect on the public site immediately — there's no
    separate "publish" step.
    ============================================ */
 
@@ -99,6 +99,29 @@ async function loadSettings() {
       }
     });
   }
+
+  // Footer content fields
+  const sl = settings.socialLinks || {};
+  const ftEl = document.getElementById("footerTagline");
+  const fcEl = document.getElementById("footerCopyright");
+  const fnEl = document.getElementById("footerNote");
+  const fbEl = document.getElementById("socialFacebook");
+  const fiEl = document.getElementById("socialInstagram");
+  const fyEl = document.getElementById("socialYoutube");
+  const fkEl = document.getElementById("socialTiktok");
+  const fctaTextEl = document.getElementById("settingsFooterCtaText");
+  const fctaLabelEl = document.getElementById("settingsFooterCtaLabel");
+  const fctaLinkEl = document.getElementById("settingsFooterCtaLink");
+  if (ftEl) ftEl.value = settings.footerTagline || "";
+  if (fcEl) fcEl.value = settings.footerCopyright || "";
+  if (fnEl) fnEl.value = settings.footerNote || "";
+  if (fbEl) fbEl.value = sl.facebook || "";
+  if (fiEl) fiEl.value = sl.instagram || "";
+  if (fyEl) fyEl.value = sl.youtube || "";
+  if (fkEl) fkEl.value = sl.tiktok || "";
+  if (fctaTextEl) fctaTextEl.value = settings.footerCtaText || "";
+  if (fctaLabelEl) fctaLabelEl.value = settings.footerCtaLabel || "";
+  if (fctaLinkEl) fctaLinkEl.value = settings.footerCtaLink || "";
 }
 
 settingsForm.addEventListener("submit", async (e) => {
@@ -342,7 +365,59 @@ if (addDivisionForm) {
   });
 }
 
+/* ---------- Footer Content ---------- */
+
+const footerContentForm = document.getElementById("footerContentForm");
+const footerContentSaveBtn = document.getElementById("footerContentSaveBtn");
+
+if (footerContentForm) {
+  footerContentForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      footerTagline: document.getElementById("footerTagline")?.value.trim() || "",
+      footerCopyright: document.getElementById("footerCopyright")?.value.trim() || "",
+      footerNote: document.getElementById("footerNote")?.value.trim() || "",
+      footerCtaText: document.getElementById("settingsFooterCtaText")?.value.trim() || "",
+      footerCtaLabel: document.getElementById("settingsFooterCtaLabel")?.value.trim() || "",
+      footerCtaLink: document.getElementById("settingsFooterCtaLink")?.value.trim() || "",
+      socialLinks: {
+        facebook: document.getElementById("socialFacebook")?.value.trim() || "",
+        instagram: document.getElementById("socialInstagram")?.value.trim() || "",
+        youtube: document.getElementById("socialYoutube")?.value.trim() || "",
+        tiktok: document.getElementById("socialTiktok")?.value.trim() || "",
+      },
+    };
+
+    if (footerContentSaveBtn) {
+      footerContentSaveBtn.disabled = true;
+      footerContentSaveBtn.textContent = "Saving...";
+    }
+
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showToast(result.error || "Couldn't save footer content", "danger");
+        return;
+      }
+      showToast("Footer content updated");
+      await loadSettings();
+    } catch (err) {
+      showToast("Couldn't save footer content", "danger");
+    } finally {
+      if (footerContentSaveBtn) {
+        footerContentSaveBtn.disabled = false;
+        footerContentSaveBtn.textContent = "Save footer content";
+      }
+    }
+  });
+}
+
 loadSettings();
 loadCategories();
 loadCareerDivisions();
-

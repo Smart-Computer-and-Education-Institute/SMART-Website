@@ -61,6 +61,18 @@
         "close": "18:00",
         "closed": false
       }
-    }
+    },
+    "footerTagline": "Practical computer and digital skills training in Charali, Jhapa.",
+    "footerNote": "Jhapa, Nepal",
+    "footerCopyright": "Smart Institute. All rights reserved.",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/",
+      "instagram": "https://www.instagram.com/",
+      "youtube": "https://www.youtube.com/",
+      "tiktok": "https://www.tiktok.com/en/"
+    },
+    "footerCtaText": "Ready to start your career? Enroll in a course today.",
+    "footerCtaLabel": "Get Started",
+    "footerCtaLink": "Contact.html"
   }
 ]

@@ -62,7 +62,79 @@ onDomReady(() => {
     const linkPage = (link.getAttribute("href") || "").split("/").pop().toLowerCase();
     link.classList.toggle("active", linkPage === currentPage);
   });
+
+  // Sticky Header Scroll elevation listener
+  const header = document.querySelector(".primary-header");
+  if (header) {
+    const onScroll = () => {
+      header.classList.toggle("scrolled", window.scrollY > 20);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  // Initialize smooth scroll reveals across sections and cards
+  initScrollReveals();
 });
+
+// Minimal & Smooth Scroll-Triggered Reveal System
+let revealObserver;
+function initScrollReveals() {
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return; // Don't animate if user prefers reduced motion
+  }
+
+  if (!revealObserver && "IntersectionObserver" in window) {
+    revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
+    );
+  }
+
+  const selectors = [
+    ".preview-section",
+    ".Hero",
+    ".about-wrap",
+    ".about-grid",
+    ".offer-section",
+    ".founder-section",
+    ".gallery-card",
+    ".service-card",
+    ".flyer-card",
+    ".notice-public-card",
+    ".timeshift-card",
+    ".student-card",
+    ".info-card",
+    ".form-panel",
+    ".map-panel",
+    ".job-card",
+    ".header-section",
+    ".contact-grid"
+  ];
+
+  document.querySelectorAll(selectors.join(",")).forEach((el) => {
+    if (!el.classList.contains("reveal-on-scroll")) {
+      el.classList.add("reveal-on-scroll");
+    }
+    if (revealObserver && !el.classList.contains("is-visible")) {
+      revealObserver.observe(el);
+    }
+  });
+
+  // Add staggered animation classes to card grids
+  document.querySelectorAll(
+    ".gallery-grid, .service-grid, .flyer-board__grid, .info-grid, .jobs-grid, .days-grid, .gird-layout"
+  ).forEach((grid) => {
+    grid.classList.add("reveal-stagger");
+  });
+}
 
 // ============================================================
 // Site-wide contact info (address, phone, email, hours, WhatsApp,
@@ -80,9 +152,10 @@ function escapeContactHtml(str) {
 }
 
 function applyContactSettings(settings) {
+  const flatSettings = { ...settings, ...(settings.socialLinks || {}) };
   document.querySelectorAll("[data-contact]").forEach((el) => {
     const field = el.getAttribute("data-contact");
-    let value = settings[field];
+    let value = flatSettings[field];
     if (value === undefined || value === null) return;
 
     const multiline = el.hasAttribute("data-contact-multiline");
@@ -99,10 +172,10 @@ function applyContactSettings(settings) {
       } else if (field === "email") {
         el.href = "mailto:" + value;
         el.textContent = value;
-      } else if (value) {
-        // Generic link fields (e.g. mapDirectionsUrl): set href and show the element.
-        el.href = value;
-        el.style.display = "";
+      } else {
+        // Generic link fields (e.g. mapDirectionsUrl, social links): set href and show if present, else hide.
+        el.style.display = value ? "" : "none";
+        if (value) el.href = value;
       }
       return;
     }
@@ -119,6 +192,13 @@ function applyContactSettings(settings) {
       el.textContent = String(value).replace(/\n/g, ", ");
     }
   });
+
+  if (settings.footerCtaText !== undefined) {
+    const showCta = Boolean(settings.footerCtaText && settings.footerCtaText.trim());
+    document.querySelectorAll(".footer-cta").forEach((cta) => {
+      cta.style.display = showCta ? "" : "none";
+    });
+  }
 }
 
 if (document.querySelector("[data-contact]")) {
@@ -127,6 +207,21 @@ if (document.querySelector("[data-contact]")) {
     .then(applyContactSettings)
     .catch(() => {});
 }
+
+// Footer dynamic year & back-to-top handler
+onDomReady(() => {
+  document.querySelectorAll("#year").forEach((el) => {
+    el.textContent = new Date().getFullYear();
+  });
+
+  const backToTop = document.getElementById("footerBackToTop");
+  if (backToTop) {
+    backToTop.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+});
 
 // ============================================================
 // About Us page content — pulled from the "About Us" section
@@ -362,6 +457,7 @@ if (publicNoticeList) {
           `;
           publicNoticeList.appendChild(card);
         });
+      initScrollReveals();
 
       // Handle anchor deep-linking (e.g. #notice-n12345) from Timeshift holiday popup
       if (window.location.hash) {
@@ -566,6 +662,7 @@ if (publicGalleryGrid) {
       });
       publicGalleryGrid.appendChild(card);
     });
+    initScrollReveals();
   }
 
   if (lightbox) {
@@ -627,6 +724,7 @@ if (publicTestimonialsGrid) {
         `;
         publicTestimonialsGrid.appendChild(card);
       });
+      initScrollReveals();
     })
     .catch(() => {
       if (publicTestimonialsEmpty) {
@@ -708,6 +806,10 @@ function escapeTestHtml(str) {
         </article>
       `;
     }).join('');
+
+    if (typeof initScrollReveals === "function") {
+      initScrollReveals();
+    }
   }
  
   renderFlyers();

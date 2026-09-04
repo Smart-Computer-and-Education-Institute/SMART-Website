@@ -217,6 +217,18 @@ const DEFAULT_SETTINGS = {
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d445.7349500066516!2d88.05294745192597!3d26.65233713027649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e5b10076063541%3A0x576f4e4164aade03!2sSmart%20Computer%20%26%20Education%20Institute!5e0!3m2!1sen!2snp!4v1782028540603!5m2!1sen!2snp",
   mapDirectionsUrl:
     "https://www.google.com/maps/place/Smart+Computer+%26+Education+Institute/@26.6523371,88.0529474,19z",
+  footerTagline: "Practical computer and digital skills training in Charali, Jhapa.",
+  footerNote: "Jhapa, Nepal",
+  footerCopyright: "Smart Computer and Education Institute. All rights reserved.",
+  footerCtaText: "Ready to start your tech career? Enroll in a course today.",
+  footerCtaLabel: "Get Started",
+  footerCtaLink: "Contact.html",
+  socialLinks: {
+    facebook: "",
+    instagram: "",
+    youtube: "",
+    tiktok: "",
+  },
 };
 
 async function getContactSettings() {
@@ -229,6 +241,10 @@ async function getContactSettings() {
     weeklyHours: {
       ...DEFAULT_SETTINGS.weeklyHours,
       ...(existing.weeklyHours || {}),
+    },
+    socialLinks: {
+      ...DEFAULT_SETTINGS.socialLinks,
+      ...(existing.socialLinks || {}),
     },
   };
 }
@@ -280,6 +296,13 @@ app.put(
       whatsapp,
       mapEmbedUrl,
       mapDirectionsUrl,
+      footerTagline,
+      footerNote,
+      footerCopyright,
+      footerCtaText,
+      footerCtaLabel,
+      footerCtaLink,
+      socialLinks,
     } = req.body || {};
     const changes = {};
 
@@ -289,6 +312,21 @@ app.put(
     if (whatsapp !== undefined) changes.whatsapp = String(whatsapp).slice(0, 300);
     if (mapEmbedUrl !== undefined) changes.mapEmbedUrl = String(mapEmbedUrl).slice(0, 1500);
     if (mapDirectionsUrl !== undefined) changes.mapDirectionsUrl = String(mapDirectionsUrl).slice(0, 500);
+    if (footerTagline !== undefined) changes.footerTagline = String(footerTagline).slice(0, 200);
+    if (footerNote !== undefined) changes.footerNote = String(footerNote).slice(0, 80);
+    if (footerCopyright !== undefined) changes.footerCopyright = String(footerCopyright).slice(0, 200);
+    if (footerCtaText !== undefined) changes.footerCtaText = String(footerCtaText).slice(0, 160);
+    if (footerCtaLabel !== undefined) changes.footerCtaLabel = String(footerCtaLabel).slice(0, 40);
+    if (footerCtaLink !== undefined) changes.footerCtaLink = String(footerCtaLink).trim().slice(0, 300);
+    if (socialLinks !== undefined && typeof socialLinks === "object" && socialLinks !== null) {
+      const allowedKeys = ["facebook", "instagram", "youtube", "tiktok"];
+      const cleanSocial = {};
+      for (const key of allowedKeys) {
+        const val = socialLinks[key];
+        cleanSocial[key] = val ? String(val).trim().slice(0, 300) : "";
+      }
+      changes.socialLinks = cleanSocial;
+    }
     if (phones !== undefined) {
       const list = Array.isArray(phones) ? phones : String(phones).split("\n");
       changes.phones = list

@@ -89,15 +89,19 @@ h1.Service-heading{
     color: #64748b;
     background: transparent;
     cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
 
 .chip:hover{
     cursor: pointer;
-    border-color: #1e3e8a;
+    border-color: #1e3a8a;
+    color: #1e3a8a;
+    transform: translateY(-1px);
 }
 
 .chip.active{
-    background-color: #1e3e8a;
+    background-color: #1e3a8a;
+    border-color: #1e3a8a;
     color:#F8FAFC;
     font-weight: 600;
 }
@@ -109,7 +113,7 @@ h1.Service-heading{
 }
 .service-card{
     background-color: #F8FAFC;
-    border: 1px solid #e2e8f0 ;
+    border: 1px solid #e2e8f0;
     border-radius: 14px;
     cursor:pointer;
     padding: 28px;
@@ -118,6 +122,14 @@ h1.Service-heading{
     box-sizing: border-box;
     margin-top: 22px;
     margin-bottom: 22px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -4px rgba(30, 58, 138, 0.12);
+    border-color: #cbd5e1;
 }
 
 
@@ -212,13 +224,21 @@ h1.Service-heading{
 
 
 .student-card{
-     display: flex;
-    background-color: #fff9f4;
+    display: flex;
+    background-color: #ffffff;
     border-radius: 14px;
-    border: 2px solid #ffffff;
-    padding: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    padding: 24px;
     flex-direction: column;
     margin-bottom: 20px;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.student-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -4px rgba(30, 58, 138, 0.12);
+    border-color: #cbd5e1;
 }
 .Student-name{
     text-align: center;

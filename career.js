@@ -65,6 +65,9 @@ function renderFilteredJobs() {
   } else {
     if (empty) empty.style.display = 'none';
     visible.forEach(job => grid.appendChild(buildJobCard(job)));
+    if (typeof initScrollReveals === 'function') {
+      initScrollReveals();
+    }
   }
 }
 
