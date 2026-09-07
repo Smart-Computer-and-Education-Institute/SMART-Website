@@ -10,7 +10,7 @@
     "start": "node server.js",
     "dev": "node server.js",
     "hash-password": "node scripts/hash-password.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node scripts/test_careers.js"
   },
   "keywords": [],
   "author": "",

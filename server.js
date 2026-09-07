@@ -84,6 +84,9 @@ const BLOCKED_PATH_PREFIXES = [
   "/package.json",
   "/package-lock.json",
   "/vercel.json",
+  "/.env",
+  "/.git",
+  "/test_careers.js",
 ];
 app.use((req, res, next) => {
   if (BLOCKED_PATH_PREFIXES.some((p) => req.path === p || req.path.startsWith(p))) {

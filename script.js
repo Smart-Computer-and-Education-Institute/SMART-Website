@@ -242,25 +242,34 @@ function applyAboutContent(data) {
     const field = el.getAttribute("data-about");
     const value = data[field];
     if (value === undefined || value === null) return;
+    const strVal = String(value).trim();
+    if (!strVal || strVal.toLowerCase() === "test" || strVal.toLowerCase() === "test test") return;
 
     if (el.hasAttribute("data-about-multiline")) {
       // Render newlines as <br> tags inside the existing element so the
       // surrounding CSS (font, spacing) still applies. Each \n\n in the
       // stored text produces a double-break, visually separating paragraphs.
-      el.innerHTML = escapeAboutHtml(String(value)).replace(/\n/g, "<br>");
+      el.innerHTML = escapeAboutHtml(strVal).replace(/\n/g, "<br>");
     } else {
-      el.textContent = String(value);
+      el.textContent = strVal;
     }
   });
 }
 
 // Also swap [data-about-img] elements when a photo URL is stored in the about doc.
 // Only overrides src if the stored URL is non-empty — keeps the hardcoded fallback
-// image for any slot the admin hasn't uploaded to yet.
+// image for any slot the admin hasn't uploaded to yet or if photo fails to load.
 function applyAboutPhotos(data) {
   document.querySelectorAll("[data-about-img]").forEach((img) => {
     const field = img.getAttribute("data-about-img");
-    if (data[field]) img.src = data[field];
+    if (data[field] && typeof data[field] === "string" && data[field].trim()) {
+      const fallbackSrc = img.getAttribute("src") || "";
+      img.onerror = function() {
+        this.onerror = null;
+        if (fallbackSrc && this.src !== fallbackSrc) this.src = fallbackSrc;
+      };
+      img.src = data[field];
+    }
   });
 }
 
@@ -295,6 +304,10 @@ function applyCustomAboutSections(data) {
       }
     })
     .join("");
+
+  if (typeof initScrollReveals === "function") {
+    initScrollReveals();
+  }
 }
 
 if (document.querySelector("[data-about]") || document.querySelector("[data-about-img]") || document.getElementById("customAboutSections")) {
@@ -307,10 +320,6 @@ if (document.querySelector("[data-about]") || document.querySelector("[data-abou
     })
     .catch(() => {}); // silently fall back to hardcoded HTML if fetch fails
 }
-
-document.querySelectorAll("#year").forEach((el) => {
-  el.textContent = new Date().getFullYear();
-});
 
 // JS for terminal..
 const typedE1 = document.getElementById("typedText");
@@ -373,7 +382,7 @@ function animateProgressBar() {
   requestAnimationFrame(step);
 }
 
-window.addEventListener('DOMContentLoaded', animateProgressBar);
+onDomReady(animateProgressBar);
 
 // 5. Stats Count-Up Animation
 const animateCount = (el) => {
@@ -553,7 +562,8 @@ if (publicServiceGrid) {
     if (!serviceModal) return;
     document.getElementById("serviceModalCategory").textContent = s.category || "";
     document.getElementById("serviceModalTitle").textContent = s.name || "";
-    document.getElementById("serviceModalDesc").textContent = s.desc || "";
+    const descEl = document.getElementById("serviceModalDesc");
+    if (descEl) descEl.innerHTML = nl2br(escapeServiceHtml(s.desc || ""));
     document.getElementById("serviceModalDuration").textContent = s.duration || "";
     serviceModal.classList.add("open");
   }
@@ -741,76 +751,30 @@ function escapeTestHtml(str) {
 }
 
 
-// Offer script
-(function () {
+// 10. Contact Inquiry Form handler (Contact.html)
+onDomReady(() => {
+  const inquiryForm = document.getElementById("inquiryForm") || document.querySelector(".form-panel form");
+  if (inquiryForm) {
+    inquiryForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name")?.value.trim() || "";
+      const email = document.getElementById("email")?.value.trim() || "";
+      const subject = document.getElementById("subject")?.value.trim() || "Course Inquiry";
+      const message = document.getElementById("message")?.value.trim() || "";
 
-  const FLYERS = [
-    {
-      tag: "New Batch",
-      title: "Digital Marketing — New Batch Starts Aug 20",
-      desc: "Evening batch, 6 weeks, seats limited to 20 students.",
-      date: "Posted Aug 5, 2026",
-      image: "",
-      link: "#"
-    },
-    {
-      tag: "Offer",
-      title: "20% Off — Office Package (Excel, Word, PowerPoint)",
-      desc: "Early-bird discount for enrollments before Aug 31.",
-      date: "Posted Aug 3, 2026",
-      image: "",
-      link: "#"
-    },
-    {
-      tag: "Event",
-      title: "Free Career Counseling — Every Saturday",
-      desc: "Drop by Charali branch, 10 AM–1 PM, no booking needed.",
-      date: "Posted Jul 28, 2026",
-      image: "",
-      link: "#"
-    }
-  ];
- 
-  const tilts = [-2, 1.5, -1, 2, -1.5, 1];
- 
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[c]));
-  }
- 
-  function renderFlyers() {
-    const grid = document.getElementById('flyerGrid');
-    const empty = document.getElementById('flyerEmpty');
- 
-    if (!FLYERS.length) {
-      grid.style.display = 'none';
-      empty.hidden = false;
-      return;
-    }
- 
-    grid.innerHTML = FLYERS.map((f, i) => {
-      const tilt = tilts[i % tilts.length];
-      const thumb = f.image
-        ? `<img class="flyer-card__thumb" style="background:none;padding:0;object-fit:cover;" src="${esc(f.image)}" alt="${esc(f.title)}">`
-        : `<div class="flyer-card__thumb"><span class="flyer-card__thumb-title">${esc(f.title)}</span></div>`;
- 
-      return `
-        <article class="flyer-card" style="--tilt:${tilt}deg;">
-          <span class="flyer-card__tag">${esc(f.tag)}</span>
-          ${thumb}
-          <h3 class="flyer-card__title">${esc(f.title)}</h3>
-          <p class="flyer-card__desc">${esc(f.desc)}</p>
-          <div class="flyer-card__meta"><span>${esc(f.date)}</span></div>
-          <a class="flyer-card__cta" href="${esc(f.link)}" target="_blank" rel="noopener">View Flyer →</a>
-        </article>
-      `;
-    }).join('');
+      const mailtoUrl = `mailto:smartinstitute@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent("From: " + name + " (" + email + ")\n\n" + message)}`;
+      window.location.href = mailtoUrl;
 
-    if (typeof initScrollReveals === "function") {
-      initScrollReveals();
-    }
+      let feedback = document.getElementById("inquiryFeedback");
+      if (!feedback) {
+        feedback = document.createElement("div");
+        feedback.id = "inquiryFeedback";
+        feedback.style.cssText =
+          "margin-top:16px;padding:12px 16px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:8px;font-size:0.9rem;font-weight:500;";
+        inquiryForm.appendChild(feedback);
+      }
+      feedback.textContent = "Opening your email client to send your inquiry. Thank you!";
+      inquiryForm.reset();
+    });
   }
- 
-  renderFlyers();
-})();
+});

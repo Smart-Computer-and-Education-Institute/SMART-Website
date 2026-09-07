@@ -222,6 +222,8 @@
     }
   }
 
+  let cachedWeeklyHours = DEFAULT_HOURS;
+
   function initTimeshift() {
     fetch("/api/public/settings")
       .then((res) => {
@@ -229,19 +231,25 @@
         return res.json();
       })
       .then((settings) => {
-        renderTimeshift(settings.weeklyHours);
+        cachedWeeklyHours = settings.weeklyHours || DEFAULT_HOURS;
+        renderTimeshift(cachedWeeklyHours);
         renderHolidayNotice(settings.nextHoliday);
       })
       .catch(() => {
         // Fallback gracefully to default hours so page is never empty
+        cachedWeeklyHours = DEFAULT_HOURS;
         renderTimeshift(DEFAULT_HOURS);
         renderHolidayNotice(null);
       });
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initTimeshift);
+    document.addEventListener("DOMContentLoaded", () => {
+      initTimeshift();
+      setInterval(() => renderTimeshift(cachedWeeklyHours), 60000);
+    });
   } else {
     initTimeshift();
+    setInterval(() => renderTimeshift(cachedWeeklyHours), 60000);
   }
 })();
