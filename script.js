@@ -205,7 +205,7 @@ if (document.querySelector("[data-contact]")) {
   fetch("/api/public/settings")
     .then((res) => res.json())
     .then(applyContactSettings)
-    .catch(() => {});
+    .catch(() => { });
 }
 
 // Footer dynamic year & back-to-top handler
@@ -264,7 +264,7 @@ function applyAboutPhotos(data) {
     const field = img.getAttribute("data-about-img");
     if (data[field] && typeof data[field] === "string" && data[field].trim()) {
       const fallbackSrc = img.getAttribute("src") || "";
-      img.onerror = function() {
+      img.onerror = function () {
         this.onerror = null;
         if (fallbackSrc && this.src !== fallbackSrc) this.src = fallbackSrc;
       };
@@ -318,7 +318,7 @@ if (document.querySelector("[data-about]") || document.querySelector("[data-abou
       applyAboutPhotos(data);
       applyCustomAboutSections(data);
     })
-    .catch(() => {}); // silently fall back to hardcoded HTML if fetch fails
+    .catch(() => { }); // silently fall back to hardcoded HTML if fetch fails
 }
 
 // JS for terminal..
@@ -602,7 +602,7 @@ if (publicServiceGrid) {
           serviceFilterChips.appendChild(chip);
         });
       })
-      .catch(() => {}); // the "All Services" chip still works fine on its own
+      .catch(() => { }); // the "All Services" chip still works fine on its own
   }
 
   fetch("/api/public/services")
