@@ -98,6 +98,10 @@
       {
         "label": "Chess",
         "url": "https://www.chess.com/home"
+      },
+      {
+        "label": "deadshot",
+        "url": "https://deadshot.io/"
       }
     ]
   }
