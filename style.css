@@ -811,7 +811,9 @@ footer .section-container {
 /* Social icons row */
 .footer-social {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  row-gap: 10px;
   margin-top: 4px;
 }
 
@@ -827,6 +829,13 @@ footer .section-container {
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
   text-decoration: none;
+}
+
+.footer-social-link svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex-shrink: 0;
 }
 
 .footer-social-link:hover {

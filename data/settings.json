@@ -73,6 +73,32 @@
     },
     "footerCtaText": "Ready to start your career? Enroll in a course today.",
     "footerCtaLabel": "Get Started",
-    "footerCtaLink": "Contact.html"
+    "footerCtaLink": "Contact.html",
+    "customSocialLinks": [
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/"
+      },
+      {
+        "label": "TikTok",
+        "url": "https://www.tiktok.com/en/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/school/smart-institute"
+      },
+      {
+        "label": "Chess",
+        "url": "https://www.chess.com/home"
+      }
+    ]
   }
 ]

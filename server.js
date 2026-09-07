@@ -232,6 +232,7 @@ const DEFAULT_SETTINGS = {
     youtube: "",
     tiktok: "",
   },
+  customSocialLinks: [],
 };
 
 async function getContactSettings() {
@@ -249,6 +250,14 @@ async function getContactSettings() {
       ...DEFAULT_SETTINGS.socialLinks,
       ...(existing.socialLinks || {}),
     },
+    customSocialLinks: Array.isArray(existing.customSocialLinks)
+      ? existing.customSocialLinks
+      : (existing.socialLinks ? [
+          existing.socialLinks.facebook && { label: "Facebook", url: existing.socialLinks.facebook },
+          existing.socialLinks.instagram && { label: "Instagram", url: existing.socialLinks.instagram },
+          existing.socialLinks.youtube && { label: "YouTube", url: existing.socialLinks.youtube },
+          existing.socialLinks.tiktok && { label: "TikTok", url: existing.socialLinks.tiktok },
+        ].filter(Boolean) : []),
   };
 }
 
@@ -306,6 +315,7 @@ app.put(
       footerCtaLabel,
       footerCtaLink,
       socialLinks,
+      customSocialLinks,
     } = req.body || {};
     const changes = {};
 
@@ -321,6 +331,22 @@ app.put(
     if (footerCtaText !== undefined) changes.footerCtaText = String(footerCtaText).slice(0, 160);
     if (footerCtaLabel !== undefined) changes.footerCtaLabel = String(footerCtaLabel).slice(0, 40);
     if (footerCtaLink !== undefined) changes.footerCtaLink = String(footerCtaLink).trim().slice(0, 300);
+    if (customSocialLinks !== undefined) {
+      if (Array.isArray(customSocialLinks)) {
+        changes.customSocialLinks = customSocialLinks
+          .map((item) => {
+            if (!item || typeof item !== "object") return null;
+            const label = String(item.label || "").trim().slice(0, 50);
+            const url = String(item.url || "").trim().slice(0, 500);
+            if (!url) return null;
+            return { label: label || "Link", url };
+          })
+          .filter(Boolean)
+          .slice(0, 10);
+      } else {
+        changes.customSocialLinks = [];
+      }
+    }
     if (socialLinks !== undefined && typeof socialLinks === "object" && socialLinks !== null) {
       const allowedKeys = ["facebook", "instagram", "youtube", "tiktok"];
       const cleanSocial = {};
@@ -328,6 +354,18 @@ app.put(
         const val = socialLinks[key];
         cleanSocial[key] = val ? String(val).trim().slice(0, 300) : "";
       }
+      changes.socialLinks = cleanSocial;
+    } else if (changes.customSocialLinks) {
+      // Sync legacy socialLinks from customSocialLinks if not explicitly sent
+      const cleanSocial = { facebook: "", instagram: "", youtube: "", tiktok: "" };
+      changes.customSocialLinks.forEach((item) => {
+        const u = (item.url || "").toLowerCase();
+        const l = (item.label || "").toLowerCase();
+        if ((u.includes("facebook") || l.includes("facebook")) && !cleanSocial.facebook) cleanSocial.facebook = item.url;
+        if ((u.includes("instagram") || l.includes("instagram")) && !cleanSocial.instagram) cleanSocial.instagram = item.url;
+        if ((u.includes("youtube") || l.includes("youtube")) && !cleanSocial.youtube) cleanSocial.youtube = item.url;
+        if ((u.includes("tiktok") || l.includes("tiktok")) && !cleanSocial.tiktok) cleanSocial.tiktok = item.url;
+      });
       changes.socialLinks = cleanSocial;
     }
     if (phones !== undefined) {
