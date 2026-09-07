@@ -831,11 +831,13 @@ footer .section-container {
   text-decoration: none;
 }
 
-.footer-social-link svg {
+.footer-social-link svg,
+.footer-social-link img {
   width: 18px;
   height: 18px;
   display: block;
   flex-shrink: 0;
+  object-fit: contain;
 }
 
 .footer-social-link:hover {

@@ -78,7 +78,7 @@ onDomReady(() => {
 });
 
 // Minimal & Smooth Scroll-Triggered Reveal System
-let revealObserver;
+var revealObserver;
 function initScrollReveals() {
   if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     return; // Don't animate if user prefers reduced motion
@@ -213,6 +213,7 @@ const FOOTER_SOCIAL_ICONS = {
   twitter: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
   linkedin: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77Z"/></svg>',
   github: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>',
+  gitlab: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="m23.6 9.58-1.07-3.29a.95.95 0 0 0-.36-.45.97.97 0 0 0-.58-.13.98.98 0 0 0-.55.24.97.97 0 0 0-.29.5L18.8 12.4H5.2L3.25 6.45a.97.97 0 0 0-.29-.5.98.98 0 0 0-.55-.24.97.97 0 0 0-.58.13.95.95 0 0 0-.36.45L.4 9.58a1.29 1.29 0 0 0 .47 1.44L12 19.88l11.13-8.86a1.29 1.29 0 0 0 .47-1.44z"/></svg>',
   telegram: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8-1.7 8.03c-.13.58-.47.72-.96.45l-2.61-1.92-1.26 1.21c-.14.14-.26.26-.53.26l.19-2.66 4.84-4.37c.21-.19-.05-.29-.32-.1l-5.99 3.77-2.58-.81c-.56-.18-.57-.56.12-.83l10.07-3.88c.47-.17.88.11.73.85z"/></svg>',
   discord: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.078.078 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>',
   threads: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c2.5 0 4.79-.92 6.54-2.45l-1.36-1.42A7.95 7.95 0 0 1 12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8c0 1.5-.4 2.89-1.13 4.07-.63 1.02-1.57 1.63-2.62 1.63-1.06 0-1.75-.68-1.75-1.95V10.2c0-1.89-1.2-3.2-3.12-3.2-2.17 0-3.88 1.74-3.88 4.05 0 2.37 1.63 4.14 3.88 4.14 1.28 0 2.34-.58 2.87-1.55.45 1.61 1.7 2.65 3.5 2.65 1.73 0 3.23-.97 4.13-2.44A9.92 9.92 0 0 0 22 12c0-5.52-4.48-10-10-10zm.12 13.25c-1.25 0-2.15-.94-2.15-2.25 0-1.34.9-2.25 2.15-2.25s2.15.91 2.15 2.25c0 1.31-.9 2.25-2.15 2.25z"/></svg>',
@@ -224,8 +225,28 @@ const FOOTER_SOCIAL_ICONS = {
   medium: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>',
   viber: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M22.84 16.42c-.22-.38-2.61-3.13-3.8-3.23-.39-.03-.78.14-1.07.45-.39.42-.77.85-1.16 1.28-.15.16-.33.22-.54.14-.52-.19-1.17-.46-1.92-.88-1.56-.87-2.97-2.14-4.14-3.69-.53-.7-.94-1.39-1.22-2.02-.09-.2-.04-.37.11-.53.4-.41.8-.81 1.2-1.22.34-.35.5-.77.42-1.26-.09-1.05-2.07-3.95-2.45-4.22-.36-.26-.78-.37-1.22-.27-.64.14-1.35.6-1.89 1.19-.8 1-.98 2.15-.55 3.35.8 2.27 2.22 4.49 4.14 6.47 2.18 2.25 4.69 3.86 7.23 4.67 1.34.42 2.61.16 3.65-.74.6-.53 1.07-1.24 1.2-1.91.09-.43-.02-.84-.28-1.2z"/></svg>',
   messenger: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.91 1.19 5.43 3.12 7.15.16.14.26.35.26.57l-.07 1.78c-.03.73.74 1.22 1.38.87l1.98-1.08c.18-.1.38-.13.58-.08.88.24 1.8.37 2.75.37 5.64 0 10-4.13 10-9.7S17.64 2 12 2zm1.06 13.06-2.58-2.75-5.04 2.75 5.54-5.88 2.65 2.75 4.97-2.75-5.54 5.88z"/></svg>',
+  chess: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19 22H5v-2h14v2zm-2-3H7l1.1-5.5h7.8L17 19zm-2.2-7H9.2l-.7-3.5h7l-.7 3.5zM12 2a3.5 3.5 0 0 1 3.5 3.5c0 1.05-.46 1.99-1.19 2.63l.69 2.37H9l.69-2.37A3.49 3.49 0 0 1 8.5 5.5 3.5 3.5 0 0 1 12 2z"/></svg>',
+  steam: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.008l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.005.105.005.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>',
+  patreon: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M14.82 2.41a7.28 7.28 0 0 0-7.28 7.28 7.28 7.28 0 0 0 7.28 7.28 7.28 7.28 0 0 0 7.28-7.28 7.28 7.28 0 0 0-7.28-7.28zM1.9 21.59h3.76V2.41H1.9v19.18z"/></svg>',
+  dribbble: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm8.38 10.98a8.3 8.3 0 0 1-3.7-.85c.08-.2.15-.4.22-.61.7-2.02 1.05-3.83 1.05-3.83a8.03 8.03 0 0 1 2.43 5.29zM12 3.96c2.04 0 3.9.77 5.33 2.05-.08.18-.38 1.76-1.04 3.65-3.23-1.08-6.19-1.09-6.52-1.09-.17 0-.34 0-.52.01A8.04 8.04 0 0 1 12 3.96zM7.28 9.53c.18 0 .34 0 .5-.01.35 0 3.3.01 6.55 1.13-.26.73-.56 1.48-.9 2.22-3.83-1.18-7.56.03-7.73.08a8.07 8.07 0 0 1 1.58-3.42zm-3.32 3.82c.13-.04 2.87-.9 6.83.17-.4 1.08-.85 2.15-1.35 3.19-3.28-.97-5.06-2.99-5.48-3.36zm4.84 5.94c.48-.99.9-2.01 1.28-3.03 2.92.83 4.2 2.39 4.34 2.56a8.02 8.02 0 0 1-5.62.47zm7.04-1.28c-.2-.23-1.46-1.68-4.22-2.54.3-.67.58-1.34.82-2 .14.04.28.08.43.12 3.32.96 4.67.75 4.88.71-.24 1.43-.99 2.71-1.91 3.71z"/></svg>',
+  behance: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M22 7h-7v2h7V7zm1.726 10c-.442 1.297-2.029 3-4.726 3-3.271 0-5.656-2.124-5.656-5.836 0-3.607 2.348-5.897 5.484-5.897 3.393 0 5.094 2.392 4.973 5.707h-7.669c.084 1.954 1.463 3.024 3.016 3.024 1.424 0 2.219-.77 2.578-1.503l2.004 1.505zm-4.887-5.116c-.053-1.288-.934-2.028-2.229-2.028-1.348 0-2.246.772-2.383 2.028h4.612zM7.29 11.283c.961-.531 1.516-1.42 1.516-2.585 0-2.23-1.748-3.698-4.488-3.698H0v14h4.664c2.81 0 4.793-1.637 4.793-4.103 0-1.579-.844-2.884-2.167-3.614zM2.844 7.644h1.619c1.17 0 1.895.586 1.895 1.621 0 1.057-.746 1.643-1.895 1.643H2.844V7.644zm1.879 8.712H2.844v-3.791h1.947c1.371 0 2.123.633 2.123 1.883 0 1.293-.822 1.908-2.091 1.908z"/></svg>',
+  slack: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>',
+  leetcode: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.074 5.074 0 0 0-3.79-1.46c-1.571 0-3.033.619-4.143 1.733L3.13 12.39c-1.11 1.11-1.728 2.572-1.728 4.143s.618 3.033 1.728 4.143l4.332 4.364c1.11 1.11 2.572 1.728 4.143 1.728s3.033-.618 4.143-1.728l2.697-2.607c.514-.514.496-1.365-.039-1.901-.535-.535-1.386-.553-1.9-.039zM10.74 13.064h10.42c.747 0 1.352-.605 1.352-1.352s-.605-1.352-1.352-1.352H10.74c-.747 0-1.352.605-1.352 1.352s.605 1.352 1.352 1.352z"/></svg>',
   website: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
 };
+
+function getDomainFromUrl(url) {
+  if (!url || typeof url !== "string") return "";
+  let trimmed = url.trim();
+  if (!trimmed) return "";
+  if (!/^https?:\/\//i.test(trimmed)) trimmed = "https://" + trimmed;
+  try {
+    const u = new URL(trimmed);
+    return u.hostname.replace(/^www\./i, "");
+  } catch (e) {
+    return "";
+  }
+}
 
 function detectPlatformIcon(label, url) {
   const combined = `${label || ""} ${url || ""}`.toLowerCase();
@@ -237,6 +258,7 @@ function detectPlatformIcon(label, url) {
   if (/twitter|x\.com/.test(combined)) return "twitter";
   if (/linkedin/.test(combined)) return "linkedin";
   if (/github/.test(combined)) return "github";
+  if (/gitlab/.test(combined)) return "gitlab";
   if (/telegram|t\.me/.test(combined)) return "telegram";
   if (/discord|discord\.gg/.test(combined)) return "discord";
   if (/threads/.test(combined)) return "threads";
@@ -248,7 +270,39 @@ function detectPlatformIcon(label, url) {
   if (/medium/.test(combined)) return "medium";
   if (/viber/.test(combined)) return "viber";
   if (/messenger|m\.me/.test(combined)) return "messenger";
+  if (/chess(\.com)?/.test(combined)) return "chess";
+  if (/steam(community|powered)?/.test(combined)) return "steam";
+  if (/patreon/.test(combined)) return "patreon";
+  if (/dribbble/.test(combined)) return "dribbble";
+  if (/behance/.test(combined)) return "behance";
+  if (/slack/.test(combined)) return "slack";
+  if (/leetcode/.test(combined)) return "leetcode";
   return "website";
+}
+
+function renderFooterSocialIcon(item) {
+  const customIcon = (item.icon || "").trim();
+  const label = item.label || "Link";
+  const url = (item.url || "").trim();
+
+  if (customIcon) {
+    const abs = customIcon.startsWith("http") || customIcon.startsWith("/") ? customIcon : "/" + customIcon;
+    return `<img src="${escapeHtml(abs)}" alt="${escapeHtml(label)}" class="footer-social-img" width="18" height="18" style="width:18px;height:18px;object-fit:contain;display:block;" onerror="this.onerror=null;this.replaceWith(document.createRange().createContextualFragment('${FOOTER_SOCIAL_ICONS.website}'));">`;
+  }
+
+  const platform = detectPlatformIcon(label, url);
+  if (platform !== "website" && FOOTER_SOCIAL_ICONS[platform]) {
+    return FOOTER_SOCIAL_ICONS[platform];
+  }
+
+  const domain = getDomainFromUrl(url);
+  if (domain && domain.includes(".")) {
+    const gUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+    const ddgUrl = `https://icons.duckduckgo.com/ip3/${encodeURIComponent(domain)}.ico`;
+    return `<img src="${gUrl}" alt="${escapeHtml(label)}" class="footer-social-img" width="18" height="18" style="width:18px;height:18px;object-fit:contain;display:block;border-radius:3px;" onerror="if(!this.dataset.triedDdg){this.dataset.triedDdg='1';this.src='${ddgUrl}';}else{this.onerror=null;this.replaceWith(document.createRange().createContextualFragment('${FOOTER_SOCIAL_ICONS.website}'));}">`;
+  }
+
+  return FOOTER_SOCIAL_ICONS.website;
 }
 
 function applyFooterSocialLinks(settings) {
@@ -278,16 +332,16 @@ function applyFooterSocialLinks(settings) {
     container.style.display = "";
     validLinks.forEach((item) => {
       const platform = detectPlatformIcon(item.label, item.url);
-      const svg = FOOTER_SOCIAL_ICONS[platform] || FOOTER_SOCIAL_ICONS.website;
+      const iconHtml = renderFooterSocialIcon(item);
       const a = document.createElement("a");
       a.className = "footer-social-link";
       a.href = item.url;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
-      const labelText = item.label || platform.charAt(0).toUpperCase() + platform.slice(1);
+      const labelText = item.label || (platform !== "website" ? platform.charAt(0).toUpperCase() + platform.slice(1) : "Link");
       a.setAttribute("aria-label", labelText);
       a.title = labelText;
-      a.innerHTML = svg;
+      a.innerHTML = iconHtml;
       container.appendChild(a);
     });
   });

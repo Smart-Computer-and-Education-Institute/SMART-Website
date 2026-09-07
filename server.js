@@ -338,8 +338,11 @@ app.put(
             if (!item || typeof item !== "object") return null;
             const label = String(item.label || "").trim().slice(0, 50);
             const url = String(item.url || "").trim().slice(0, 500);
+            const icon = typeof item.icon === "string" ? String(item.icon).trim().slice(0, 500) : "";
             if (!url) return null;
-            return { label: label || "Link", url };
+            const res = { label: label || "Link", url };
+            if (icon) res.icon = icon;
+            return res;
           })
           .filter(Boolean)
           .slice(0, 10);
@@ -427,6 +430,7 @@ app.put(
     res.json(updated);
   })
 );
+
 
 // ---------------------------------------------------------
 // Popups API (multi-record collection with scheduling & priority)
@@ -2057,6 +2061,20 @@ function safeUploadName(prefix, mimetype) {
   const ext = ALLOWED_IMAGE_TYPES[mimetype];
   return `${prefix}-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
 }
+
+app.post(
+  "/api/settings/social-icon",
+  requireApiAuth,
+  handlePhotoUpload,
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "Please choose an icon image to upload." });
+    }
+    const filename = safeUploadName("social", req.file.mimetype);
+    const iconUrl = await blobStorage.saveUpload(req.file.buffer, "social-icons", filename);
+    res.json({ icon: iconUrl });
+  })
+);
 
 // ---------------------------------------------------------
 // Gallery API
