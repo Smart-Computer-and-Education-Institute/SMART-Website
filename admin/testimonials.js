@@ -26,7 +26,7 @@ function renderTestimonials() {
     const card = document.createElement("div");
     card.className = "testimonial-admin-card";
     const photoHtml = t.photo
-      ? `<img src="${escapeHtml(t.photo)}" alt="${escapeHtml(t.name)}" class="testimonial-admin-avatar">`
+      ? `<img src="${escapeHtml(toAbsUrl(t.photo))}" alt="${escapeHtml(t.name)}" class="testimonial-admin-avatar">`
       : `<div class="testimonial-admin-avatar testimonial-admin-avatar-placeholder">${escapeHtml(t.name.charAt(0).toUpperCase())}</div>`;
     card.innerHTML = `
       <div class="testimonial-admin-header">
@@ -70,7 +70,7 @@ function openTestimonialModal(id) {
     document.getElementById("testimonialService").value = t.service || "";
     document.getElementById("testimonialText").value = t.text;
     if (t.photo) {
-      previewImg.src = t.photo;
+      previewImg.src = toAbsUrl(t.photo);
       preview.style.display = "block";
     } else {
       preview.style.display = "none";

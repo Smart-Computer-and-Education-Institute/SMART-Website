@@ -73,7 +73,7 @@ function showCareerPhotoPreview(url) {
   const img = document.getElementById("preview-careerPhoto");
   if (!img) return;
   if (url) {
-    img.src = url;
+    img.src = toAbsUrl(url);
     img.style.display = "block";
   } else {
     img.src = "";
@@ -111,7 +111,7 @@ function renderCareers() {
   rows.forEach((c) => {
     const tr = document.createElement("tr");
     const thumbHtml = c.image
-      ? `<img src="${escapeHtml(c.image)}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
+      ? `<img src="${escapeHtml(toAbsUrl(c.image))}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
       : `<div style="width:38px;height:38px;border-radius:6px;background:var(--color-primary-soft,#eff6ff);color:var(--color-primary,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">💼</div>`;
 
     tr.innerHTML = `
@@ -237,7 +237,7 @@ async function uploadCareerPhoto() {
     }
 
     const data = await res.json();
-    showCareerPhotoPreview(data.image);
+    showCareerPhotoPreview(toAbsUrl(data.image));
     fileInput.value = "";
     showToast("Photo updated successfully");
     await loadCareers();

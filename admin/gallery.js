@@ -36,7 +36,7 @@ function renderGallery() {
     const card = document.createElement("div");
     card.className = "gallery-admin-card";
     const thumbInner = p.image
-      ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover;">`
+      ? `<img src="${escapeHtml(toAbsUrl(p.image))}" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover;">`
       : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>`;
     card.innerHTML = `
       <div class="gallery-admin-thumb" style="background:${thumbPalette[i % thumbPalette.length]}">
@@ -82,7 +82,7 @@ function openPhotoModal(id) {
     // we show the existing photo and let the file field stay empty
     // (empty = "keep the current photo" when the form is submitted).
     if (p.image) {
-      previewImg.src = p.image;
+      previewImg.src = toAbsUrl(p.image);
       preview.style.display = "block";
     } else {
       preview.style.display = "none";

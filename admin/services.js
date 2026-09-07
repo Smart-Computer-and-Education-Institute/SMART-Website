@@ -106,7 +106,7 @@ function renderServices() {
   rows.forEach((s) => {
     const tr = document.createElement("tr");
     const thumbHtml = s.image
-      ? `<img src="${escapeHtml(s.image)}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
+      ? `<img src="${escapeHtml(toAbsUrl(s.image))}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
       : `<div style="width:38px;height:38px;border-radius:6px;background:var(--color-primary-soft,#eff6ff);color:var(--color-primary,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">📚</div>`;
 
     tr.innerHTML = `
@@ -184,7 +184,7 @@ function openServiceModal(id) {
     document.getElementById("serviceDesc").value             = s.desc;
     document.getElementById("serviceEnrolled").value         = s.enrolled;
     document.getElementById("serviceStatus").value           = s.status;
-    showServicePhotoPreview(s.image || "");
+    showServicePhotoPreview(toAbsUrl(s.image || ""));
   } else {
     document.getElementById("serviceModalTitle").textContent = "Add service";
     document.getElementById("serviceId").value               = "";
@@ -229,7 +229,7 @@ async function uploadServicePhoto() {
     }
 
     const data = await res.json();
-    showServicePhotoPreview(data.image);
+    showServicePhotoPreview(toAbsUrl(data.image));
     fileInput.value = "";
     showToast("Photo updated successfully");
     await loadServices();

@@ -225,7 +225,7 @@ function renderPopups() {
     let sourceBadge = '<span class="badge badge-gray">Custom</span>';
     let contentSnippet = p.title || p.message || "Custom message";
     let thumbHtml = p.image
-      ? `<img src="${escapeHtml(p.image)}" alt="" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
+      ? `<img src="${escapeHtml(toAbsUrl(p.image))}" alt="" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
       : `<div style="width:36px;height:36px;border-radius:6px;background:var(--color-primary-soft);color:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;">💬</div>`;
 
     if (p.source === "offer") {
@@ -234,7 +234,7 @@ function renderPopups() {
       if (offer) {
         contentSnippet = `Offer: ${offer.title}`;
         if (offer.image) {
-          thumbHtml = `<img src="${escapeHtml(offer.image)}" alt="" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`;
+          thumbHtml = `<img src="${escapeHtml(toAbsUrl(offer.image))}" alt="" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`;
         }
       } else {
         contentSnippet = `<span style="color:var(--color-danger);">(Missing offer ref: ${escapeHtml(p.refId)})</span>`;
@@ -357,7 +357,7 @@ function updateOfferPreview() {
   offerPreviewTitle.textContent = offer.title || "Untitled Offer";
   offerPreviewDesc.textContent = offer.description ? offer.description.slice(0, 100) + "..." : "";
   if (offer.image) {
-    offerPreviewImg.src = offer.image;
+    offerPreviewImg.src = toAbsUrl(offer.image);
     offerPreviewImg.style.display = "block";
   } else {
     offerPreviewImg.style.display = "none";

@@ -21,6 +21,24 @@
   };
 })();
 
+/* ---------- Image path helper ----------
+   Uploaded images are stored in the database as either:
+     • A full https:// URL    (Vercel Blob in production)
+     • "/img/folder/file.jpg"  (absolute local path — new format)
+     • "img/folder/file.jpg"   (relative local path — legacy format)
+
+   Admin pages live at /admin/*.html, so a bare "img/..." path would be
+   resolved by the browser as "/admin/img/..." and 404.  This helper
+   always returns an absolute-from-root URL so images display correctly
+   on every admin page regardless of when the record was created. */
+function toAbsUrl(storedPath) {
+  if (!storedPath) return "";
+  // Already absolute (https://... or /img/...)
+  if (storedPath.startsWith("http") || storedPath.startsWith("/")) return storedPath;
+  // Legacy relative path: prepend /
+  return "/" + storedPath;
+}
+
 /* ---------- Logout ----------
    The session cookie is httpOnly, so page JavaScript can't clear it
    directly — that request has to go to the server. */

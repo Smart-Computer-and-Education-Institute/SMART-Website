@@ -27,7 +27,7 @@ function showOfferPhotoPreview(url) {
   const img = document.getElementById("preview-offerPhoto");
   if (!img) return;
   if (url) {
-    img.src = url;
+    img.src = toAbsUrl(url);
     img.style.display = "block";
   } else {
     img.src = "";
@@ -68,7 +68,7 @@ function renderOffers() {
   rows.forEach((o) => {
     const tr = document.createElement("tr");
     const thumbHtml = o.image
-      ? `<img src="${escapeHtml(o.image)}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
+      ? `<img src="${escapeHtml(toAbsUrl(o.image))}" alt="" style="width:38px;height:38px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
       : `<div style="width:38px;height:38px;border-radius:6px;background:var(--color-primary-soft,#eff6ff);color:var(--color-primary,#2563eb);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">🏷️</div>`;
 
     const ctaText = o.ctaLink ? `<a href="${escapeHtml(o.ctaLink)}" target="_blank" style="color:var(--color-primary);font-size:12.5px;">${escapeHtml(o.ctaLabel || "Learn more")} ↗</a>` : `<span style="color:var(--color-text-secondary);font-size:12.5px;">${escapeHtml(o.ctaLabel || "Learn more")}</span>`;
@@ -200,7 +200,7 @@ async function uploadOfferPhoto() {
     }
 
     const data = await res.json();
-    showOfferPhotoPreview(data.image);
+    showOfferPhotoPreview(toAbsUrl(data.image));
     fileInput.value = "";
     showToast("Photo updated successfully");
     await loadOffers();

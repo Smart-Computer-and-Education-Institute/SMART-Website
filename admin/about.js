@@ -31,7 +31,7 @@ function showPhotoPreview(slot, url) {
   const img = document.getElementById("preview-" + slot);
   if (!img) return;
   if (url) {
-    img.src = url;
+    img.src = toAbsUrl(url);
     img.style.display = "block";
   } else {
     img.style.display = "none";
@@ -41,7 +41,7 @@ function showPhotoPreview(slot, url) {
 function showSecPhotoPreview(url) {
   if (!previewSecPhoto) return;
   if (url) {
-    previewSecPhoto.src = url;
+    previewSecPhoto.src = toAbsUrl(url);
     previewSecPhoto.style.display = "block";
   } else {
     previewSecPhoto.src = "";
@@ -120,7 +120,7 @@ function renderCustomSections() {
       const isLast = idx === customSections.length - 1;
 
       const thumbHtml = sec.photo
-        ? `<img src="${escapeHtml(sec.photo)}" alt="" style="width:46px;height:46px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
+        ? `<img src="${escapeHtml(toAbsUrl(sec.photo))}" alt="" style="width:46px;height:46px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--color-border);">`
         : `<div style="width:46px;height:46px;border-radius:6px;background:var(--color-primary-soft);color:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">📄</div>`;
 
       return `
