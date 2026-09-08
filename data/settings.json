@@ -66,10 +66,10 @@
     "footerNote": "Jhapa, Nepal",
     "footerCopyright": "Smart Institute. All rights reserved.",
     "socialLinks": {
-      "facebook": "https://www.facebook.com/",
-      "instagram": "https://www.instagram.com/",
-      "youtube": "https://www.youtube.com/",
-      "tiktok": "https://www.tiktok.com/en/"
+      "facebook": "https://www.facebook.com",
+      "instagram": "https://www.instagram.com",
+      "youtube": "https://www.youtube.com",
+      "tiktok": ""
     },
     "footerCtaText": "Ready to start your career? Enroll in a course today.",
     "footerCtaLabel": "Get Started",
@@ -77,31 +77,15 @@
     "customSocialLinks": [
       {
         "label": "Facebook",
-        "url": "https://www.facebook.com/"
+        "url": "https://www.facebook.com"
+      },
+      {
+        "label": "Youtube",
+        "url": "https://www.youtube.com"
       },
       {
         "label": "Instagram",
-        "url": "https://www.instagram.com/"
-      },
-      {
-        "label": "YouTube",
-        "url": "https://www.youtube.com/"
-      },
-      {
-        "label": "TikTok",
-        "url": "https://www.tiktok.com/en/"
-      },
-      {
-        "label": "LinkedIn",
-        "url": "https://www.linkedin.com/school/smart-institute"
-      },
-      {
-        "label": "Chess",
-        "url": "https://www.chess.com/home"
-      },
-      {
-        "label": "deadshot",
-        "url": "https://deadshot.io/"
+        "url": "https://www.instagram.com"
       }
     ]
   }

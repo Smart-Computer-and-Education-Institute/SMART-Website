@@ -460,29 +460,63 @@ function detectSocialPlatform(label, url) {
   return "website";
 }
 
-function renderSocialIconHtml(item = {}) {
+// Returns a DOM Node for the icon — avoids embedding SVG (which contains " quotes)
+// inside HTML string onerror attributes, which breaks HTML parsing.
+function buildSocialIconNode(item = {}) {
   const customIcon = (item.icon || "").trim();
   const label = item.label || "Link";
   const url = (item.url || "").trim();
 
+  function svgFallback() {
+    const span = document.createElement("span");
+    span.style.cssText = "width:18px;height:18px;display:flex;align-items:center;justify-content:center;";
+    span.innerHTML = SOCIAL_ICONS.website;
+    return span.firstElementChild || span;
+  }
+
   if (customIcon) {
     const abs = typeof toAbsUrl === "function" ? toAbsUrl(customIcon) : customIcon;
-    return `<img src="${escapeHtml(abs)}" alt="${escapeHtml(label)}" class="social-preview-img" style="width:18px;height:18px;object-fit:contain;display:block;" onerror="this.onerror=null;this.replaceWith(document.createRange().createContextualFragment('${SOCIAL_ICONS.website}'));">`;
+    const img = document.createElement("img");
+    img.src = abs;
+    img.alt = label;
+    img.className = "social-preview-img";
+    img.style.cssText = "width:18px;height:18px;object-fit:contain;display:block;";
+    img.onerror = function () {
+      this.onerror = null;
+      this.parentNode && this.parentNode.replaceChild(svgFallback(), this);
+    };
+    return img;
   }
 
   const platform = detectSocialPlatform(label, url);
   if (platform !== "website" && SOCIAL_ICONS[platform]) {
-    return SOCIAL_ICONS[platform];
+    const span = document.createElement("span");
+    span.innerHTML = SOCIAL_ICONS[platform];
+    return span.firstElementChild || span;
   }
 
   const domain = getDomainFromUrl(url);
   if (domain && domain.includes(".")) {
     const gUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
     const ddgUrl = `https://icons.duckduckgo.com/ip3/${encodeURIComponent(domain)}.ico`;
-    return `<img src="${gUrl}" alt="${escapeHtml(label)}" class="social-preview-img" style="width:18px;height:18px;object-fit:contain;display:block;border-radius:3px;" onerror="if(!this.dataset.triedDdg){this.dataset.triedDdg='1';this.src='${ddgUrl}';}else{this.onerror=null;this.replaceWith(document.createRange().createContextualFragment('${SOCIAL_ICONS.website}'));}">`;
+    const img = document.createElement("img");
+    img.src = gUrl;
+    img.alt = label;
+    img.className = "social-preview-img";
+    img.style.cssText = "width:18px;height:18px;object-fit:contain;display:block;border-radius:3px;";
+    img.onerror = function () {
+      if (!this.dataset.triedDdg) {
+        this.dataset.triedDdg = "1";
+        this.src = ddgUrl;
+      } else {
+        this.onerror = null;
+        this.parentNode && this.parentNode.replaceChild(svgFallback(), this);
+      }
+    };
+    return img;
   }
 
-  return SOCIAL_ICONS.website;
+  return svgFallback();
 }
 
 function getSocialSvg(platform) {
@@ -560,11 +594,12 @@ function createSocialLinkRow(item = { label: "", url: "", icon: "" }) {
   removeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
   function updateIcon() {
-    preview.innerHTML = renderSocialIconHtml({
+    preview.innerHTML = "";
+    preview.appendChild(buildSocialIconNode({
       label: labelInput.value,
       url: urlInput.value,
       icon: customIconPath,
-    });
+    }));
     if (customIconPath) {
       customIconBadge.style.display = "inline-flex";
       uploadBtn.title = "Change custom logo";

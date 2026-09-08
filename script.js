@@ -280,29 +280,68 @@ function detectPlatformIcon(label, url) {
   return "website";
 }
 
-function renderFooterSocialIcon(item) {
+// Creates a DOM node for a social icon (img with fallback chain, or inline SVG).
+// Returns a Node so callers can appendChild() it directly — avoids embedding
+// SVG markup (which contains " double-quotes) inside onerror="..." attributes.
+function buildFooterSocialIconNode(item) {
   const customIcon = (item.icon || "").trim();
   const label = item.label || "Link";
   const url = (item.url || "").trim();
 
+  function svgFallbackNode() {
+    const span = document.createElement("span");
+    span.style.cssText = "width:18px;height:18px;display:flex;align-items:center;justify-content:center;";
+    span.innerHTML = FOOTER_SOCIAL_ICONS.website;
+    return span.firstElementChild || span;
+  }
+
   if (customIcon) {
     const abs = customIcon.startsWith("http") || customIcon.startsWith("/") ? customIcon : "/" + customIcon;
-    return `<img src="${escapeHtml(abs)}" alt="${escapeHtml(label)}" class="footer-social-img" width="18" height="18" style="width:18px;height:18px;object-fit:contain;display:block;" onerror="this.onerror=null;this.replaceWith(document.createRange().createContextualFragment('${FOOTER_SOCIAL_ICONS.website}'));">`;
+    const img = document.createElement("img");
+    img.src = abs;
+    img.alt = label;
+    img.className = "footer-social-img";
+    img.width = 18;
+    img.height = 18;
+    img.style.cssText = "width:18px;height:18px;object-fit:contain;display:block;";
+    img.onerror = function () {
+      this.onerror = null;
+      this.parentNode && this.parentNode.replaceChild(svgFallbackNode(), this);
+    };
+    return img;
   }
 
   const platform = detectPlatformIcon(label, url);
   if (platform !== "website" && FOOTER_SOCIAL_ICONS[platform]) {
-    return FOOTER_SOCIAL_ICONS[platform];
+    const span = document.createElement("span");
+    span.innerHTML = FOOTER_SOCIAL_ICONS[platform];
+    return span.firstElementChild || span;
   }
 
   const domain = getDomainFromUrl(url);
   if (domain && domain.includes(".")) {
     const gUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
     const ddgUrl = `https://icons.duckduckgo.com/ip3/${encodeURIComponent(domain)}.ico`;
-    return `<img src="${gUrl}" alt="${escapeHtml(label)}" class="footer-social-img" width="18" height="18" style="width:18px;height:18px;object-fit:contain;display:block;border-radius:3px;" onerror="if(!this.dataset.triedDdg){this.dataset.triedDdg='1';this.src='${ddgUrl}';}else{this.onerror=null;this.replaceWith(document.createRange().createContextualFragment('${FOOTER_SOCIAL_ICONS.website}'));}">`;
+    const img = document.createElement("img");
+    img.src = gUrl;
+    img.alt = label;
+    img.className = "footer-social-img";
+    img.width = 18;
+    img.height = 18;
+    img.style.cssText = "width:18px;height:18px;object-fit:contain;display:block;border-radius:3px;";
+    img.onerror = function () {
+      if (!this.dataset.triedDdg) {
+        this.dataset.triedDdg = "1";
+        this.src = ddgUrl;
+      } else {
+        this.onerror = null;
+        this.parentNode && this.parentNode.replaceChild(svgFallbackNode(), this);
+      }
+    };
+    return img;
   }
 
-  return FOOTER_SOCIAL_ICONS.website;
+  return svgFallbackNode();
 }
 
 function applyFooterSocialLinks(settings) {
@@ -332,7 +371,6 @@ function applyFooterSocialLinks(settings) {
     container.style.display = "";
     validLinks.forEach((item) => {
       const platform = detectPlatformIcon(item.label, item.url);
-      const iconHtml = renderFooterSocialIcon(item);
       const a = document.createElement("a");
       a.className = "footer-social-link";
       a.href = item.url;
@@ -341,7 +379,8 @@ function applyFooterSocialLinks(settings) {
       const labelText = item.label || (platform !== "website" ? platform.charAt(0).toUpperCase() + platform.slice(1) : "Link");
       a.setAttribute("aria-label", labelText);
       a.title = labelText;
-      a.innerHTML = iconHtml;
+      // Use DOM node instead of innerHTML to avoid embedding SVG in onerror attributes
+      a.appendChild(buildFooterSocialIconNode(item));
       container.appendChild(a);
     });
   });
