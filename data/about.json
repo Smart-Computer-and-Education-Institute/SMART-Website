@@ -8,11 +8,11 @@
     "founderMessage": "test test",
     "founderSignoff": "Warm regards,",
     "founderSignature": "Bikash Pokharel",
-    "founderPhoto": "img/about/about-founderPhoto-1788361573080-466285433.jpg",
-    "storyPhoto": "img/about/about-storyPhoto-1788361607396-33781702.jpg",
-    "missionPhoto": "img/about/about-missionPhoto-1788361626718-653012167.jpg",
-    "visionPhoto": "img/about/about-visionPhoto-1788361638373-590818878.jpg",
-    "whyPhoto": "img/about/about-whyPhoto-1788361648965-430583060.jpg",
+    "founderPhoto": "/img/about/about-founderPhoto-1789058324653-84023185.jpg",
+    "storyPhoto": "/img/about/about-storyPhoto-1789058333029-316917285.jpg",
+    "missionPhoto": "/img/about/about-missionPhoto-1789058338099-560592925.jpg",
+    "visionPhoto": "/img/about/about-visionPhoto-1789058347079-845736248.jpg",
+    "whyPhoto": "/img/about/about-whyPhoto-1789058352247-368610471.jpg",
     "ourStoryHeading": "Our Story",
     "ourStoryText": "test test",
     "ourMissionHeading": "Our Mission",
@@ -21,14 +21,6 @@
     "ourVisionText": "test",
     "whyChooseUsHeading": "Why Choose Us",
     "whyChooseUsText": "test",
-    "customSections": [
-      {
-        "id": "sec1788363634148",
-        "heading": "aditional section",
-        "text": "test",
-        "photo": "img/about-sections/about-sec-1788363634156-855256932.jpg",
-        "order": 1
-      }
-    ]
+    "customSections": []
   }
 ]

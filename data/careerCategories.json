@@ -1,6 +1,18 @@
 [
   {
-    "id": "ccat1000000001",
-    "name": "Test"
+    "id": "ccat17890581419713",
+    "name": "Marketing"
+  },
+  {
+    "id": "ccat17890581419712",
+    "name": "Administration"
+  },
+  {
+    "id": "ccat17890581419701",
+    "name": "IT & Support"
+  },
+  {
+    "id": "ccat17890581419700",
+    "name": "Teaching"
   }
 ]

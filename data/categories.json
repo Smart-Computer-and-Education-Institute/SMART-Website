@@ -1,6 +1,18 @@
 [
   {
-    "id": "cat1788360664684",
-    "name": "Test"
+    "id": "cat17890581390873",
+    "name": "Accounting"
+  },
+  {
+    "id": "cat17890581390862",
+    "name": "Marketing"
+  },
+  {
+    "id": "cat17890581390861",
+    "name": "Design"
+  },
+  {
+    "id": "cat17890581390850",
+    "name": "Office"
   }
 ]
