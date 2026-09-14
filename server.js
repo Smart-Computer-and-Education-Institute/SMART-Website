@@ -2247,12 +2247,16 @@ function escapeHtmlServer(str) {
     .replace(/'/g, "&#039;");
 }
 
+// Hard cap to stop automated bots from hammering the endpoint.
+// A real human can never hit 20 submissions in 15 minutes, so legitimate
+// use is unaffected. Repeated submissions from the same *email* are handled
+// more gracefully below (replace-latest rather than reject).
 const inquiryLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // max 5 submissions per 15 minutes per IP
+  windowMs: 15 * 60 * 1000,
+  max: 20,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "Too many inquiries submitted. Please wait a few minutes before trying again." },
+  message: { error: "Too many requests. Please try again later." },
 });
 
 // Helper to send email notification to admin if SMTP is configured
@@ -2345,27 +2349,76 @@ app.post(
     const cleanSubject = subject.trim().slice(0, 200);
     const cleanMessage = message.trim().slice(0, 4000);
 
-    const newInquiry = {
-      id: Date.now(),
-      name: cleanName,
-      email: cleanEmail,
-      phone: cleanPhone,
-      subject: cleanSubject,
-      message: cleanMessage,
-      status: "unread", // "unread" | "read" | "replied"
-      createdAt: new Date().toISOString(),
-      source: "Contact Page",
-    };
+    // Spam protection: if this email already has a recent inquiry (within the
+    // last 60 minutes), overwrite it with the new content instead of inserting
+    // a duplicate.  The admin still sees the most up-to-date message, and the
+    // database doesn't accumulate hundreds of near-identical rows from one person.
+    const SPAM_WINDOW_MS = 60 * 60 * 1000; // 60 minutes
+    const now = Date.now();
+    let existingInquiry = null;
 
-    await db.insertOne("inquiries", newInquiry);
+    try {
+      const allInquiries = await db.findAll("inquiries");
+      // Find the most recent inquiry from this email address
+      const sameEmailInquiries = allInquiries
+        .filter((inq) => inq.email === cleanEmail)
+        .sort((a, b) => {
+          const ta = typeof a.id === "number" ? a.id : new Date(a.createdAt).getTime();
+          const tb = typeof b.id === "number" ? b.id : new Date(b.createdAt).getTime();
+          return tb - ta; // descending — most recent first
+        });
 
-    // Asynchronously trigger email notification without delaying response
-    sendInquiryEmailNotification(newInquiry).catch(() => {});
+      if (sameEmailInquiries.length > 0) {
+        const latest = sameEmailInquiries[0];
+        const latestTime = typeof latest.id === "number" ? latest.id : new Date(latest.createdAt).getTime();
+        if (now - latestTime < SPAM_WINDOW_MS) {
+          existingInquiry = latest;
+        }
+      }
+    } catch (_) {
+      // If we can't check, just insert normally — don't block the user
+    }
+
+    let savedInquiry;
+
+    if (existingInquiry) {
+      // Replace the latest inquiry from this email with the new content
+      const updates = {
+        name: cleanName,
+        phone: cleanPhone,
+        subject: cleanSubject,
+        message: cleanMessage,
+        status: "unread", // reset to unread so admin sees the update
+        updatedAt: new Date().toISOString(),
+        replacedAt: new Date().toISOString(),
+      };
+      savedInquiry = await db.updateOne("inquiries", String(existingInquiry.id), updates);
+      console.log(`[inquiries] Spam-protection: replaced latest inquiry ${existingInquiry.id} for ${cleanEmail}`);
+    } else {
+      savedInquiry = {
+        id: String(now),
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        subject: cleanSubject,
+        message: cleanMessage,
+        status: "unread",
+        createdAt: new Date().toISOString(),
+        source: "Contact Page",
+      };
+      await db.insertOne("inquiries", savedInquiry);
+    }
+
+    // Asynchronously trigger email notification without delaying response.
+    // When replacing an existing inquiry, updateOne may not return the email
+    // field, so we merge it back in explicitly.
+    const notifyPayload = { email: cleanEmail, ...savedInquiry };
+    sendInquiryEmailNotification(notifyPayload).catch(() => {});
 
     res.status(201).json({
       ok: true,
       message: "Thank you! Your inquiry has been sent successfully.",
-      inquiryId: newInquiry.id,
+      inquiryId: savedInquiry ? savedInquiry.id : now,
     });
   })
 );

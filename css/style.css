@@ -215,12 +215,32 @@ body {
   to { transform: rotate(360deg); }
 }
 
+@keyframes feedbackPopIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
 .form-feedback {
   margin-top: 18px;
-  padding: 14px 18px;
-  border-radius: 10px;
+  padding: 16px 18px;
+  border-radius: 12px;
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.55;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.form-feedback-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.form-feedback-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .form-feedback.success {
@@ -251,6 +271,7 @@ body {
   color: #15803d;
   text-decoration: underline;
 }
+
 
 /* Map panel */
 .map-panel {

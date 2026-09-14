@@ -961,6 +961,11 @@ onDomReady(() => {
     feedback.className = `form-feedback ${type}`;
     feedback.innerHTML = htmlContent;
     feedback.style.display = "block";
+    // Smooth scroll + brief pop-in animation
+    feedback.style.animation = "none";
+    // eslint-disable-next-line no-unused-expressions
+    feedback.offsetHeight; // force reflow
+    feedback.style.animation = "feedbackPopIn 0.35s cubic-bezier(0.22, 1, 0.36, 1)";
     feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
@@ -1002,20 +1007,29 @@ onDomReady(() => {
         throw new Error(data.error || "Unable to send your message at this time.");
       }
 
+      // Get first phone from settings (falls back to hardcoded default)
+      const firstPhone = (window._smartSettings?.phones?.[0]) || "+977-9700071948";
+      const phoneHref = "tel:" + firstPhone.replace(/[^+\d]/g, "");
+
       showFeedback(
         "success",
-        `<strong>Thank you, ${escapeHtml(name)}!</strong><br>` +
-          `Your message has been sent successfully. Our team will review your inquiry and get back to you shortly at <strong>${escapeHtml(email)}</strong>.` +
-          `<div class="form-feedback-links">` +
-          `<a href="tel:+9779700071948" class="form-feedback-link">📞 Call us: +977-9700071948</a>` +
-          `</div>`
+        `<span class="form-feedback-icon">✅</span>` +
+        `<div class="form-feedback-body">` +
+        `<strong>Message sent! Thank you, ${escapeHtml(name)}.</strong><br>` +
+        `We received your inquiry and will get back to you at <strong>${escapeHtml(email)}</strong> shortly.` +
+        `<div class="form-feedback-links">` +
+        `<a href="${phoneHref}" class="form-feedback-link">📞 ${escapeHtml(firstPhone)}</a>` +
+        `</div></div>`
       );
 
       inquiryForm.reset();
     } catch (err) {
       showFeedback(
         "error",
-        `<strong>Could not send message:</strong> ${escapeHtml(err.message || "Please check your internet connection or try again later.")}`
+        `<span class="form-feedback-icon">⚠️</span>` +
+        `<div class="form-feedback-body">` +
+        `<strong>Could not send message.</strong><br>` +
+        `${escapeHtml(err.message || "Please check your internet connection and try again.")}</div>`
       );
     } finally {
       setSubmitting(false);
