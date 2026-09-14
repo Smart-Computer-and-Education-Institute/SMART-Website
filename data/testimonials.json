@@ -1,9 +1,14 @@
 [
   {
-    "id": "t1788363268412",
-    "name": "Abishek Dangal",
-    "text": "I dont like smart institute",
-    "service": "Berojgar",
-    "photo": "/img/testimonials/testimonial-1789058382885-758507041.jpg"
+    "id": 1789372179422,
+    "name": "John Doe",
+    "text": "Great platform for learning!",
+    "rating": 5
+  },
+  {
+    "id": 1789372179423,
+    "name": "Jane Smith",
+    "text": "Excellent courses and support.",
+    "rating": 4
   }
 ]

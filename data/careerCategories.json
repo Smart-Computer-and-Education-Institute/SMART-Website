@@ -1,18 +1,18 @@
 [
   {
-    "id": "ccat17890581419713",
+    "id": "ccat1",
     "name": "Marketing"
   },
   {
-    "id": "ccat17890581419712",
+    "id": "ccat2",
     "name": "Administration"
   },
   {
-    "id": "ccat17890581419701",
+    "id": "ccat3",
     "name": "IT & Support"
   },
   {
-    "id": "ccat17890581419700",
+    "id": "ccat4",
     "name": "Teaching"
   }
 ]

@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": 1789372179431,
+    "position": "Frontend Engineer",
+    "department": "IT & Support",
+    "location": "Kathmandu",
+    "description": "Build UI components.",
+    "requirements": [
+      "JavaScript",
+      "React"
+    ]
+  }
+]

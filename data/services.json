@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": 1789372179427,
+    "name": "Web Development",
+    "description": "Full‑stack web development services."
+  },
+  {
+    "id": 1789372179428,
+    "name": "IT Support",
+    "description": "24/7 technical support for institutions."
+  }
+]

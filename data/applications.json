@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": 1789372179430,
+    "name": "Alice",
+    "email": "alice@example.com",
+    "courseId": "course1",
+    "status": "pending"
+  }
+]

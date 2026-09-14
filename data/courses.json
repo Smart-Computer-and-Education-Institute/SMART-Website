@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": 1789372179425,
+    "title": "Intro to Programming",
+    "description": "Learn the basics of coding.",
+    "price": 0,
+    "image": "/images/course1.jpg"
+  },
+  {
+    "id": 1789372179426,
+    "title": "Advanced Web Development",
+    "description": "Full‑stack development with modern tools.",
+    "price": 199,
+    "image": "/images/course2.jpg"
+  }
+]
