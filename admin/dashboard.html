@@ -28,6 +28,11 @@
       </a>
 
       <div class="sidebar-nav-label">Manage</div>
+      <a href="inquiries.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Inquiries
+        <span class="badge badge-amber sidebar-badge" id="sidebarInquiryBadge" style="display:none; margin-left:auto;">0</span>
+      </a>
       <a href="services.html" class="nav-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Services
@@ -194,6 +199,17 @@
           <div class="stat-label">New applications</div>
         </div>
 
+        <div class="stat-card" id="cardInquiries" onclick="window.location.href='inquiries.html'" style="cursor:pointer;" title="View inquiries">
+          <div class="stat-card-top">
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <span class="badge badge-amber" id="statInquiriesBadge" style="display:none;">Unread</span>
+          </div>
+          <div class="stat-value" id="statInquiries">—</div>
+          <div class="stat-label">Contact inquiries</div>
+        </div>
+
         <div class="stat-card">
           <div class="stat-card-top">
             <div class="stat-icon green">
@@ -220,6 +236,16 @@
         <div style="display:flex;flex-direction:column;gap:20px;">
           <div class="card">
             <div class="panel-header">
+              <h2>Recent inquiries</h2>
+              <a href="inquiries.html">View all</a>
+            </div>
+            <div class="panel-body" id="recentInquiriesBody">
+              <div class="list-row"><div class="list-row-text"><span>Loading…</span></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="panel-header">
               <h2>Recent notices</h2>
               <a href="notices.html">View all</a>
             </div>
@@ -244,6 +270,15 @@
             <h2>Quick actions</h2>
           </div>
           <div class="quick-actions">
+            <a class="quick-action" href="inquiries.html">
+              <div class="list-row-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <strong>View inquiries</strong><br>
+                <span>Read student messages &amp; questions</span>
+              </div>
+            </a>
             <a class="quick-action" href="services.html">
               <div class="list-row-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>

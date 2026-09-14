@@ -2234,6 +2234,213 @@ app.delete(
 );
 
 // ---------------------------------------------------------
+// Contact Inquiries API & Email Notification
+// ---------------------------------------------------------
+
+function escapeHtmlServer(str) {
+  if (str == null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+const inquiryLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // max 5 submissions per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many inquiries submitted. Please wait a few minutes before trying again." },
+});
+
+// Helper to send email notification to admin if SMTP is configured
+async function sendInquiryEmailNotification(inquiry) {
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD;
+  const adminRecipient = process.env.ADMIN_EMAIL || "smartinstitute@gmail.com";
+
+  if (!smtpUser || !smtpPass) {
+    // SMTP is not configured — inquiry is safely stored in database
+    return;
+  }
+
+  try {
+    const nodemailer = require("nodemailer");
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: process.env.SMTP_SECURE !== "false",
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Smart Institute Website" <${smtpUser}>`,
+      to: adminRecipient,
+      replyTo: inquiry.email,
+      subject: `[New Inquiry] ${inquiry.subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+          <h2 style="color: #0b132b; margin-top: 0;">New Contact Inquiry Received</h2>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr><td style="padding: 8px 0; color: #64748b; width: 120px;"><strong>Name:</strong></td><td style="padding: 8px 0; color: #1e293b;">${escapeHtmlServer(inquiry.name)}</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;"><strong>Email:</strong></td><td style="padding: 8px 0; color: #1e293b;"><a href="mailto:${escapeHtmlServer(inquiry.email)}">${escapeHtmlServer(inquiry.email)}</a></td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;"><strong>Phone:</strong></td><td style="padding: 8px 0; color: #1e293b;">${inquiry.phone ? escapeHtmlServer(inquiry.phone) : "Not provided"}</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;"><strong>Subject:</strong></td><td style="padding: 8px 0; color: #1e293b;">${escapeHtmlServer(inquiry.subject)}</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748b;"><strong>Date:</strong></td><td style="padding: 8px 0; color: #1e293b;">${new Date(inquiry.createdAt).toLocaleString()}</td></tr>
+          </table>
+          <div style="background: #f8fafc; padding: 16px; border-radius: 6px; border-left: 4px solid #d92b3e;">
+            <strong style="color: #334155; display: block; margin-bottom: 8px;">Message:</strong>
+            <p style="white-space: pre-wrap; margin: 0; color: #1e293b; line-height: 1.6;">${escapeHtmlServer(inquiry.message)}</p>
+          </div>
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 0.85rem; color: #94a3b8;">
+            Sent automatically from Smart Computer & Education Institute Website
+          </div>
+        </div>
+      `,
+    });
+    console.log(`[inquiries] Notification email sent for inquiry ${inquiry.id}`);
+  } catch (err) {
+    console.error("[inquiries] Failed to send email notification (inquiry is safely stored in database):", err);
+  }
+}
+
+// 1. Public inquiry submission endpoint
+app.post(
+  "/api/public/inquiries",
+  inquiryLimiter,
+  asyncHandler(async (req, res) => {
+    const { name, email, phone, subject, message, company } = req.body || {};
+
+    // Bot detection via honeypot field
+    if (company) {
+      console.warn("[inquiries] Honeypot triggered, discarded spam submission.");
+      return res.status(200).json({ ok: true, message: "Thank you for reaching out." });
+    }
+
+    if (!name || typeof name !== "string" || !name.trim()) {
+      return res.status(400).json({ error: "Your name is required." });
+    }
+    if (!email || typeof email !== "string" || !email.trim()) {
+      return res.status(400).json({ error: "Email address is required." });
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.trim())) {
+      return res.status(400).json({ error: "Please enter a valid email address." });
+    }
+    if (!subject || typeof subject !== "string" || !subject.trim()) {
+      return res.status(400).json({ error: "Subject is required." });
+    }
+    if (!message || typeof message !== "string" || !message.trim()) {
+      return res.status(400).json({ error: "Message is required." });
+    }
+
+    const cleanName = name.trim().slice(0, 100);
+    const cleanEmail = email.trim().toLowerCase().slice(0, 150);
+    const cleanPhone = phone && typeof phone === "string" ? phone.trim().slice(0, 40) : null;
+    const cleanSubject = subject.trim().slice(0, 200);
+    const cleanMessage = message.trim().slice(0, 4000);
+
+    const newInquiry = {
+      id: Date.now(),
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      subject: cleanSubject,
+      message: cleanMessage,
+      status: "unread", // "unread" | "read" | "replied"
+      createdAt: new Date().toISOString(),
+      source: "Contact Page",
+    };
+
+    await db.insertOne("inquiries", newInquiry);
+
+    // Asynchronously trigger email notification without delaying response
+    sendInquiryEmailNotification(newInquiry).catch(() => {});
+
+    res.status(201).json({
+      ok: true,
+      message: "Thank you! Your inquiry has been sent successfully.",
+      inquiryId: newInquiry.id,
+    });
+  })
+);
+
+// 2. Admin: Get all inquiries
+app.get(
+  "/api/inquiries",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const inquiries = await db.findAll("inquiries");
+    res.json(inquiries);
+  })
+);
+
+// 3. Admin: Get inquiry statistics (total, unread, read, replied)
+app.get(
+  "/api/inquiries/stats",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const inquiries = await db.findAll("inquiries");
+    const total = inquiries.length;
+    const unread = inquiries.filter((i) => i.status === "unread").length;
+    const read = inquiries.filter((i) => i.status === "read").length;
+    const replied = inquiries.filter((i) => i.status === "replied").length;
+    res.json({ total, unread, read, replied });
+  })
+);
+
+// 4. Admin: Get single inquiry by ID
+app.get(
+  "/api/inquiries/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const inquiry = await db.findOne("inquiries", req.params.id);
+    if (!inquiry) return res.status(404).json({ error: "Inquiry not found" });
+    res.json(inquiry);
+  })
+);
+
+// 5. Admin: Update inquiry status (unread | read | replied)
+app.patch(
+  "/api/inquiries/:id/status",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const { status } = req.body || {};
+    const validStatuses = ["unread", "read", "replied"];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const existing = await db.findOne("inquiries", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Inquiry not found" });
+
+    const updated = await db.updateOne("inquiries", req.params.id, {
+      status,
+      updatedAt: new Date().toISOString(),
+    });
+    res.json(updated);
+  })
+);
+
+// 6. Admin: Delete inquiry
+app.delete(
+  "/api/inquiries/:id",
+  requireApiAuth,
+  asyncHandler(async (req, res) => {
+    const existing = await db.findOne("inquiries", req.params.id);
+    if (!existing) return res.status(404).json({ error: "Inquiry not found" });
+
+    await db.deleteOne("inquiries", req.params.id);
+    res.status(204).end();
+  })
+);
+
+// ---------------------------------------------------------
 // Centralized error handler.
 // Anything asyncHandler() catches (a bad DB connection, an unexpected
 // bug, etc.) ends up here instead of leaking a raw stack trace to the

@@ -939,27 +939,86 @@ function escapeTestHtml(str) {
 // 10. Contact Inquiry Form handler (Contact.html)
 onDomReady(() => {
   const inquiryForm = document.getElementById("inquiryForm") || document.querySelector(".form-panel form");
-  if (inquiryForm) {
-    inquiryForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = document.getElementById("name")?.value.trim() || "";
-      const email = document.getElementById("email")?.value.trim() || "";
-      const subject = document.getElementById("subject")?.value.trim() || "Course Inquiry";
-      const message = document.getElementById("message")?.value.trim() || "";
+  if (!inquiryForm) return;
 
-      const mailtoUrl = `mailto:smartinstitute@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent("From: " + name + " (" + email + ")\n\n" + message)}`;
-      window.location.href = mailtoUrl;
+  const submitBtn = document.getElementById("inquirySubmitBtn") || inquiryForm.querySelector("button[type='submit']");
+  const btnText = submitBtn?.querySelector(".btn-text");
+  const btnSpinner = submitBtn?.querySelector(".btn-spinner");
+  const feedback = document.getElementById("inquiryFeedback");
 
-      let feedback = document.getElementById("inquiryFeedback");
-      if (!feedback) {
-        feedback = document.createElement("div");
-        feedback.id = "inquiryFeedback";
-        feedback.style.cssText =
-          "margin-top:16px;padding:12px 16px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:8px;font-size:0.9rem;font-weight:500;";
-        inquiryForm.appendChild(feedback);
-      }
-      feedback.textContent = "Opening your email client to send your inquiry. Thank you!";
-      inquiryForm.reset();
-    });
+  function setSubmitting(isSubmitting) {
+    if (submitBtn) submitBtn.disabled = isSubmitting;
+    if (btnText && btnSpinner) {
+      btnText.style.display = isSubmitting ? "none" : "inline";
+      btnSpinner.style.display = isSubmitting ? "inline-flex" : "none";
+    } else if (submitBtn) {
+      submitBtn.textContent = isSubmitting ? "Sending..." : "Send Message";
+    }
   }
+
+  function showFeedback(type, htmlContent) {
+    if (!feedback) return;
+    feedback.className = `form-feedback ${type}`;
+    feedback.innerHTML = htmlContent;
+    feedback.style.display = "block";
+    feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  inquiryForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = (document.getElementById("name")?.value || "").trim();
+    const email = (document.getElementById("email")?.value || "").trim();
+    const phone = (document.getElementById("phone")?.value || "").trim();
+    const subject = (document.getElementById("subject")?.value || "").trim();
+    const message = (document.getElementById("message")?.value || "").trim();
+    const company = (document.getElementById("companyHoneypot")?.value || "").trim();
+
+    // Client-side validation
+    if (!name || !email || !subject || !message) {
+      showFeedback("error", "Please fill in all required fields (marked with *).");
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      showFeedback("error", "Please enter a valid email address.");
+      return;
+    }
+
+    setSubmitting(true);
+    if (feedback) feedback.style.display = "none";
+
+    try {
+      const response = await fetch("/api/public/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, subject, message, company }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Unable to send your message at this time.");
+      }
+
+      showFeedback(
+        "success",
+        `<strong>Thank you, ${escapeHtml(name)}!</strong><br>` +
+          `Your message has been sent successfully. Our team will review your inquiry and get back to you shortly at <strong>${escapeHtml(email)}</strong>.` +
+          `<div class="form-feedback-links">` +
+          `<a href="tel:+9779700071948" class="form-feedback-link">📞 Call us: +977-9700071948</a>` +
+          `</div>`
+      );
+
+      inquiryForm.reset();
+    } catch (err) {
+      showFeedback(
+        "error",
+        `<strong>Could not send message:</strong> ${escapeHtml(err.message || "Please check your internet connection or try again later.")}`
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  });
 });

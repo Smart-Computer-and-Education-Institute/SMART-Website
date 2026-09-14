@@ -317,3 +317,23 @@ function nl2br(escapedStr) {
   return escapedStr.replace(/\n/g, "<br>");
 }
 
+/* ---------- Global sidebar unread inquiry badge ---------- */
+(async function updateGlobalInquiryBadge() {
+  const badge = document.getElementById("sidebarInquiryBadge");
+  if (!badge) return;
+  try {
+    const res = await fetch("/api/inquiries/stats");
+    if (res.ok) {
+      const stats = await res.json();
+      if (stats.unread > 0) {
+        badge.textContent = stats.unread;
+        badge.style.display = "inline-flex";
+      } else {
+        badge.style.display = "none";
+      }
+    }
+  } catch {
+    // Non-critical background indicator
+  }
+})();
+
