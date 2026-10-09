@@ -148,7 +148,7 @@ function renderCustomSections() {
 }
 
 async function moveSection(id, direction) {
-  const idx = customSections.findIndex((s) => String(s.id) === String(id));
+  const idx = customSections.findIndex((s) => s.id === id);
   if (idx === -1) return;
 
   const targetIdx = idx + direction;
@@ -193,7 +193,7 @@ function openSectionModal(id) {
   if (fileSecPhoto) fileSecPhoto.value = "";
 
   if (id) {
-    const sec = customSections.find((s) => String(s.id) === String(id));
+    const sec = customSections.find((s) => s.id === id);
     if (!sec) return;
 
     document.getElementById("sectionModalTitle").textContent = "Edit Section";
@@ -279,7 +279,7 @@ sectionForm.addEventListener("submit", async (e) => {
 });
 
 async function deleteSection(id) {
-  const sec = customSections.find((s) => String(s.id) === String(id));
+  const sec = customSections.find((s) => s.id === id);
   const name = sec ? sec.heading : "this section";
   if (!confirmDelete(`Delete section "${name}"? This cannot be undone.`)) return;
 

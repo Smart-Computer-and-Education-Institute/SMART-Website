@@ -230,7 +230,7 @@ function renderPopups() {
 
     if (p.source === "offer") {
       sourceBadge = '<span class="badge badge-blue">Offer</span>';
-      const offer = allOffers.find((o) => String(o.id) === String(p.refId));
+      const offer = allOffers.find((o) => o.id === p.refId);
       if (offer) {
         contentSnippet = `Offer: ${offer.title}`;
         if (offer.image) {
@@ -241,7 +241,7 @@ function renderPopups() {
       }
     } else if (p.source === "notice") {
       sourceBadge = '<span class="badge badge-amber">Notice</span>';
-      const notice = allNotices.find((n) => String(n.id) === String(p.refId));
+      const notice = allNotices.find((n) => n.id === p.refId);
       contentSnippet = notice ? `Notice: ${notice.title}` : `<span style="color:var(--color-danger);">(Missing notice ref: ${escapeHtml(p.refId)})</span>`;
     }
 
@@ -348,7 +348,7 @@ srcOptNotice.addEventListener("click", () => setSource("notice"));
 
 function updateOfferPreview() {
   const selectedId = popupOfferSelect.value;
-  const offer = allOffers.find((o) => String(o.id) === String(selectedId));
+  const offer = allOffers.find((o) => o.id === selectedId);
   if (!offer) {
     offerPreviewCard.style.display = "none";
     return;
@@ -366,7 +366,7 @@ function updateOfferPreview() {
 
 function updateNoticePreview() {
   const selectedId = popupNoticeSelect.value;
-  const notice = allNotices.find((n) => String(n.id) === String(selectedId));
+  const notice = allNotices.find((n) => n.id === selectedId);
   if (!notice) {
     noticePreviewCard.style.display = "none";
     return;
@@ -492,7 +492,7 @@ function openPopupModal(id) {
   setSelectedWeekdays([]);
 
   if (id) {
-    const p = popups.find((x) => String(x.id) === String(id));
+    const p = popups.find((x) => x.id === id);
     if (!p) return;
 
     document.getElementById("popupModalTitle").textContent = "Edit popup";
@@ -555,7 +555,7 @@ function previewCurrentModalPopup() {
   let tag = "";
 
   if (currentSource === "offer") {
-    const selectedOffer = allOffers.find((o) => String(o.id) === String(popupOfferSelect.value));
+    const selectedOffer = allOffers.find((o) => o.id === popupOfferSelect.value);
     if (selectedOffer) {
       title = selectedOffer.title || "Special Offer";
       message = selectedOffer.description || "";
@@ -566,7 +566,7 @@ function previewCurrentModalPopup() {
       message = "Please pick an offer from the dropdown.";
     }
   } else if (currentSource === "notice") {
-    const selectedNotice = allNotices.find((n) => String(n.id) === String(popupNoticeSelect.value));
+    const selectedNotice = allNotices.find((n) => n.id === popupNoticeSelect.value);
     if (selectedNotice) {
       title = selectedNotice.title || "Important Notice";
       message = selectedNotice.content || "";
@@ -709,7 +709,7 @@ popupForm.addEventListener("submit", async (e) => {
 /* ---------- Delete Popup ---------- */
 
 async function deletePopup(id) {
-  const p = popups.find((x) => String(x.id) === String(id));
+  const p = popups.find((x) => x.id === id);
   const name = p ? p.name : "this popup";
   if (!confirmDelete(`Delete popup "${name}"? This cannot be undone.`)) return;
 

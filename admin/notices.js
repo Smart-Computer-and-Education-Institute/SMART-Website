@@ -21,9 +21,7 @@ async function loadNotices() {
 }
 
 function formatDate(iso) {
-  if (!iso) return "";
-  const d = new Date(iso.includes("T") ? iso : iso + "T00:00:00");
-  if (isNaN(d.getTime())) return String(iso).slice(0, 10);
+  const d = new Date(iso + "T00:00:00");
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
@@ -51,7 +49,7 @@ function renderNotices() {
             }
             <span class="notice-item-date">${formatDate(n.date)}</span>
           </div>
-          <p>${nl2br(escapeHtml(n.content || n.body || ""))}</p>
+          <p>${nl2br(escapeHtml(n.content))}</p>
         </div>
         <div class="notice-item-actions">
           <button class="btn btn-secondary btn-sm" onclick="toggleNoticeStatus('${n.id}')">
@@ -98,8 +96,7 @@ function openNoticeModal(id) {
   clearNoticeErrors();
 
   if (id) {
-    const n = notices.find((x) => String(x.id) === String(id));
-    if (!n) return;
+    const n = notices.find((x) => x.id === id);
     document.getElementById("noticeModalTitle").textContent = "Edit notice";
     document.getElementById("noticeId").value = n.id;
     document.getElementById("noticeTitle").value = n.title;
@@ -109,7 +106,6 @@ function openNoticeModal(id) {
   } else {
     document.getElementById("noticeModalTitle").textContent = "New notice";
     document.getElementById("noticeId").value = "";
-    document.getElementById("noticeStatus").value = "published";
     document.getElementById("noticeDate").value = todayIso();
   }
 
@@ -170,8 +166,8 @@ async function toggleNoticeStatus(id) {
 }
 
 async function deleteNotice(id) {
-  const n = notices.find((x) => String(x.id) === String(id));
-  if (!n || !confirmDelete(`Delete "${n.title}"? This can't be undone.`)) return;
+  const n = notices.find((x) => x.id === id);
+  if (!confirmDelete(`Delete "${n.title}"? This can't be undone.`)) return;
   await fetch(`/api/notices/${id}`, { method: "DELETE" });
   showToast("Notice deleted", "danger");
   await loadNotices();

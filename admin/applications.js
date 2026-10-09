@@ -144,7 +144,7 @@ if (searchInput) {
 /* ---------- Detail Modal ---------- */
 
 function openDetailModal(id) {
-  const app = applications.find((x) => String(x.id) === String(id));
+  const app = applications.find((x) => x.id === id);
   if (!app) return;
 
   currentDetailId = id;
@@ -245,7 +245,7 @@ document.getElementById("updateDetailStatusBtn")?.addEventListener("click", asyn
 });
 
 async function deleteApplication(id) {
-  const app = applications.find((x) => String(x.id) === String(id));
+  const app = applications.find((x) => x.id === id);
   if (!confirmDelete(`Delete application from "${app ? app.fullName : "applicant"}"? This will also remove the uploaded CV.`)) return;
 
   const res = await fetch(`/api/applications/${id}`, { method: "DELETE" });

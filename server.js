@@ -2500,19 +2500,9 @@ app.delete(
 // visitor or crashing the server.
 // ---------------------------------------------------------
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  console.error(`[ERROR] ${req.method} ${req.originalUrl || req.url}:`, err);
-  try {
-    const errorLogPath = path.join(__dirname, "data", "server-errors.log");
-    const line = `[${new Date().toISOString()}] ${req.method} ${req.originalUrl || req.url}: ${err.stack || err.message || err}\n`;
-    fs.appendFileSync(errorLogPath, line);
-  } catch {}
-
+  console.error(err);
   if (res.headersSent) return next(err);
-  const isDev = process.env.NODE_ENV !== "production";
-  res.status(500).json({
-    error: isDev ? (err.message || "Something went wrong on our end.") : "Something went wrong on our end.",
-    ...(isDev && err.stack ? { stack: err.stack } : {}),
-  });
+  res.status(500).json({ error: "Something went wrong on our end." });
 });
 
 // Vercel imports this file as a module and calls the exported app

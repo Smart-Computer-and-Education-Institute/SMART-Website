@@ -8,17 +8,17 @@
     "employmentType": "Full-time",
     "experience": "3+ Years",
     "description": "xfb dfzdfgzd",
-    "status": "open"
+    "status": "closed"
   },
   {
     "id": "1789372179431",
-    "title": "Frontend Engineer",
-    "category": "IT & Support",
-    "image": "",
-    "location": "Kathmandu, Nepal",
-    "employmentType": "Full-time",
-    "experience": "2+ Years",
-    "description": "Build modern UI components using JavaScript and React.",
-    "status": "open"
+    "position": "Frontend Engineer",
+    "department": "IT & Support",
+    "location": "Kathmandu",
+    "description": "Build UI components.",
+    "requirements": [
+      "JavaScript",
+      "React"
+    ]
   }
 ]

@@ -1,14 +1,12 @@
 [
   {
-    "id": "p1789372179434",
-    "image": "/img/gallery/gallery1.jpg",
-    "title": "Campus View",
-    "desc": "Smart Computer and Education Institute campus."
+    "id": "1789372179434",
+    "src": "/images/gallery1.jpg",
+    "caption": "Campus view"
   },
   {
-    "id": "p1789372179435",
-    "image": "/img/gallery/gallery2.jpg",
-    "title": "Computer Lab",
-    "desc": "Modern computer lab with high-speed internet and equipment."
+    "id": "1789372179435",
+    "src": "/images/gallery2.jpg",
+    "caption": "Classroom"
   }
 ]

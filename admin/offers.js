@@ -49,9 +49,8 @@ if (offerFileInput) {
 function renderOffers() {
   const rows = offers.filter((o) => {
     const matchesFilter = activeFilter === "all" || o.status === activeFilter;
-    const title = o.title || "";
     const matchesSearch =
-      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      o.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (o.tag && o.tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (o.description && o.description.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesFilter && matchesSearch;
@@ -144,8 +143,7 @@ function openOfferModal(id) {
   if (fileInput) fileInput.value = "";
 
   if (id) {
-    const o = offers.find((x) => String(x.id) === String(id));
-    if (!o) return;
+    const o = offers.find((x) => x.id === id);
     document.getElementById("offerModalTitle").textContent = "Edit offer";
     document.getElementById("offerId").value               = o.id;
     document.getElementById("offerTitle").value            = o.title;
@@ -158,7 +156,6 @@ function openOfferModal(id) {
   } else {
     document.getElementById("offerModalTitle").textContent = "Add offer";
     document.getElementById("offerId").value               = "";
-    document.getElementById("offerStatus").value           = "active";
     document.getElementById("offerTag").value              = "LIMITED TIME";
     document.getElementById("offerCtaLabel").value         = "Learn more";
     document.getElementById("offerCtaLink").value          = "Contact.html";
@@ -297,8 +294,8 @@ document.getElementById("offerForm").addEventListener("submit", async (e) => {
 });
 
 async function deleteOffer(id) {
-  const o = offers.find((x) => String(x.id) === String(id));
-  if (!o || !confirmDelete(`Delete "${o.title}"? This can't be undone.`)) return;
+  const o = offers.find((x) => x.id === id);
+  if (!confirmDelete(`Delete "${o.title}"? This can't be undone.`)) return;
   const res = await fetch(`/api/offers/${id}`, { method: "DELETE" });
   if (res.ok || res.status === 204) {
     showToast("Offer deleted", "danger");

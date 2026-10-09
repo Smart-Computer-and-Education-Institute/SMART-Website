@@ -1,16 +1,14 @@
 [
   {
-    "id": "n1789372179416",
-    "title": "Welcome to Smart Institute",
-    "content": "Welcome to the SMART Computer and Education Institute portal! Explore our latest courses and services.",
-    "date": "2026-09-14",
-    "status": "published"
+    "id": "1789372179416",
+    "title": "Welcome",
+    "body": "Welcome to the SMART website demo!",
+    "date": "2026-09-14T07:49:39.416Z"
   },
   {
-    "id": "n1789372179417",
-    "title": "Admissions Open",
-    "content": "Admissions are now open for new batches in Web Development, Graphic Design, and Basic Computing.",
-    "date": "2026-09-14",
-    "status": "published"
+    "id": "1789372179417",
+    "title": "Update",
+    "body": "New features have been added.",
+    "date": "2026-09-14T07:49:39.416Z"
   }
 ]

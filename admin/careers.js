@@ -95,8 +95,7 @@ if (careerFileInput) {
 function renderCareers() {
   const rows = careers.filter((c) => {
     const matchesFilter = careerFilter === "all" || c.category === careerFilter;
-    const title = c.title || c.position || "";
-    const matchesSearch = title.toLowerCase().includes(careerSearch.toLowerCase());
+    const matchesSearch = c.title.toLowerCase().includes(careerSearch.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -120,7 +119,7 @@ function renderCareers() {
         <div style="display:flex;align-items:center;gap:12px;">
           ${thumbHtml}
           <div>
-            <div class="cell-title">${escapeHtml(c.title || c.position || "Untitled")}</div>
+            <div class="cell-title">${escapeHtml(c.title)}</div>
             <div class="cell-sub">${escapeHtml(c.location || "")}</div>
           </div>
         </div>
@@ -181,8 +180,7 @@ function openCareerModal(id) {
   if (fileInput) fileInput.value = "";
 
   if (id) {
-    const c = careers.find((x) => String(x.id) === String(id));
-    if (!c) return;
+    const c = careers.find((x) => x.id === id);
     document.getElementById("careerModalTitle").textContent  = "Edit position";
     document.getElementById("careerId").value                = c.id;
     document.getElementById("careerTitle").value             = c.title;
@@ -196,7 +194,6 @@ function openCareerModal(id) {
   } else {
     document.getElementById("careerModalTitle").textContent  = "Add position";
     document.getElementById("careerId").value                = "";
-    document.getElementById("careerStatus").value            = "open";
     document.getElementById("careerLocation").value          = "Jhapa, Nepal";
     document.getElementById("careerEmploymentType").value    = "Full-time";
     showCareerPhotoPreview("");
@@ -329,8 +326,8 @@ document.getElementById("careerForm").addEventListener("submit", async (e) => {
 });
 
 async function deleteCareer(id) {
-  const c = careers.find((x) => String(x.id) === String(id));
-  if (!c || !confirmDelete(`Delete "${c.title}"? This can't be undone.`)) return;
+  const c = careers.find((x) => x.id === id);
+  if (!confirmDelete(`Delete "${c.title}"? This can't be undone.`)) return;
   const res = await fetch(`/api/careers/${id}`, { method: "DELETE" });
   if (res.ok || res.status === 204) {
     showToast("Position deleted", "danger");

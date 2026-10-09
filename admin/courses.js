@@ -98,8 +98,7 @@ function openCourseModal(id) {
   clearErrors();
 
   if (id) {
-    const c = courses.find((x) => String(x.id) === String(id));
-    if (!c) return;
+    const c = courses.find((x) => x.id === id);
     document.getElementById("courseModalTitle").textContent = "Edit course";
     document.getElementById("courseId").value = c.id;
     document.getElementById("courseName").value = c.name;
@@ -167,8 +166,8 @@ document.getElementById("courseForm").addEventListener("submit", async (e) => {
 });
 
 async function deleteCourse(id) {
-  const c = courses.find((x) => String(x.id) === String(id));
-  if (!c || !confirmDelete(`Delete "${c.name}"? This can't be undone.`)) return;
+  const c = courses.find((x) => x.id === id);
+  if (!confirmDelete(`Delete "${c.name}"? This can't be undone.`)) return;
   await fetch(`/api/courses/${id}`, { method: "DELETE" });
   showToast("Course deleted", "danger");
   await loadCourses();
