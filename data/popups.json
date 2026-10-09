@@ -1,7 +1,25 @@
 [
   {
-    "id": 1789372179438,
-    "message": "Subscribe to our newsletter!",
-    "type": "info"
+    "id": "pop1791548321455",
+    "name": "scssdass",
+    "enabled": true,
+    "priority": 1,
+    "source": "offer",
+    "refId": "1789372179436",
+    "title": "",
+    "message": "",
+    "image": "",
+    "ctaLabel": "Learn more",
+    "ctaLink": "hello.com",
+    "frequency": "oncePerDay",
+    "schedule": {
+      "startDate": null,
+      "endDate": null,
+      "daysOfWeek": [],
+      "startTime": null,
+      "endTime": null
+    },
+    "createdAt": "2026-10-09T12:18:41.455Z",
+    "updatedAt": "2026-10-09T12:18:41.455Z"
   }
 ]

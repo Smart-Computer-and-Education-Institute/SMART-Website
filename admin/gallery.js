@@ -72,7 +72,8 @@ function openPhotoModal(id) {
   const previewImg = document.getElementById("photoCurrentImg");
 
   if (id) {
-    const p = photos.find((x) => x.id === id);
+    const p = photos.find((x) => String(x.id) === String(id));
+    if (!p) return;
     document.getElementById("photoModalTitle").textContent = "Edit photo";
     document.getElementById("photoId").value = p.id;
     document.getElementById("photoTitle").value = p.title;
@@ -146,8 +147,8 @@ document.getElementById("photoForm").addEventListener("submit", async (e) => {
 });
 
 async function deletePhoto(id) {
-  const p = photos.find((x) => x.id === id);
-  if (!confirmDelete(`Delete "${p.title}"? This can't be undone.`)) return;
+  const p = photos.find((x) => String(x.id) === String(id));
+  if (!p || !confirmDelete(`Delete "${p.title}"? This can't be undone.`)) return;
   await fetch(`/api/gallery/${id}`, { method: "DELETE" });
   showToast("Photo deleted", "danger");
   await loadPhotos();

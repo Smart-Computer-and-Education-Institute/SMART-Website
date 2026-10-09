@@ -21,6 +21,14 @@
     "ourVisionText": "test",
     "whyChooseUsHeading": "Why Choose Us",
     "whyChooseUsText": "test",
-    "customSections": []
+    "customSections": [
+      {
+        "id": "sec1791548254469",
+        "heading": "sdds",
+        "text": "s sdfs",
+        "photo": "/img/about-sections/about-sec-1791548254508-166274471.jpg",
+        "order": 1
+      }
+    ]
   }
 ]

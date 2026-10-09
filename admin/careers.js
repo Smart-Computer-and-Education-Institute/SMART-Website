@@ -180,7 +180,8 @@ function openCareerModal(id) {
   if (fileInput) fileInput.value = "";
 
   if (id) {
-    const c = careers.find((x) => x.id === id);
+    const c = careers.find((x) => String(x.id) === String(id));
+    if (!c) return;
     document.getElementById("careerModalTitle").textContent  = "Edit position";
     document.getElementById("careerId").value                = c.id;
     document.getElementById("careerTitle").value             = c.title;
@@ -326,8 +327,8 @@ document.getElementById("careerForm").addEventListener("submit", async (e) => {
 });
 
 async function deleteCareer(id) {
-  const c = careers.find((x) => x.id === id);
-  if (!confirmDelete(`Delete "${c.title}"? This can't be undone.`)) return;
+  const c = careers.find((x) => String(x.id) === String(id));
+  if (!c || !confirmDelete(`Delete "${c.title}"? This can't be undone.`)) return;
   const res = await fetch(`/api/careers/${id}`, { method: "DELETE" });
   if (res.ok || res.status === 204) {
     showToast("Position deleted", "danger");

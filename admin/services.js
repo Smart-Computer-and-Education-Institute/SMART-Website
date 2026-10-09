@@ -175,7 +175,8 @@ function openServiceModal(id) {
   if (fileInput) fileInput.value = "";
 
   if (id) {
-    const s = services.find((x) => x.id === id);
+    const s = services.find((x) => String(x.id) === String(id));
+    if (!s) return;
     document.getElementById("serviceModalTitle").textContent = "Edit service";
     document.getElementById("serviceId").value               = s.id;
     document.getElementById("serviceName").value             = s.name;
@@ -321,8 +322,8 @@ document.getElementById("serviceForm").addEventListener("submit", async (e) => {
 });
 
 async function deleteService(id) {
-  const s = services.find((x) => x.id === id);
-  if (!confirmDelete(`Delete "${s.name}"? This can't be undone.`)) return;
+  const s = services.find((x) => String(x.id) === String(id));
+  if (!s || !confirmDelete(`Delete "${s.name}"? This can't be undone.`)) return;
   const res = await fetch(`/api/services/${id}`, { method: "DELETE" });
   if (res.ok || res.status === 204) {
     showToast("Service deleted", "danger");

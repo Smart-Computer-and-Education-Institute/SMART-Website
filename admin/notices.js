@@ -96,7 +96,8 @@ function openNoticeModal(id) {
   clearNoticeErrors();
 
   if (id) {
-    const n = notices.find((x) => x.id === id);
+    const n = notices.find((x) => String(x.id) === String(id));
+    if (!n) return;
     document.getElementById("noticeModalTitle").textContent = "Edit notice";
     document.getElementById("noticeId").value = n.id;
     document.getElementById("noticeTitle").value = n.title;
@@ -166,8 +167,8 @@ async function toggleNoticeStatus(id) {
 }
 
 async function deleteNotice(id) {
-  const n = notices.find((x) => x.id === id);
-  if (!confirmDelete(`Delete "${n.title}"? This can't be undone.`)) return;
+  const n = notices.find((x) => String(x.id) === String(id));
+  if (!n || !confirmDelete(`Delete "${n.title}"? This can't be undone.`)) return;
   await fetch(`/api/notices/${id}`, { method: "DELETE" });
   showToast("Notice deleted", "danger");
   await loadNotices();

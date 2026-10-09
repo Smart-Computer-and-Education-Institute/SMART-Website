@@ -1,12 +1,12 @@
 [
   {
-    "id": 1789372179422,
+    "id": "1789372179422",
     "name": "John Doe",
     "text": "Great platform for learning!",
     "rating": 5
   },
   {
-    "id": 1789372179423,
+    "id": "1789372179423",
     "name": "Jane Smith",
     "text": "Excellent courses and support.",
     "rating": 4

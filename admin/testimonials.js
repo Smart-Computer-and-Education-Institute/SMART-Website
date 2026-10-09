@@ -63,7 +63,8 @@ function openTestimonialModal(id) {
   const previewImg = document.getElementById("testimonialCurrentImg");
 
   if (id) {
-    const t = testimonials.find((x) => x.id === id);
+    const t = testimonials.find((x) => String(x.id) === String(id));
+    if (!t) return;
     document.getElementById("testimonialModalTitle").textContent = "Edit testimonial";
     document.getElementById("testimonialId").value = t.id;
     document.getElementById("testimonialName").value = t.name;
@@ -129,8 +130,8 @@ document.getElementById("testimonialForm").addEventListener("submit", async (e) 
 });
 
 async function deleteTestimonial(id) {
-  const t = testimonials.find((x) => x.id === id);
-  if (!confirmDelete(`Delete testimonial by "${t.name}"? This can't be undone.`)) return;
+  const t = testimonials.find((x) => String(x.id) === String(id));
+  if (!t || !confirmDelete(`Delete testimonial by "${t.name}"? This can't be undone.`)) return;
   await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
   showToast("Testimonial deleted", "danger");
   await loadTestimonials();
