@@ -8,15 +8,5 @@
     "enrolled": 45,
     "status": "active",
     "image": ""
-  },
-  {
-    "id": "1789372179428",
-    "name": "IT Support & Networking",
-    "category": "Basic Courses",
-    "duration": "2 Months",
-    "desc": "Hands-on technical support, hardware troubleshooting, and computer networking training.",
-    "enrolled": 30,
-    "status": "active",
-    "image": ""
   }
 ]
