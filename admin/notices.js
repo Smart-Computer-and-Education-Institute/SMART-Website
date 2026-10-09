@@ -21,7 +21,9 @@ async function loadNotices() {
 }
 
 function formatDate(iso) {
-  const d = new Date(iso + "T00:00:00");
+  if (!iso) return "";
+  const d = new Date(iso.includes("T") ? iso : iso + "T00:00:00");
+  if (isNaN(d.getTime())) return String(iso).slice(0, 10);
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
@@ -49,7 +51,7 @@ function renderNotices() {
             }
             <span class="notice-item-date">${formatDate(n.date)}</span>
           </div>
-          <p>${nl2br(escapeHtml(n.content))}</p>
+          <p>${nl2br(escapeHtml(n.content || n.body || ""))}</p>
         </div>
         <div class="notice-item-actions">
           <button class="btn btn-secondary btn-sm" onclick="toggleNoticeStatus('${n.id}')">
@@ -107,6 +109,7 @@ function openNoticeModal(id) {
   } else {
     document.getElementById("noticeModalTitle").textContent = "New notice";
     document.getElementById("noticeId").value = "";
+    document.getElementById("noticeStatus").value = "published";
     document.getElementById("noticeDate").value = todayIso();
   }
 

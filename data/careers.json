@@ -1,13 +1,24 @@
 [
   {
+    "id": "job1791549152761",
+    "title": "nbvkjnbvs vsd",
+    "category": "IT & Support",
+    "image": "",
+    "location": "Jhapa, Nepal",
+    "employmentType": "Full-time",
+    "experience": "3+ Years",
+    "description": "xfb dfzdfgzd",
+    "status": "open"
+  },
+  {
     "id": "1789372179431",
-    "position": "Frontend Engineer",
-    "department": "IT & Support",
-    "location": "Kathmandu",
-    "description": "Build UI components.",
-    "requirements": [
-      "JavaScript",
-      "React"
-    ]
+    "title": "Frontend Engineer",
+    "category": "IT & Support",
+    "image": "",
+    "location": "Kathmandu, Nepal",
+    "employmentType": "Full-time",
+    "experience": "2+ Years",
+    "description": "Build modern UI components using JavaScript and React.",
+    "status": "open"
   }
 ]

@@ -1,14 +1,16 @@
 [
   {
-    "id": "1789372179422",
-    "name": "John Doe",
-    "text": "Great platform for learning!",
+    "id": "t1789372179422",
+    "name": "Sujan Thapa",
+    "service": "Web Development",
+    "text": "Great platform for learning practical programming skills! Highly recommended.",
     "rating": 5
   },
   {
-    "id": "1789372179423",
-    "name": "Jane Smith",
-    "text": "Excellent courses and support.",
-    "rating": 4
+    "id": "t1789372179423",
+    "name": "Pooja Sharma",
+    "service": "IT Support",
+    "text": "Excellent courses, friendly instructors, and great hands-on lab sessions.",
+    "rating": 5
   }
 ]

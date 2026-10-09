@@ -35,16 +35,18 @@ function renderGallery() {
   photos.forEach((p, i) => {
     const card = document.createElement("div");
     card.className = "gallery-admin-card";
-    const thumbInner = p.image
-      ? `<img src="${escapeHtml(toAbsUrl(p.image))}" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover;">`
+    const title = p.title || p.caption || "Untitled";
+    const imgUrl = p.image || p.src || "";
+    const thumbInner = imgUrl
+      ? `<img src="${escapeHtml(toAbsUrl(imgUrl))}" alt="${escapeHtml(title)}" style="width:100%;height:100%;object-fit:cover;">`
       : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>`;
     card.innerHTML = `
       <div class="gallery-admin-thumb" style="background:${thumbPalette[i % thumbPalette.length]}">
         ${thumbInner}
       </div>
       <div class="gallery-admin-body">
-        <h3>${escapeHtml(p.title)}</h3>
-        <p>${nl2br(escapeHtml(p.desc))}</p>
+        <h3>${escapeHtml(title)}</h3>
+        <p>${nl2br(escapeHtml(p.desc || p.caption || ""))}</p>
         <div class="gallery-admin-actions">
           <button class="btn btn-secondary btn-sm" onclick="openPhotoModal('${p.id}')">Edit</button>
           <button class="btn btn-danger-ghost btn-sm" onclick="deletePhoto('${p.id}')">Delete</button>

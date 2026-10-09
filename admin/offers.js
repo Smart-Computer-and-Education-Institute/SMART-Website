@@ -49,8 +49,9 @@ if (offerFileInput) {
 function renderOffers() {
   const rows = offers.filter((o) => {
     const matchesFilter = activeFilter === "all" || o.status === activeFilter;
+    const title = o.title || "";
     const matchesSearch =
-      o.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (o.tag && o.tag.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (o.description && o.description.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesFilter && matchesSearch;
@@ -157,6 +158,7 @@ function openOfferModal(id) {
   } else {
     document.getElementById("offerModalTitle").textContent = "Add offer";
     document.getElementById("offerId").value               = "";
+    document.getElementById("offerStatus").value           = "active";
     document.getElementById("offerTag").value              = "LIMITED TIME";
     document.getElementById("offerCtaLabel").value         = "Learn more";
     document.getElementById("offerCtaLink").value          = "Contact.html";

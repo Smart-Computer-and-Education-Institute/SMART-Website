@@ -90,7 +90,8 @@ if (serviceFileInput) {
 function renderServices() {
   const rows = services.filter((s) => {
     const matchesFilter = activeFilter === "all" || s.category === activeFilter;
-    const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const name = s.name || "";
+    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -189,6 +190,7 @@ function openServiceModal(id) {
   } else {
     document.getElementById("serviceModalTitle").textContent = "Add service";
     document.getElementById("serviceId").value               = "";
+    document.getElementById("serviceStatus").value           = "active";
     showServicePhotoPreview("");
   }
 

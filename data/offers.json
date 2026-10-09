@@ -2,7 +2,12 @@
   {
     "id": "1789372179436",
     "title": "Early Bird Discount",
-    "description": "20% off on all courses until end of month.",
-    "validUntil": "2026-09-21T07:49:39.424Z"
+    "tag": "LIMITED TIME",
+    "description": "20% off on all computer courses until end of month.",
+    "ctaLabel": "Enroll Now",
+    "ctaLink": "Contact.html",
+    "status": "active",
+    "image": "",
+    "createdAt": "2026-09-21T07:49:39.424Z"
   }
 ]

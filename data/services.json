@@ -2,11 +2,21 @@
   {
     "id": "1789372179427",
     "name": "Web Development",
-    "description": "Full‑stack web development services."
+    "category": "Programming",
+    "duration": "3 Months",
+    "desc": "Full‑stack web development services covering HTML, CSS, JavaScript, Node.js, and modern frameworks.",
+    "enrolled": 45,
+    "status": "active",
+    "image": ""
   },
   {
     "id": "1789372179428",
-    "name": "IT Support",
-    "description": "24/7 technical support for institutions."
+    "name": "IT Support & Networking",
+    "category": "Basic Courses",
+    "duration": "2 Months",
+    "desc": "Hands-on technical support, hardware troubleshooting, and computer networking training.",
+    "enrolled": 30,
+    "status": "active",
+    "image": ""
   }
 ]

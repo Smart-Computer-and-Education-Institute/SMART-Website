@@ -95,7 +95,8 @@ if (careerFileInput) {
 function renderCareers() {
   const rows = careers.filter((c) => {
     const matchesFilter = careerFilter === "all" || c.category === careerFilter;
-    const matchesSearch = c.title.toLowerCase().includes(careerSearch.toLowerCase());
+    const title = c.title || c.position || "";
+    const matchesSearch = title.toLowerCase().includes(careerSearch.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -119,7 +120,7 @@ function renderCareers() {
         <div style="display:flex;align-items:center;gap:12px;">
           ${thumbHtml}
           <div>
-            <div class="cell-title">${escapeHtml(c.title)}</div>
+            <div class="cell-title">${escapeHtml(c.title || c.position || "Untitled")}</div>
             <div class="cell-sub">${escapeHtml(c.location || "")}</div>
           </div>
         </div>
@@ -195,6 +196,7 @@ function openCareerModal(id) {
   } else {
     document.getElementById("careerModalTitle").textContent  = "Add position";
     document.getElementById("careerId").value                = "";
+    document.getElementById("careerStatus").value            = "open";
     document.getElementById("careerLocation").value          = "Jhapa, Nepal";
     document.getElementById("careerEmploymentType").value    = "Full-time";
     showCareerPhotoPreview("");

@@ -25,18 +25,19 @@ function renderTestimonials() {
   testimonials.forEach((t) => {
     const card = document.createElement("div");
     card.className = "testimonial-admin-card";
+    const name = t.name || "Anonymous";
     const photoHtml = t.photo
-      ? `<img src="${escapeHtml(toAbsUrl(t.photo))}" alt="${escapeHtml(t.name)}" class="testimonial-admin-avatar">`
-      : `<div class="testimonial-admin-avatar testimonial-admin-avatar-placeholder">${escapeHtml(t.name.charAt(0).toUpperCase())}</div>`;
+      ? `<img src="${escapeHtml(toAbsUrl(t.photo))}" alt="${escapeHtml(name)}" class="testimonial-admin-avatar">`
+      : `<div class="testimonial-admin-avatar testimonial-admin-avatar-placeholder">${escapeHtml(name.charAt(0).toUpperCase())}</div>`;
     card.innerHTML = `
       <div class="testimonial-admin-header">
         ${photoHtml}
         <div class="testimonial-admin-meta">
-          <strong>${escapeHtml(t.name)}</strong>
+          <strong>${escapeHtml(name)}</strong>
           ${t.service ? `<span class="badge badge-blue">${escapeHtml(t.service)}</span>` : ""}
         </div>
       </div>
-      <p class="testimonial-admin-text">"${nl2br(escapeHtml(t.text))}"</p>
+      <p class="testimonial-admin-text">"${nl2br(escapeHtml(t.text || t.quote || ""))}"</p>
       <div class="testimonial-admin-actions">
         <button class="btn btn-secondary btn-sm" onclick="openTestimonialModal('${t.id}')">Edit</button>
         <button class="btn btn-danger-ghost btn-sm" onclick="deleteTestimonial('${t.id}')">Delete</button>
