@@ -95,7 +95,8 @@ async function loadCustomSections() {
   try {
     const res = await fetch("/api/about/sections");
     if (!res.ok) return;
-    customSections = await res.json();
+    const data = await res.json().catch(() => []);
+    customSections = Array.isArray(data) ? data : [];
     renderCustomSections();
   } catch (err) {
     console.error("Could not load custom sections:", err);
@@ -167,7 +168,7 @@ async function moveSection(id, direction) {
   renderCustomSections();
 
   try {
-    await Promise.all([
+    const [res1, res2] = await Promise.all([
       fetch(`/api/about/sections/${currentSec.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -179,6 +180,13 @@ async function moveSection(id, direction) {
         body: JSON.stringify({ order: newTargetOrder }),
       }),
     ]);
+    if (!res1.ok || !res2.ok) {
+      const failedRes = !res1.ok ? res1 : res2;
+      const err = await failedRes.json().catch(() => ({}));
+      showToast(err.error || "Could not update order.", "danger");
+      await loadCustomSections();
+      return;
+    }
     showToast("Section order updated");
     await loadCustomSections();
   } catch (err) {

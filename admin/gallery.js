@@ -23,7 +23,8 @@ const galleryCount = document.getElementById("galleryCount");
 // so the screen always matches what's actually saved.
 async function loadPhotos() {
   const res = await fetch("/api/gallery");
-  photos = await res.json();
+  const data = await res.json().catch(() => []);
+  photos = Array.isArray(data) ? data : [];
   renderGallery();
 }
 
@@ -148,7 +149,12 @@ document.getElementById("photoForm").addEventListener("submit", async (e) => {
 async function deletePhoto(id) {
   const p = photos.find((x) => x.id === id);
   if (!confirmDelete(`Delete "${p.title}"? This can't be undone.`)) return;
-  await fetch(`/api/gallery/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/gallery/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || "Could not delete photo — please try again.", "danger");
+    return;
+  }
   showToast("Photo deleted", "danger");
   await loadPhotos();
 }

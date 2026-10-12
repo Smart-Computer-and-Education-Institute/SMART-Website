@@ -16,7 +16,8 @@ const noticeCount = document.getElementById("noticeCount");
 // so the screen always matches what's actually saved.
 async function loadNotices() {
   const res = await fetch("/api/notices");
-  notices = await res.json();
+  const data = await res.json().catch(() => []);
+  notices = Array.isArray(data) ? data : [];
   renderNotices();
 }
 
@@ -138,19 +139,29 @@ document.getElementById("noticeForm").addEventListener("submit", async (e) => {
 
   if (id) {
     // Editing an existing notice
-    await fetch(`/api/notices/${id}`, {
+    const res = await fetch(`/api/notices/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || "Failed to update notice — please try again.", "danger");
+      return;
+    }
     showToast("Notice updated");
   } else {
     // Creating a new one
-    await fetch("/api/notices", {
+    const res = await fetch("/api/notices", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || "Failed to post notice — please try again.", "danger");
+      return;
+    }
     showToast("Notice posted");
   }
 
@@ -160,6 +171,11 @@ document.getElementById("noticeForm").addEventListener("submit", async (e) => {
 
 async function toggleNoticeStatus(id) {
   const res = await fetch(`/api/notices/${id}/toggle`, { method: "POST" });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || "Could not toggle notice status — please try again.", "danger");
+    return;
+  }
   const updated = await res.json();
   showToast(updated.status === "published" ? "Notice published" : "Notice moved to draft");
   await loadNotices();
@@ -168,7 +184,12 @@ async function toggleNoticeStatus(id) {
 async function deleteNotice(id) {
   const n = notices.find((x) => x.id === id);
   if (!confirmDelete(`Delete "${n.title}"? This can't be undone.`)) return;
-  await fetch(`/api/notices/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/notices/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || "Could not delete notice — please try again.", "danger");
+    return;
+  }
   showToast("Notice deleted", "danger");
   await loadNotices();
 }

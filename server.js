@@ -20,6 +20,7 @@ require("dotenv").config(); // loads .env locally; harmless no-op in production
 
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const multer = require("multer");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
@@ -34,6 +35,7 @@ const {
   clearSessionCookie,
   requireAuthPage,
   requireApiAuth,
+  getSession,
 } = require("./lib/auth");
 
 const app = express();
@@ -78,8 +80,11 @@ app.use(express.json({ limit: "1mb" }));
 // ---------------------------------------------------------
 const BLOCKED_PATH_PREFIXES = [
   "/data/",
+  "/data",
   "/lib/",
+  "/lib",
   "/scripts/",
+  "/scripts",
   "/server.js",
   "/package.json",
   "/package-lock.json",
@@ -87,6 +92,11 @@ const BLOCKED_PATH_PREFIXES = [
   "/.env",
   "/.git",
   "/test_careers.js",
+  "/docs",
+  "/.agents",
+  "/.vscode",
+  "/index.js",
+  "/img/applications",
 ];
 app.use((req, res, next) => {
   if (BLOCKED_PATH_PREFIXES.some((p) => req.path === p || req.path.startsWith(p))) {
@@ -106,6 +116,11 @@ app.use((req, res, next) => {
 app.use("/admin", requireAuthPage);
 app.get("/admin", (req, res) => res.redirect("/admin/dashboard.html"));
 
+// Serve static assets from public/ folder if present (Vercel standard)
+const publicDir = path.join(__dirname, "public");
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+}
 // Serve the rest of the site (HTML, CSS, JS, images) as static files.
 app.use(express.static(__dirname));
 
@@ -117,11 +132,11 @@ app.use(express.static(__dirname));
 // minutes on the login route specifically (every other route is
 // unaffected).
 const loginLimiter = rateLimit({
-  windowMs: 10 * 1000,
+  windowMs: 15 * 60 * 1000,
   max: 8,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "Too many login attempts. Please try again in a few seconds." },
+  message: { error: "Too many login attempts. Please try again in 15 minutes." },
 });
 
 app.post(
@@ -615,6 +630,19 @@ async function parseAndValidatePopup(body = {}, isUpdate = false, existing = nul
   return { ok: true, data };
 }
 
+function normalizePopupCtaLink(link) {
+  if (!link || typeof link !== "string") return "";
+  const trimmed = link.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("/") || trimmed.startsWith("#")) {
+    return trimmed;
+  }
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+    return trimmed;
+  }
+  return "https://" + trimmed;
+}
+
 app.get(
   "/api/public/site-popups",
   asyncHandler(async (req, res) => {
@@ -640,7 +668,7 @@ app.get(
           image: offer.image || "",
           tag: offer.tag || "",
           ctaLabel: p.ctaLabel || "Learn more",
-          ctaLink: p.ctaLink || "",
+          ctaLink: normalizePopupCtaLink(p.ctaLink),
           frequency: p.frequency || "everyLoad",
         });
       } else if (p.source === "notice") {
@@ -658,7 +686,7 @@ app.get(
           image: "",
           tag: "Notice",
           ctaLabel: p.ctaLabel || "Learn more",
-          ctaLink: p.ctaLink || "",
+          ctaLink: normalizePopupCtaLink(p.ctaLink),
           frequency: p.frequency || "everyLoad",
         });
       } else {
@@ -673,7 +701,7 @@ app.get(
           image: p.image || "",
           tag: "",
           ctaLabel: p.ctaLabel || "Learn more",
-          ctaLink: p.ctaLink || "",
+          ctaLink: normalizePopupCtaLink(p.ctaLink),
           frequency: p.frequency || "everyLoad",
         });
       }
@@ -1355,7 +1383,7 @@ app.post(
       duration: String(duration).slice(0, 60),
       desc: String(desc).slice(0, 2000),
       enrolled: Number.isFinite(Number(enrolled)) ? Number(enrolled) : 0,
-      status: status === "inactive" ? "inactive" : "active",
+      status: ["active", "draft", "inactive"].includes(status) ? status : "active",
     };
 
     await db.insertOne("services", newService);
@@ -1375,7 +1403,9 @@ app.put(
     if (duration !== undefined) changes.duration = String(duration).slice(0, 60);
     if (desc !== undefined) changes.desc = String(desc).slice(0, 2000);
     if (enrolled !== undefined) changes.enrolled = Number(enrolled) || 0;
-    if (status !== undefined) changes.status = status === "inactive" ? "inactive" : "active";
+    if (status !== undefined) {
+      changes.status = ["active", "draft", "inactive"].includes(status) ? status : "active";
+    }
 
     const service = await db.updateOne("services", req.params.id, changes);
     if (!service) return res.status(404).json({ error: "Service not found" });
@@ -1781,7 +1811,7 @@ const ALLOWED_CV_TYPES = {
 
 const cvMemoryUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  limits: { fileSize: 4 * 1024 * 1024 }, // 4MB max
   fileFilter: (req, file, cb) => {
     if (!ALLOWED_CV_TYPES[file.mimetype]) {
       return cb(new Error("Only PDF, DOC, or DOCX documents are allowed."));
@@ -1793,7 +1823,7 @@ const cvMemoryUpload = multer({
 function handleCvUpload(req, res, next) {
   cvMemoryUpload(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({ error: "CV file is too large. Max size is 5MB." });
+      return res.status(400).json({ error: "CV file is too large. Max size is 4MB." });
     }
     if (err) {
       return res.status(400).json({ error: err.message || "CV upload failed." });
@@ -1813,6 +1843,9 @@ const applicationLimiter = rateLimit({
 async function verifyTurnstileToken(token, remoteIp) {
   const secretKey = process.env.TURNSTILE_SECRET_KEY;
   if (!secretKey) {
+    if (process.env.NODE_ENV === "production") {
+      return false;
+    }
     // Optional fallback when running locally or without Turnstile keys configured
     console.warn("TURNSTILE_SECRET_KEY is not configured; skipping CAPTCHA verification.");
     return true;
@@ -1838,6 +1871,10 @@ async function verifyTurnstileToken(token, remoteIp) {
     return false;
   }
 }
+
+app.get("/api/public/turnstile-sitekey", (req, res) => {
+  res.json({ sitekey: process.env.TURNSTILE_SITE_KEY || "1x00000000000000000000AA" });
+});
 
 app.post(
   "/api/public/applications",
@@ -1960,6 +1997,38 @@ app.get(
   })
 );
 
+app.get(
+  "/api/applications/:id/cv",
+  asyncHandler(async (req, res) => {
+    const session = await getSession(req);
+    if (!session) {
+      if (req.accepts("html")) return res.redirect("/login.html");
+      return res.status(401).json({ error: "Not logged in." });
+    }
+
+    const appItem = await db.findOne("applications", req.params.id);
+    if (!appItem || !appItem.cvUrl) {
+      return res.status(404).json({ error: "CV not found" });
+    }
+
+    if (appItem.cvUrl.startsWith("http://") || appItem.cvUrl.startsWith("https://")) {
+      return res.redirect(appItem.cvUrl);
+    }
+
+    const cleanPath = appItem.cvUrl.replace(/^[/\\]+/, "");
+    let localPath = path.join(__dirname, cleanPath);
+    if (!fs.existsSync(localPath)) {
+      localPath = path.join(__dirname, "public", cleanPath);
+    }
+
+    if (fs.existsSync(localPath)) {
+      return res.sendFile(localPath);
+    }
+
+    return res.status(404).json({ error: "CV file not found on disk" });
+  })
+);
+
 app.put(
   "/api/applications/:id/status",
   requireApiAuth,
@@ -2036,7 +2105,7 @@ const ALLOWED_IMAGE_TYPES = {
 
 const memoryUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max for high-res photos
+  limits: { fileSize: 4 * 1024 * 1024 }, // 4MB max for photos
   fileFilter: (req, file, cb) => {
     if (!ALLOWED_IMAGE_TYPES[file.mimetype]) {
       return cb(new Error("Only JPG, PNG, WEBP, or GIF images are allowed."));
@@ -2048,7 +2117,7 @@ const memoryUpload = multer({
 function handlePhotoUpload(req, res, next) {
   memoryUpload(req, res, (err) => {
     if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({ error: "Photo is too large. Max size is 10MB." });
+      return res.status(400).json({ error: "Photo is too large. Max size is 4MB." });
     }
     if (err) {
       return res.status(400).json({ error: err.message || "Upload failed." });
@@ -2318,10 +2387,10 @@ app.post(
   "/api/public/inquiries",
   inquiryLimiter,
   asyncHandler(async (req, res) => {
-    const { name, email, phone, subject, message, company } = req.body || {};
+    const { name, email, phone, subject, message, contact_pref } = req.body || {};
 
     // Bot detection via honeypot field
-    if (company) {
+    if (contact_pref) {
       console.warn("[inquiries] Honeypot triggered, discarded spam submission.");
       return res.status(200).json({ ok: true, message: "Thank you for reaching out." });
     }
@@ -2349,76 +2418,31 @@ app.post(
     const cleanSubject = subject.trim().slice(0, 200);
     const cleanMessage = message.trim().slice(0, 4000);
 
-    // Spam protection: if this email already has a recent inquiry (within the
-    // last 60 minutes), overwrite it with the new content instead of inserting
-    // a duplicate.  The admin still sees the most up-to-date message, and the
-    // database doesn't accumulate hundreds of near-identical rows from one person.
-    const SPAM_WINDOW_MS = 60 * 60 * 1000; // 60 minutes
     const now = Date.now();
-    let existingInquiry = null;
+    const newInquiry = {
+      id: String(now),
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      subject: cleanSubject,
+      message: cleanMessage,
+      status: "unread",
+      createdAt: new Date().toISOString(),
+      source: "Contact Page",
+    };
+
+    await db.insertOne("inquiries", newInquiry);
 
     try {
-      const allInquiries = await db.findAll("inquiries");
-      // Find the most recent inquiry from this email address
-      const sameEmailInquiries = allInquiries
-        .filter((inq) => inq.email === cleanEmail)
-        .sort((a, b) => {
-          const ta = typeof a.id === "number" ? a.id : new Date(a.createdAt).getTime();
-          const tb = typeof b.id === "number" ? b.id : new Date(b.createdAt).getTime();
-          return tb - ta; // descending — most recent first
-        });
-
-      if (sameEmailInquiries.length > 0) {
-        const latest = sameEmailInquiries[0];
-        const latestTime = typeof latest.id === "number" ? latest.id : new Date(latest.createdAt).getTime();
-        if (now - latestTime < SPAM_WINDOW_MS) {
-          existingInquiry = latest;
-        }
-      }
-    } catch (_) {
-      // If we can't check, just insert normally — don't block the user
+      await sendInquiryEmailNotification(newInquiry);
+    } catch (err) {
+      console.error("[inquiries] Email notification failed:", err);
     }
-
-    let savedInquiry;
-
-    if (existingInquiry) {
-      // Replace the latest inquiry from this email with the new content
-      const updates = {
-        name: cleanName,
-        phone: cleanPhone,
-        subject: cleanSubject,
-        message: cleanMessage,
-        status: "unread", // reset to unread so admin sees the update
-        updatedAt: new Date().toISOString(),
-        replacedAt: new Date().toISOString(),
-      };
-      savedInquiry = await db.updateOne("inquiries", String(existingInquiry.id), updates);
-      console.log(`[inquiries] Spam-protection: replaced latest inquiry ${existingInquiry.id} for ${cleanEmail}`);
-    } else {
-      savedInquiry = {
-        id: String(now),
-        name: cleanName,
-        email: cleanEmail,
-        phone: cleanPhone,
-        subject: cleanSubject,
-        message: cleanMessage,
-        status: "unread",
-        createdAt: new Date().toISOString(),
-        source: "Contact Page",
-      };
-      await db.insertOne("inquiries", savedInquiry);
-    }
-
-    // Asynchronously trigger email notification without delaying response.
-    // When replacing an existing inquiry, updateOne may not return the email
-    // field, so we merge it back in explicitly.
-    const notifyPayload = { email: cleanEmail, ...savedInquiry };
-    sendInquiryEmailNotification(notifyPayload).catch(() => {});
 
     res.status(201).json({
       ok: true,
       message: "Thank you! Your inquiry has been sent successfully.",
-      inquiryId: savedInquiry ? savedInquiry.id : now,
+      inquiryId: newInquiry.id,
     });
   })
 );
@@ -2500,8 +2524,21 @@ app.delete(
 // visitor or crashing the server.
 // ---------------------------------------------------------
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  console.error(err);
   if (res.headersSent) return next(err);
+
+  const isMongoConnError =
+    err &&
+    (err.name === "MongoServerSelectionError" ||
+      err.name === "MongoNetworkError" ||
+      (err.constructor &&
+        (err.constructor.name === "MongoServerSelectionError" ||
+          err.constructor.name === "MongoNetworkError")));
+
+  if (isMongoConnError) {
+    return res.status(503).json({ error: "Database unavailable. Please try again." });
+  }
+
+  console.error(err);
   res.status(500).json({ error: "Something went wrong on our end." });
 });
 

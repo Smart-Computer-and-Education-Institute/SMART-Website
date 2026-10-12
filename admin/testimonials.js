@@ -11,7 +11,8 @@ const testimonialCount = document.getElementById("testimonialCount");
 
 async function loadTestimonials() {
   const res = await fetch("/api/testimonials");
-  testimonials = await res.json();
+  const data = await res.json().catch(() => []);
+  testimonials = Array.isArray(data) ? data : [];
   renderTestimonials();
 }
 
@@ -131,7 +132,12 @@ document.getElementById("testimonialForm").addEventListener("submit", async (e) 
 async function deleteTestimonial(id) {
   const t = testimonials.find((x) => x.id === id);
   if (!confirmDelete(`Delete testimonial by "${t.name}"? This can't be undone.`)) return;
-  await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
+  const res = await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || "Could not delete testimonial — please try again.", "danger");
+    return;
+  }
   showToast("Testimonial deleted", "danger");
   await loadTestimonials();
 }

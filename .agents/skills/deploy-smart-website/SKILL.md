@@ -105,6 +105,8 @@ Go to **Vercel → Your Project → Settings → Environment Variables** and add
 | `ADMIN_PASSWORD_HASH` | bcrypt hash of your password | Run locally: `npm run hash-password -- "YourPassword123!"` |
 | `JWT_SECRET` | Long random string | Run locally: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
 | `MONGODB_URI` | Full Atlas connection string | From Step 2 |
+| `TURNSTILE_SITE_KEY` | Turnstile site key | From Cloudflare dashboard (under Turnstile) |
+| `TURNSTILE_SECRET_KEY` | Turnstile secret key | From Cloudflare dashboard (under Turnstile) |
 
 `BLOB_READ_WRITE_TOKEN` is already set from Step 4.
 

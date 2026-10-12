@@ -181,6 +181,8 @@ add:
 | `ADMIN_PASSWORD_HASH` | Run `npm run hash-password -- "YourNewPassword123!"` locally and paste the printed hash. **Never put a plain password here.** |
 | `JWT_SECRET` | A long random string. Generate one with `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
 | `MONGODB_URI` | The connection string from Step 2 |
+| `TURNSTILE_SITE_KEY` | (Optional locally, required for CAPTCHA in prod) Cloudflare Turnstile Site Key from Cloudflare dashboard |
+| `TURNSTILE_SECRET_KEY` | (Optional locally, required for CAPTCHA in prod) Cloudflare Turnstile Secret Key from Cloudflare dashboard |
 
 `BLOB_READ_WRITE_TOKEN` should already be there from Step 4.
 

@@ -181,7 +181,7 @@
                     <!-- CV/Resume Section -->
                     <div class="form-section">
                         <h3 class="section-title">Upload CV / Resume</h3>
-                        <p class="section-description">Upload your CV or Resume (PDF, DOC, or DOCX format. Max 5MB)</p>
+                        <p class="section-description">Upload your CV or Resume (PDF, DOC, or DOCX format. Max 4MB)</p>
                         
                         <div class="file-upload-wrapper">
                             <div class="file-upload-area" id="fileUploadArea">
@@ -191,7 +191,7 @@
                                     <line x1="12" y1="3" x2="12" y2="15"></line>
                                 </svg>
                                 <p class="upload-text">Drag and drop your CV here, or <span class="upload-link">click to browse</span></p>
-                                <p class="upload-hint">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                                <p class="upload-hint">Supported formats: PDF, DOC, DOCX (Max 4MB)</p>
                                 <input type="file" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display: none;">
                             </div>
                             <div class="file-preview" id="filePreview" style="display: none;">
@@ -223,8 +223,8 @@
                             <span class="form-error" id="termsError"></span>
                         </div>
 
-                        <!-- Turnstile CAPTCHA Widget Placeholder -->
-                        <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-theme="light" style="margin: 12px 0;"></div>
+                        <!-- Turnstile CAPTCHA Widget Placeholder (rendered dynamically via /api/public/turnstile-sitekey) -->
+                        <div id="turnstile-container" data-theme="light" style="margin: 12px 0;"></div>
                     </div>
  
                     <!-- Form Actions -->

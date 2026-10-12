@@ -2,13 +2,15 @@
   {
     "id": "1789372179416",
     "title": "Welcome",
-    "body": "Welcome to the SMART website demo!",
-    "date": "2026-09-14T07:49:39.416Z"
+    "content": "Welcome to the SMART website demo!",
+    "date": "2026-09-14",
+    "status": "published"
   },
   {
     "id": "1789372179417",
     "title": "Update",
-    "body": "New features have been added.",
-    "date": "2026-09-14T07:49:39.416Z"
+    "content": "New features have been added.",
+    "date": "2026-09-14",
+    "status": "published"
   }
 ]

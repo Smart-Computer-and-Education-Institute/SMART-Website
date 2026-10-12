@@ -135,7 +135,7 @@ function fetchAndRenderJobs() {
 // ===================================
 let selectedFile = null;
 let currentJobTitle = '';
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
 const ALLOWED_FILE_TYPES = [
     'application/pdf',
     'application/msword',
@@ -149,7 +149,36 @@ document.addEventListener('DOMContentLoaded', function() {
     loadPublicCareerCategories().then(fetchAndRenderJobs);
     initializeEventListeners();
     setupFileUploadDragDrop();
+    initTurnstile();
 });
+
+async function initTurnstile() {
+    const container = document.getElementById('turnstile-container');
+    if (!container) return;
+
+    try {
+        const res = await fetch('/api/public/turnstile-sitekey');
+        const data = await res.json().catch(() => ({}));
+        const sitekey = data.sitekey || '1x00000000000000000000AA';
+
+        const renderWidget = () => {
+            if (window.turnstile && typeof window.turnstile.render === 'function') {
+                if (!container.dataset.rendered) {
+                    container.dataset.rendered = 'true';
+                    window.turnstile.render(container, {
+                        sitekey: sitekey,
+                        theme: 'light',
+                    });
+                }
+            } else {
+                setTimeout(renderWidget, 100);
+            }
+        };
+        renderWidget();
+    } catch (err) {
+        console.warn('Could not initialize Turnstile:', err);
+    }
+}
 
 // ===================================
 // EVENT LISTENERS
@@ -245,7 +274,7 @@ function validateAndSetFile(file) {
 
     // Check file size
     if (file.size > MAX_FILE_SIZE) {
-        errorElement.textContent = 'File size exceeds 5MB. Please upload a smaller file.';
+        errorElement.textContent = 'File size exceeds 4MB. Please upload a smaller file.';
         clearFileInput();
         return;
     }

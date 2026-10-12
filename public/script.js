@@ -977,7 +977,7 @@ onDomReady(() => {
     const phone = (document.getElementById("phone")?.value || "").trim();
     const subject = (document.getElementById("subject")?.value || "").trim();
     const message = (document.getElementById("message")?.value || "").trim();
-    const company = (document.getElementById("companyHoneypot")?.value || "").trim();
+    const contact_pref = (document.getElementById("contact_pref")?.value || "").trim();
 
     // Client-side validation
     if (!name || !email || !subject || !message) {
@@ -998,7 +998,7 @@ onDomReady(() => {
       const response = await fetch("/api/public/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, subject, message, company }),
+        body: JSON.stringify({ name, email, phone, subject, message, contact_pref }),
       });
 
       const data = await response.json();

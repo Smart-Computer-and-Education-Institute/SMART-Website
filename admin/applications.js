@@ -20,7 +20,8 @@ async function loadApplications() {
     renderApplications();
     return;
   }
-  applications = await res.json();
+  const data = await res.json().catch(() => []);
+  applications = Array.isArray(data) ? data : [];
   renderApplications();
 }
 
@@ -74,7 +75,7 @@ function renderApplications() {
     const tr = document.createElement("tr");
 
     const cvButton = a.cvUrl
-      ? `<a href="../${escapeHtml(a.cvUrl)}" target="_blank" class="btn btn-secondary btn-sm" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;">
+      ? `<a href="/api/applications/${encodeURIComponent(a.id)}/cv" target="_blank" class="btn btn-secondary btn-sm" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;">
            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
            CV
          </a>`
@@ -151,7 +152,7 @@ function openDetailModal(id) {
   const body = document.getElementById("appDetailBody");
 
   const cvLink = app.cvUrl
-    ? `<a href="../${escapeHtml(app.cvUrl)}" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;">
+    ? `<a href="/api/applications/${encodeURIComponent(app.id)}/cv" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;">
          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
          Download ${escapeHtml(app.cvOriginalName || "CV / Resume")}
        </a>`

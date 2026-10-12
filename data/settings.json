@@ -1,5 +1,8 @@
-{
-  "siteTitle": "SMART Demo Site",
-  "theme": "light",
-  "adminEmail": "admin@example.com"
-}
+[
+  {
+    "id": "contact",
+    "siteTitle": "SMART Demo Site",
+    "theme": "light",
+    "adminEmail": "admin@example.com"
+  }
+]
