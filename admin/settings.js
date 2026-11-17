@@ -551,7 +551,7 @@ function createSocialLinkRow(item = { label: "", url: "", icon: "" }) {
   const labelInput = document.createElement("input");
   labelInput.type = "text";
   labelInput.className = "social-label-input";
-  labelInput.placeholder = "Platform (e.g. Chess)";
+  labelInput.placeholder = "e.g. Facebook, TikTok, etc.";
   labelInput.value = item.label || "";
   labelInput.style.cssText = "flex:0 0 140px;min-width:110px;";
 

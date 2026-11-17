@@ -1,404 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settings · Smart Admin</title>
-<link rel="stylesheet" href="admin.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings · Smart Admin</title>
+  <link rel="stylesheet" href="admin.css">
 </head>
+
 <body>
 
-<div class="app-shell">
+  <div class="app-shell">
 
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <img src="../Smart-Logo.png" alt="Smart Institute Logo" class="sidebar-logo-img">
-      <div class="sidebar-brand-text">
-        <strong>Smart Institute</strong>
-        <span>Admin panel</span>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <div class="sidebar-nav-label">Overview</div>
-      <a href="dashboard.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-        Dashboard
-      </a>
-
-      <div class="sidebar-nav-label">Manage</div>
-      <a href="inquiries.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        Inquiries
-        <span class="badge badge-amber sidebar-badge" id="sidebarInquiryBadge" style="display:none; margin-left:auto;">0</span>
-      </a>
-      <a href="services.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Services
-      </a>
-      <a href="offers.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        Offers
-      </a>
-      <a href="careers.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-        Careers
-      </a>
-      <a href="applications.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Applications
-      </a>
-      <a href="gallery.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-        Gallery
-      </a>
-      <a href="notices.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        Notices
-      </a>
-      <a href="testimonials.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Testimonials
-      </a>
-
-      <div class="sidebar-nav-label">Configure</div>
-      <a href="about.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        About Us
-      </a>
-      <a href="popups.html" class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="9"/></svg>
-        Popups
-      </a>
-      <a href="settings.html" class="nav-item active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Settings
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="avatar">AD</div>
-        <div class="sidebar-user-text">
-          <strong>Admin User</strong>
-          <span>admin@smartinstitute.com</span>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <!-- Main -->
-  <div class="main-col">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        </button>
-        <div>
-          <div class="topbar-title">Settings</div>
-          <div class="topbar-breadcrumb">Contact info and service categories shown on the public site</div>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button class="icon-btn" aria-label="Notifications">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span class="dot"></span>
-        </button>
-        <div class="avatar topbar-avatar" id="topbarAvatar" style="cursor:pointer;" title="Account">AD</div>
-      </div>
-    </header>
-
-    <!-- Logout Popup -->
-    <div class="logout-popup" id="logoutPopup">
-      <div class="logout-popup-user">
-        <div class="avatar" style="width:40px;height:40px;font-size:15px;">AD</div>
-        <div>
-          <strong>Admin User</strong>
-          <span>admin@smartinstitute.com</span>
-        </div>
-      </div>
-      <hr class="logout-popup-divider">
-      <a href="../login.html" class="logout-popup-btn" id="logoutBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Sign out
-      </a>
-    </div>
-
-    <main class="content">
-      <div class="page-header">
-        <div>
-          <h1>Settings</h1>
-          <p style="margin:0;color:var(--color-text-secondary);font-size:13.5px;">Changes here update the live site immediately.</p>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <img src="../Smart-Logo.png" alt="Smart Institute Logo" class="sidebar-logo-img">
+        <div class="sidebar-brand-text">
+          <strong>Smart Institute</strong>
+          <span>Admin panel</span>
         </div>
       </div>
 
-      <div class="dash-grid">
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-label">Overview</div>
+        <a href="dashboard.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="9" rx="1.5" />
+            <rect x="14" y="3" width="7" height="5" rx="1.5" />
+            <rect x="14" y="12" width="7" height="9" rx="1.5" />
+            <rect x="3" y="16" width="7" height="5" rx="1.5" />
+          </svg>
+          Dashboard
+        </a>
 
-        <!-- Contact info -->
-        <div class="card">
-          <div class="panel-header">
-            <h2>Contact info</h2>
+        <div class="sidebar-nav-label">Manage</div>
+        <a href="inquiries.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          Inquiries
+          <span class="badge badge-amber sidebar-badge" id="sidebarInquiryBadge"
+            style="display:none; margin-left:auto;">0</span>
+        </a>
+        <a href="services.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+          Services
+        </a>
+        <a href="offers.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            <line x1="7" y1="7" x2="7.01" y2="7" />
+          </svg>
+          Offers
+        </a>
+        <a href="careers.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+            <line x1="12" y1="12" x2="12" y2="16" />
+            <line x1="10" y1="14" x2="14" y2="14" />
+          </svg>
+          Careers
+        </a>
+        <a href="applications.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          Applications
+        </a>
+        <a href="gallery.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="9" cy="9" r="2" />
+            <path d="m21 15-5-5L5 21" />
+          </svg>
+          Gallery
+        </a>
+        <a href="notices.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          Notices
+        </a>
+        <a href="testimonials.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          Testimonials
+        </a>
+
+        <div class="sidebar-nav-label">Configure</div>
+        <a href="about.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          About Us
+        </a>
+        <a href="popups.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="9" y1="3" x2="9" y2="9" />
+          </svg>
+          Popups
+        </a>
+        <a href="settings.html" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          Settings
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="avatar">AD</div>
+          <div class="sidebar-user-text">
+            <strong>Admin User</strong>
+            <span>admin@smartinstitute.com</span>
           </div>
-          <form id="settingsForm" style="padding: 4px 22px 22px;">
-            <div class="form-field" id="field-address">
-              <label for="settingsAddress">Address</label>
-              <textarea id="settingsAddress" placeholder="e.g. Mechinagar-13, Charali Jhapa&#10;Koshi, Nepal" style="min-height:56px;"></textarea>
-              <span class="hint" style="display:block;margin-top:4px;">One line per address line — shown across the site, including on the Contact page.</span>
-            </div>
+        </div>
+      </div>
+    </aside>
 
-            <div class="form-field" id="field-phones">
-              <label for="settingsPhones">Phone numbers</label>
-              <textarea id="settingsPhones" placeholder="e.g. +977-9700071948&#10;+977-9700071958" style="min-height:70px;"></textarea>
-              <span class="hint" style="display:block;margin-top:4px;">One phone number per line.</span>
-            </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-            <div class="form-row">
-              <div class="form-field" id="field-email">
-                <label for="settingsEmail">Email</label>
-                <input type="email" id="settingsEmail" placeholder="e.g. smartinstitute@gmail.com">
-              </div>
-              <div class="form-field" id="field-hours">
-                <label for="settingsHours">Working hours</label>
-                <textarea id="settingsHours" placeholder="e.g. 6:00 AM – 6:00 PM&#10;Sunday – Friday" style="min-height:56px;"></textarea>
-              </div>
-            </div>
+    <!-- Main -->
+    <div class="main-col">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+          </button>
+          <div>
+            <div class="topbar-title">Settings</div>
+            <div class="topbar-breadcrumb">Contact info and service categories shown on the public site</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            <span class="dot"></span>
+          </button>
+          <div class="avatar topbar-avatar" id="topbarAvatar" style="cursor:pointer;" title="Account">AD</div>
+        </div>
+      </header>
 
-            <div class="form-field" id="field-whatsapp">
-              <label for="settingsWhatsapp">WhatsApp link <span class="hint">optional</span></label>
-              <input type="text" id="settingsWhatsapp" placeholder="e.g. https://wa.me/9779700071948">
-              <span class="hint" style="display:block;margin-top:4px;">Leave blank to hide the WhatsApp button on the Contact page.</span>
-            </div>
+      <!-- Logout Popup -->
+      <div class="logout-popup" id="logoutPopup">
+        <div class="logout-popup-user">
+          <div class="avatar" style="width:40px;height:40px;font-size:15px;">AD</div>
+          <div>
+            <strong>Admin User</strong>
+            <span>admin@smartinstitute.com</span>
+          </div>
+        </div>
+        <hr class="logout-popup-divider">
+        <a href="../login.html" class="logout-popup-btn" id="logoutBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          Sign out
+        </a>
+      </div>
 
-            <div class="form-field" id="field-map">
-              <label for="settingsMap">Google Maps embed URL <span class="hint">optional</span></label>
-              <input type="text" id="settingsMap" placeholder="https://www.google.com/maps/embed?...">
-              <span class="hint" style="display:block;margin-top:4px;">From Google Maps: Share → Embed a map → copy the src="..." URL.</span>
-            </div>
-
-            <div class="form-field" id="field-weekly-hours" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--color-border,#e2e8f0);">
-              <label style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Weekly Business Hours (Timeshift)</label>
-              <span class="hint" style="display:block;margin:0 0 12px;">Configure opening and closing times for each day. These dynamically drive the live status and schedule on Timeshift.html.</span>
-              <div class="weekly-hours-grid" id="weeklyHoursGrid">
-                <div class="weekly-hours-row" data-day="monday">
-                  <span class="day-name">Monday</span>
-                  <div class="time-inputs">
-                    <input type="time" class="hour-open" value="06:00" aria-label="Monday opening time">
-                    <span class="time-sep">to</span>
-                    <input type="time" class="hour-close" value="18:00" aria-label="Monday closing time">
-                  </div>
-                  <label class="closed-toggle">
-                    <input type="checkbox" class="hour-closed">
-                    <span>Closed</span>
-                  </label>
-                </div>
-                <div class="weekly-hours-row" data-day="tuesday">
-                  <span class="day-name">Tuesday</span>
-                  <div class="time-inputs">
-                    <input type="time" class="hour-open" value="06:00" aria-label="Tuesday opening time">
-                    <span class="time-sep">to</span>
-                    <input type="time" class="hour-close" value="18:00" aria-label="Tuesday closing time">
-                  </div>
-                  <label class="closed-toggle">
-                    <input type="checkbox" class="hour-closed">
-                    <span>Closed</span>
-                  </label>
-                </div>
-                <div class="weekly-hours-row" data-day="wednesday">
-                  <span class="day-name">Wednesday</span>
-                  <div class="time-inputs">
-                    <input type="time" class="hour-open" value="06:00" aria-label="Wednesday opening time">
-                    <span class="time-sep">to</span>
-                    <input type="time" class="hour-close" value="18:00" aria-label="Wednesday closing time">
-                  </div>
-                  <label class="closed-toggle">
-                    <input type="checkbox" class="hour-closed">
-                    <span>Closed</span>
-                  </label>
-                </div>
-                <div class="weekly-hours-row" data-day="thursday">
-                  <span class="day-name">Thursday</span>
-                  <div class="time-inputs">
-                    <input type="time" class="hour-open" value="06:00" aria-label="Thursday opening time">
-                    <span class="time-sep">to</span>
-                    <input type="time" class="hour-close" value="18:00" aria-label="Thursday closing time">
-                  </div>
-                  <label class="closed-toggle">
-                    <input type="checkbox" class="hour-closed">
-                    <span>Closed</span>
-                  </label>
-                </div>
-                <div class="weekly-hours-row" data-day="friday">
-                  <span class="day-name">Friday</span>
-                  <div class="time-inputs">
-                    <input type="time" class="hour-open" value="06:00" aria-label="Friday opening time">
-                    <span class="time-sep">to</span>
-                    <input type="time" class="hour-close" value="18:00" aria-label="Friday closing time">
-                  </div>
-                  <label class="closed-toggle">
-                    <input type="checkbox" class="hour-closed">
-                    <span>Closed</span>
-                  </label>
-                </div>
-                <div class="weekly-hours-row" data-day="saturday">
-                  <span class="day-name">Saturday</span>
-                  <div class="time-inputs">
-                    <input type="time" class="hour-open" value="06:00" aria-label="Saturday opening time">
-                    <span class="time-sep">to</span>
-                    <input type="time" class="hour-close" value="18:00" aria-label="Saturday closing time">
-                  </div>
-                  <label class="closed-toggle">
-                    <input type="checkbox" class="hour-closed" checked>
-                    <span>Closed</span>
-                  </label>
-                </div>
-                <div class="weekly-hours-row" data-day="sunday">
-                  <span class="day-name">Sunday</span>
-                  <div class="time-inputs">
-                    <input type="time" class="hour-open" value="06:00" aria-label="Sunday opening time">
-                    <span class="time-sep">to</span>
-                    <input type="time" class="hour-close" value="18:00" aria-label="Sunday closing time">
-                  </div>
-                  <label class="closed-toggle">
-                    <input type="checkbox" class="hour-closed">
-                    <span>Closed</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-field" id="field-next-holiday" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--color-border,#e2e8f0);">
-              <label for="settingsNextHoliday" style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Next Holiday Notice (Timeshift)</label>
-              <span class="hint" style="display:block;margin:0 0 10px;">Select an upcoming holiday notice to feature on Timeshift.html. Visitors will see the title, date, and can click to read the full notice.</span>
-              <select id="settingsNextHoliday" style="width:100%;padding:10px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;background:#fff;color:var(--color-text,#1e293b);">
-                <option value="">None selected</option>
-              </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary" id="settingsSaveBtn" style="margin-top:16px;">Save contact info &amp; hours</button>
-          </form>
+      <main class="content">
+        <div class="page-header">
+          <div>
+            <h1>Settings</h1>
+            <p style="margin:0;color:var(--color-text-secondary);font-size:13.5px;">Changes here update the live site
+              immediately.</p>
+          </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="dash-grid">
 
-          <!-- Service Categories -->
+          <!-- Contact info -->
           <div class="card">
             <div class="panel-header">
-              <h2>Service categories</h2>
+              <h2>Contact info</h2>
             </div>
-            <div style="padding: 4px 22px 22px;">
-              <p style="margin: 0 0 14px; font-size: 12.5px; color: var(--color-text-secondary);">
-                These are the filter chips shown on the public Services page and the
-                category options when adding a service. Renaming one updates every
-                service already using it.
-              </p>
-
-              <div id="categoryList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
-
-              <form id="addCategoryForm" style="display:flex;gap:8px;">
-                <input type="text" id="newCategoryName" placeholder="New category name" style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
-                <button type="submit" class="btn btn-primary">Add</button>
-              </form>
-            </div>
-          </div>
-
-          <!-- Career Divisions -->
-          <div class="card">
-            <div class="panel-header">
-              <h2>Career divisions</h2>
-            </div>
-            <div style="padding: 4px 22px 22px;">
-              <p style="margin: 0 0 14px; font-size: 12.5px; color: var(--color-text-secondary);">
-                These divisions appear as filter buttons on the public Career page and as
-                options when adding a position. Renaming a division updates every position
-                already using it.
-              </p>
-
-              <div id="divisionList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
-
-              <form id="addDivisionForm" style="display:flex;gap:8px;">
-                <input type="text" id="newDivisionName" placeholder="New division name" style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
-                <button type="submit" class="btn btn-primary">Add</button>
-              </form>
-            </div>
-          </div>
-
-          <!-- Footer Content -->
-          <div class="card">
-            <div class="panel-header">
-              <h2>Footer content</h2>
-            </div>
-            <form id="footerContentForm" style="padding: 4px 22px 22px;">
-              <p style="margin: 0 0 16px; font-size: 12.5px; color: var(--color-text-secondary);">
-                These fields are displayed in the footer across all pages of the public site.
-              </p>
-
-              <div class="form-field">
-                <label for="footerTagline">Tagline</label>
-                <input type="text" id="footerTagline" placeholder="e.g. Practical computer and digital skills training in Charali, Jhapa.">
-                <span class="hint" style="display:block;margin-top:4px;">Short description shown under the logo in the footer.</span>
+            <form id="settingsForm" style="padding: 4px 22px 22px;">
+              <div class="form-field" id="field-address">
+                <label for="settingsAddress">Address</label>
+                <textarea id="settingsAddress" placeholder="e.g. Mechinagar-13, Charali Jhapa&#10;Koshi, Nepal"
+                  style="min-height:56px;"></textarea>
+                <span class="hint" style="display:block;margin-top:4px;">One line per address line — shown across the
+                  site, including on the Contact page.</span>
               </div>
 
-              <div class="form-field">
-                <label for="footerCopyright">Copyright text</label>
-                <input type="text" id="footerCopyright" placeholder="e.g. Smart Computer and Education Institute. All rights reserved.">
-                <span class="hint" style="display:block;margin-top:4px;">Appears after "© [year]" in the footer bottom bar.</span>
+              <div class="form-field" id="field-phones">
+                <label for="settingsPhones">Phone numbers</label>
+                <textarea id="settingsPhones" placeholder="e.g. +977-9700071948&#10;+977-9700071958"
+                  style="min-height:70px;"></textarea>
+                <span class="hint" style="display:block;margin-top:4px;">One phone number per line.</span>
               </div>
 
-              <div class="form-field">
-                <label for="footerNote">Footer note <span class="hint">optional</span></label>
-                <input type="text" id="footerNote" placeholder="e.g. Jhapa, Nepal">
-                <span class="hint" style="display:block;margin-top:4px;">Small secondary label on the right side of the footer bottom bar.</span>
-              </div>
-
-              <div class="form-field" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--color-border,#e2e8f0);">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                  <label style="font-size:13.5px;font-weight:700;margin:0;">Social links <span class="hint">optional — up to 10, leave blank to hide</span></label>
-                  <span id="socialLinkCount" style="font-size:12px;color:var(--color-text-secondary);"></span>
+              <div class="form-row">
+                <div class="form-field" id="field-email">
+                  <label for="settingsEmail">Email</label>
+                  <input type="email" id="settingsEmail" placeholder="e.g. smartinstitute@gmail.com">
                 </div>
-
-                <div id="socialLinksList" style="display:flex;flex-direction:column;gap:8px;"></div>
-
-                <button type="button" id="addSocialLinkBtn" class="btn btn-secondary btn-sm" style="margin-top:10px;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  Add social link
-                </button>
-                <p class="hint" style="margin-top:6px;">Enter the platform name (e.g. <em>Facebook</em>, <em>LinkedIn</em>, <em>Threads</em>) and the full URL. The correct icon will appear automatically.</p>
+                <div class="form-field" id="field-hours">
+                  <label for="settingsHours">Working hours</label>
+                  <textarea id="settingsHours" placeholder="e.g. 6:00 AM – 6:00 PM&#10;Sunday – Friday"
+                    style="min-height:56px;"></textarea>
+                </div>
               </div>
 
-              <div class="form-field" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--color-border,#e2e8f0);">
-                <label style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Footer CTA banner <span class="hint">optional — leave text blank to hide banner</span></label>
-                <div class="form-field" style="margin-top:10px;">
-                  <label for="settingsFooterCtaText">CTA banner text</label>
-                  <input type="text" id="settingsFooterCtaText" placeholder="Ready to start your tech career? Enroll in a course today.">
-                  <span class="hint" style="display:block;margin-top:4px;">Main message displayed in the slim banner strip above footer bottom.</span>
-                </div>
-                <div class="form-row">
-                  <div class="form-field">
-                    <label for="settingsFooterCtaLabel">Button label</label>
-                    <input type="text" id="settingsFooterCtaLabel" placeholder="Get Started">
+              <div class="form-field" id="field-whatsapp">
+                <label for="settingsWhatsapp">WhatsApp link <span class="hint">optional</span></label>
+                <input type="text" id="settingsWhatsapp" placeholder="e.g. https://wa.me/9779700071948">
+                <span class="hint" style="display:block;margin-top:4px;">Leave blank to hide the WhatsApp button on the
+                  Contact page.</span>
+              </div>
+
+              <div class="form-field" id="field-map">
+                <label for="settingsMap">Google Maps embed URL <span class="hint">optional</span></label>
+                <input type="text" id="settingsMap" placeholder="https://www.google.com/maps/embed?...">
+                <span class="hint" style="display:block;margin-top:4px;">From Google Maps: Share → Embed a map → copy
+                  the src="..." URL.</span>
+              </div>
+
+              <div class="form-field" id="field-weekly-hours"
+                style="margin-top:20px;padding-top:16px;border-top:1px solid var(--color-border,#e2e8f0);">
+                <label style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Weekly Business Hours
+                  (Timeshift)</label>
+                <span class="hint" style="display:block;margin:0 0 12px;">Configure opening and closing times for each
+                  day. These dynamically drive the live status and schedule on Timeshift.html.</span>
+                <div class="weekly-hours-grid" id="weeklyHoursGrid">
+                  <div class="weekly-hours-row" data-day="monday">
+                    <span class="day-name">Monday</span>
+                    <div class="time-inputs">
+                      <input type="time" class="hour-open" value="06:00" aria-label="Monday opening time">
+                      <span class="time-sep">to</span>
+                      <input type="time" class="hour-close" value="18:00" aria-label="Monday closing time">
+                    </div>
+                    <label class="closed-toggle">
+                      <input type="checkbox" class="hour-closed">
+                      <span>Closed</span>
+                    </label>
                   </div>
-                  <div class="form-field">
-                    <label for="settingsFooterCtaLink">Button link URL</label>
-                    <input type="text" id="settingsFooterCtaLink" placeholder="Contact.html">
+                  <div class="weekly-hours-row" data-day="tuesday">
+                    <span class="day-name">Tuesday</span>
+                    <div class="time-inputs">
+                      <input type="time" class="hour-open" value="06:00" aria-label="Tuesday opening time">
+                      <span class="time-sep">to</span>
+                      <input type="time" class="hour-close" value="18:00" aria-label="Tuesday closing time">
+                    </div>
+                    <label class="closed-toggle">
+                      <input type="checkbox" class="hour-closed">
+                      <span>Closed</span>
+                    </label>
+                  </div>
+                  <div class="weekly-hours-row" data-day="wednesday">
+                    <span class="day-name">Wednesday</span>
+                    <div class="time-inputs">
+                      <input type="time" class="hour-open" value="06:00" aria-label="Wednesday opening time">
+                      <span class="time-sep">to</span>
+                      <input type="time" class="hour-close" value="18:00" aria-label="Wednesday closing time">
+                    </div>
+                    <label class="closed-toggle">
+                      <input type="checkbox" class="hour-closed">
+                      <span>Closed</span>
+                    </label>
+                  </div>
+                  <div class="weekly-hours-row" data-day="thursday">
+                    <span class="day-name">Thursday</span>
+                    <div class="time-inputs">
+                      <input type="time" class="hour-open" value="06:00" aria-label="Thursday opening time">
+                      <span class="time-sep">to</span>
+                      <input type="time" class="hour-close" value="18:00" aria-label="Thursday closing time">
+                    </div>
+                    <label class="closed-toggle">
+                      <input type="checkbox" class="hour-closed">
+                      <span>Closed</span>
+                    </label>
+                  </div>
+                  <div class="weekly-hours-row" data-day="friday">
+                    <span class="day-name">Friday</span>
+                    <div class="time-inputs">
+                      <input type="time" class="hour-open" value="06:00" aria-label="Friday opening time">
+                      <span class="time-sep">to</span>
+                      <input type="time" class="hour-close" value="18:00" aria-label="Friday closing time">
+                    </div>
+                    <label class="closed-toggle">
+                      <input type="checkbox" class="hour-closed">
+                      <span>Closed</span>
+                    </label>
+                  </div>
+                  <div class="weekly-hours-row" data-day="saturday">
+                    <span class="day-name">Saturday</span>
+                    <div class="time-inputs">
+                      <input type="time" class="hour-open" value="06:00" aria-label="Saturday opening time">
+                      <span class="time-sep">to</span>
+                      <input type="time" class="hour-close" value="18:00" aria-label="Saturday closing time">
+                    </div>
+                    <label class="closed-toggle">
+                      <input type="checkbox" class="hour-closed" checked>
+                      <span>Closed</span>
+                    </label>
+                  </div>
+                  <div class="weekly-hours-row" data-day="sunday">
+                    <span class="day-name">Sunday</span>
+                    <div class="time-inputs">
+                      <input type="time" class="hour-open" value="06:00" aria-label="Sunday opening time">
+                      <span class="time-sep">to</span>
+                      <input type="time" class="hour-close" value="18:00" aria-label="Sunday closing time">
+                    </div>
+                    <label class="closed-toggle">
+                      <input type="checkbox" class="hour-closed">
+                      <span>Closed</span>
+                    </label>
                   </div>
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary" id="footerContentSaveBtn" style="margin-top:16px;">Save footer content</button>
+              <div class="form-field" id="field-next-holiday"
+                style="margin-top:20px;padding-top:16px;border-top:1px solid var(--color-border,#e2e8f0);">
+                <label for="settingsNextHoliday" style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Next
+                  Holiday Notice (Timeshift)</label>
+                <span class="hint" style="display:block;margin:0 0 10px;">Select an upcoming holiday notice to feature
+                  on Timeshift.html. Visitors will see the title, date, and can click to read the full notice.</span>
+                <select id="settingsNextHoliday"
+                  style="width:100%;padding:10px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;background:#fff;color:var(--color-text,#1e293b);">
+                  <option value="">None selected</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary" id="settingsSaveBtn" style="margin-top:16px;">Save contact
+                info &amp; hours</button>
             </form>
           </div>
 
+          <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <!-- Service Categories -->
+            <div class="card">
+              <div class="panel-header">
+                <h2>Service categories</h2>
+              </div>
+              <div style="padding: 4px 22px 22px;">
+                <p style="margin: 0 0 14px; font-size: 12.5px; color: var(--color-text-secondary);">
+                  These are the filter chips shown on the public Services page and the
+                  category options when adding a service. Renaming one updates every
+                  service already using it.
+                </p>
+
+                <div id="categoryList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
+                <form id="addCategoryForm" style="display:flex;gap:8px;">
+                  <input type="text" id="newCategoryName" placeholder="New category name"
+                    style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
+                  <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Career Divisions -->
+            <div class="card">
+              <div class="panel-header">
+                <h2>Career divisions</h2>
+              </div>
+              <div style="padding: 4px 22px 22px;">
+                <p style="margin: 0 0 14px; font-size: 12.5px; color: var(--color-text-secondary);">
+                  These divisions appear as filter buttons on the public Career page and as
+                  options when adding a position. Renaming a division updates every position
+                  already using it.
+                </p>
+
+                <div id="divisionList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
+                <form id="addDivisionForm" style="display:flex;gap:8px;">
+                  <input type="text" id="newDivisionName" placeholder="New division name"
+                    style="flex:1;padding:9px 12px;border:1px solid var(--color-border,#e2e8f0);border-radius:var(--radius-sm,6px);font-size:13.5px;">
+                  <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Footer Content -->
+            <div class="card">
+              <div class="panel-header">
+                <h2>Footer content</h2>
+              </div>
+              <form id="footerContentForm" style="padding: 4px 22px 22px;">
+                <p style="margin: 0 0 16px; font-size: 12.5px; color: var(--color-text-secondary);">
+                  These fields are displayed in the footer across all pages of the public site.
+                </p>
+
+                <div class="form-field">
+                  <label for="footerTagline">Tagline</label>
+                  <input type="text" id="footerTagline"
+                    placeholder="e.g. Practical computer and digital skills training in Charali, Jhapa.">
+                  <span class="hint" style="display:block;margin-top:4px;">Short description shown under the logo in the
+                    footer.</span>
+                </div>
+
+                <div class="form-field">
+                  <label for="footerCopyright">Copyright text</label>
+                  <input type="text" id="footerCopyright"
+                    placeholder="e.g. Smart Computer and Education Institute. All rights reserved.">
+                  <span class="hint" style="display:block;margin-top:4px;">Appears after "© [year]" in the footer bottom
+                    bar.</span>
+                </div>
+
+                <div class="form-field">
+                  <label for="footerNote">Footer note <span class="hint">optional</span></label>
+                  <input type="text" id="footerNote" placeholder="e.g. Jhapa, Nepal">
+                  <span class="hint" style="display:block;margin-top:4px;">Small secondary label on the right side of
+                    the footer bottom bar.</span>
+                </div>
+
+                <div class="form-field"
+                  style="margin-top:16px;padding-top:14px;border-top:1px solid var(--color-border,#e2e8f0);">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                    <label style="font-size:13.5px;font-weight:700;margin:0;">Social links <span class="hint">optional —
+                        up to 10, leave blank to hide</span></label>
+                    <span id="socialLinkCount" style="font-size:12px;color:var(--color-text-secondary);"></span>
+                  </div>
+
+                  <div id="socialLinksList" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+                  <button type="button" id="addSocialLinkBtn" class="btn btn-secondary btn-sm" style="margin-top:10px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                      stroke-linejoin="round" width="14" height="14">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Add social link
+                  </button>
+                  <p class="hint" style="margin-top:6px;">Enter the platform name (e.g. <em>Facebook</em>,
+                    <em>LinkedIn</em>, <em>Threads</em>) and the full URL.</p>
+                </div>
+
+                <div class="form-field"
+                  style="margin-top:16px;padding-top:14px;border-top:1px solid var(--color-border,#e2e8f0);">
+                  <label style="font-size:13.5px;font-weight:700;margin-bottom:4px;">Footer CTA banner <span
+                      class="hint">optional — leave text blank to hide banner</span></label>
+                  <div class="form-field" style="margin-top:10px;">
+                    <label for="settingsFooterCtaText">CTA banner text</label>
+                    <input type="text" id="settingsFooterCtaText"
+                      placeholder="Ready to start your tech career? Enroll in a course today.">
+                    <span class="hint" style="display:block;margin-top:4px;">Main message displayed in the slim banner
+                      strip above footer bottom.</span>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field">
+                      <label for="settingsFooterCtaLabel">Button label</label>
+                      <input type="text" id="settingsFooterCtaLabel" placeholder="Get Started">
+                    </div>
+                    <div class="form-field">
+                      <label for="settingsFooterCtaLink">Button link URL</label>
+                      <input type="text" id="settingsFooterCtaLink" placeholder="Contact.html">
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="footerContentSaveBtn" style="margin-top:16px;">Save
+                  footer content</button>
+              </form>
+            </div>
+
+          </div>
+
         </div>
-
-      </div>
-    </main>
+      </main>
+    </div>
   </div>
-</div>
 
-<script src="admin.js"></script>
-<script src="settings.js"></script>
+  <script src="admin.js"></script>
+  <script src="settings.js"></script>
 </body>
+
 </html>

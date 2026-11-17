@@ -29,11 +29,14 @@ async function loadPhotos() {
 }
 
 function renderGallery() {
+  const validPhotos = photos.filter(
+    (p) => p && typeof p.image === "string" && p.image.trim() !== "" && typeof p.title === "string" && p.title.trim() !== ""
+  );
   grid.innerHTML = "";
-  galleryEmpty.style.display = photos.length ? "none" : "block";
-  galleryCount.textContent = `${photos.length} photo${photos.length === 1 ? "" : "s"}`;
+  galleryEmpty.style.display = validPhotos.length ? "none" : "block";
+  galleryCount.textContent = `${validPhotos.length} photo${validPhotos.length === 1 ? "" : "s"}`;
 
-  photos.forEach((p, i) => {
+  validPhotos.forEach((p, i) => {
     const card = document.createElement("div");
     card.className = "gallery-admin-card";
     const thumbInner = p.image
@@ -45,7 +48,7 @@ function renderGallery() {
       </div>
       <div class="gallery-admin-body">
         <h3>${escapeHtml(p.title)}</h3>
-        <p>${nl2br(escapeHtml(p.desc))}</p>
+        <p>${nl2br(escapeHtml(p.desc || ""))}</p>
         <div class="gallery-admin-actions">
           <button class="btn btn-secondary btn-sm" onclick="openPhotoModal('${p.id}')">Edit</button>
           <button class="btn btn-danger-ghost btn-sm" onclick="deletePhoto('${p.id}')">Delete</button>
@@ -58,7 +61,7 @@ function renderGallery() {
 
 function escapeHtml(str) {
   const div = document.createElement("div");
-  div.textContent = str;
+  div.textContent = str == null ? "" : str;
   return div.innerHTML;
 }
 

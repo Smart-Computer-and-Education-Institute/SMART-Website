@@ -827,7 +827,11 @@ if (publicGalleryGrid) {
 
   function renderPublicGallery(photos) {
     publicGalleryGrid.innerHTML = "";
-    if (publicGalleryEmpty) publicGalleryEmpty.style.display = photos.length ? "none" : "block";
+    const validPhotos = (Array.isArray(photos) ? photos : []).filter(
+      (p) => p && typeof p.image === "string" && p.image.trim() !== "" && typeof p.title === "string" && p.title.trim() !== ""
+    );
+
+    if (publicGalleryEmpty) publicGalleryEmpty.style.display = validPhotos.length ? "none" : "block";
 
     // Optional data-limit attribute: when present (e.g. on index.html preview
     // sections), only the first N photos are rendered. Pages without the
@@ -835,24 +839,24 @@ if (publicGalleryGrid) {
     const limitAttr = publicGalleryGrid.getAttribute("data-limit");
     const limit = limitAttr ? parseInt(limitAttr, 10) : Infinity;
 
-    photos.slice(0, limit).forEach((p) => {
+    validPhotos.slice(0, limit).forEach((p) => {
       const card = document.createElement("div");
       card.className = "gallery-card";
       card.innerHTML = `
         <div class="gallery-image">
-          <img src="${escapeGalleryHtml(p.image || "")}" alt="${escapeGalleryHtml(p.title)}" loading="lazy" decoding="async">
+          <img src="${escapeGalleryHtml(p.image || "")}" alt="${escapeGalleryHtml(p.title || "")}" loading="lazy" decoding="async">
         </div>
         <div class="gallery-info">
-          <h3 class="gallery-title">${escapeGalleryHtml(p.title)}</h3>
-          <p class="gallery-desc">${nl2br(escapeGalleryHtml(p.desc))}</p>
+          <h3 class="gallery-title">${escapeGalleryHtml(p.title || "")}</h3>
+          <p class="gallery-desc">${nl2br(escapeGalleryHtml(p.desc || ""))}</p>
         </div>
       `;
       card.addEventListener("click", () => {
         if (!lightbox) return;
         lightboxImg.src = p.image || "";
-        lightboxImg.alt = p.title;
-        lightboxTitle.textContent = p.title;
-        lightboxDesc.textContent = p.desc;
+        lightboxImg.alt = p.title || "";
+        lightboxTitle.textContent = p.title || "";
+        lightboxDesc.textContent = p.desc || "";
         lightbox.classList.add("open");
       });
       publicGalleryGrid.appendChild(card);
@@ -883,7 +887,7 @@ if (publicGalleryGrid) {
 
 function escapeGalleryHtml(str) {
   const div = document.createElement("div");
-  div.textContent = str;
+  div.textContent = str == null ? "" : str;
   return div.innerHTML;
 }
 
@@ -941,6 +945,12 @@ onDomReady(() => {
   const inquiryForm = document.getElementById("inquiryForm") || document.querySelector(".form-panel form");
   if (!inquiryForm) return;
 
+  function escape(str) {
+    const div = document.createElement("div");
+    div.textContent = str == null ? "" : String(str);
+    return div.innerHTML;
+  }
+
   const submitBtn = document.getElementById("inquirySubmitBtn") || inquiryForm.querySelector("button[type='submit']");
   const btnText = submitBtn?.querySelector(".btn-text");
   const btnSpinner = submitBtn?.querySelector(".btn-spinner");
@@ -967,6 +977,81 @@ onDomReady(() => {
     feedback.offsetHeight; // force reflow
     feedback.style.animation = "feedbackPopIn 0.35s cubic-bezier(0.22, 1, 0.36, 1)";
     feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function showInquirySuccessPopup(submittedName, submittedEmail) {
+    const prevOverlay = document.getElementById("inquirySuccessPopupOverlay");
+    if (prevOverlay) prevOverlay.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "inquirySuccessPopupOverlay";
+    overlay.className = "site-popup-overlay";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", "inquirySuccessTitle");
+
+    overlay.innerHTML = `
+      <div class="site-popup-card site-popup-card--small">
+        <button type="button" class="site-popup-close" id="inquirySuccessClose" aria-label="Close message">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <div class="site-popup-content">
+          <div class="site-popup-icon-check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+          </div>
+          <h3 class="site-popup-title" id="inquirySuccessTitle">Message sent!</h3>
+          <div class="site-popup-body">
+            Thank you, ${escape(submittedName)}. We received your inquiry and will get back to you at ${escape(submittedEmail)} soon.
+          </div>
+          <div class="site-popup-actions" style="width:100%;">
+            <button type="button" class="site-popup-cta" id="inquirySuccessOkBtn">OK</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const okBtn = overlay.querySelector("#inquirySuccessOkBtn");
+    const closeBtn = overlay.querySelector("#inquirySuccessClose");
+
+    let isClosed = false;
+    let autoCloseTimer = null;
+
+    function closePopup() {
+      if (isClosed) return;
+      isClosed = true;
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+      document.removeEventListener("keydown", onKeyDown);
+      overlay.classList.remove("active");
+      setTimeout(() => {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, 300);
+    }
+
+    function onKeyDown(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closePopup();
+      }
+    }
+
+    if (okBtn) okBtn.addEventListener("click", closePopup);
+    if (closeBtn) closeBtn.addEventListener("click", closePopup);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closePopup();
+    });
+    document.addEventListener("keydown", onKeyDown);
+
+    autoCloseTimer = setTimeout(closePopup, 6000);
+
+    // eslint-disable-next-line no-unused-expressions
+    overlay.offsetHeight;
+    overlay.classList.add("active");
+
+    if (okBtn) okBtn.focus();
   }
 
   inquiryForm.addEventListener("submit", async (e) => {
@@ -1007,29 +1092,20 @@ onDomReady(() => {
         throw new Error(data.error || "Unable to send your message at this time.");
       }
 
-      // Get first phone from settings (falls back to hardcoded default)
-      const firstPhone = (window._smartSettings?.phones?.[0]) || "+977-9700071948";
-      const phoneHref = "tel:" + firstPhone.replace(/[^+\d]/g, "");
-
-      showFeedback(
-        "success",
-        `<span class="form-feedback-icon">✅</span>` +
-        `<div class="form-feedback-body">` +
-        `<strong>Message sent! Thank you, ${escapeHtml(name)}.</strong><br>` +
-        `We received your inquiry and will get back to you at <strong>${escapeHtml(email)}</strong> shortly.` +
-        `<div class="form-feedback-links">` +
-        `<a href="${phoneHref}" class="form-feedback-link">📞 ${escapeHtml(firstPhone)}</a>` +
-        `</div></div>`
-      );
-
       inquiryForm.reset();
+      if (feedback) {
+        feedback.style.display = "none";
+        feedback.innerHTML = "";
+      }
+
+      showInquirySuccessPopup(name, email);
     } catch (err) {
       showFeedback(
         "error",
         `<span class="form-feedback-icon">⚠️</span>` +
         `<div class="form-feedback-body">` +
         `<strong>Could not send message.</strong><br>` +
-        `${escapeHtml(err.message || "Please check your internet connection and try again.")}</div>`
+        `${escape(err.message || "Please check your internet connection and try again.")}</div>`
       );
     } finally {
       setSubmitting(false);

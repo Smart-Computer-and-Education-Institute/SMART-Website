@@ -1,17 +1,40 @@
 [
   {
-    "id": "pop1791548321455",
-    "name": "scssdass",
+    "id": "pop1794891056026",
+    "name": "test",
     "enabled": true,
-    "priority": 1,
+    "priority": 20,
     "source": "offer",
-    "refId": "1789372179436",
+    "refId": "offer1794890485784",
     "title": "",
     "message": "",
     "image": "",
     "ctaLabel": "Learn more",
     "ctaLink": "hello.com",
-    "frequency": "oncePerDay",
+    "frequency": "everyLoad",
+    "schedule": {
+      "startDate": null,
+      "endDate": null,
+      "daysOfWeek": [],
+      "startTime": null,
+      "endTime": null
+    },
+    "createdAt": "2026-11-17T04:50:56.026Z",
+    "updatedAt": "2026-11-17T04:51:13.531Z"
+  },
+  {
+    "id": "pop1791548321455",
+    "name": "scssdass",
+    "enabled": true,
+    "priority": 10,
+    "source": "notice",
+    "refId": "1789372179417",
+    "title": "",
+    "message": "",
+    "image": "",
+    "ctaLabel": "Learn more",
+    "ctaLink": "hello.com",
+    "frequency": "everyLoad",
     "schedule": {
       "startDate": null,
       "endDate": null,
@@ -20,6 +43,6 @@
       "endTime": null
     },
     "createdAt": "2026-10-09T12:18:41.455Z",
-    "updatedAt": "2026-10-09T12:18:41.455Z"
+    "updatedAt": "2026-11-17T04:51:13.531Z"
   }
 ]

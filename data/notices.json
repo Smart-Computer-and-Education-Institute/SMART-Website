@@ -4,13 +4,13 @@
     "title": "Welcome",
     "content": "Welcome to the SMART website demo!",
     "date": "2026-09-14",
-    "status": "published"
+    "status": "draft"
   },
   {
     "id": "1789372179417",
     "title": "Update",
     "content": "New features have been added.",
     "date": "2026-09-14",
-    "status": "published"
+    "status": "draft"
   }
 ]

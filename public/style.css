@@ -1355,6 +1355,45 @@ footer .section-container {
   text-decoration: underline;
 }
 
+/* Small confirmation dialog variant */
+.site-popup-card--small {
+  max-width: 380px;
+  text-align: center;
+}
+
+.site-popup-card--small .site-popup-content {
+  align-items: center;
+  padding: 28px 24px 24px;
+}
+
+.site-popup-card--small .site-popup-title {
+  color: #1a2760;
+  margin-bottom: 10px;
+}
+
+.site-popup-card--small .site-popup-body {
+  color: #475569;
+  margin-bottom: 22px;
+}
+
+.site-popup-icon-check {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 0 0 6px #f0fdf4;
+}
+
+.site-popup-icon-check svg {
+  width: 26px;
+  height: 26px;
+}
+
 @media (max-width: 480px) {
   .site-popup-content {
     padding: 18px 20px 20px;

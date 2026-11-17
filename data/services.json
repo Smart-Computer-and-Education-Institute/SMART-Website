@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "s1794890453213",
+    "name": "test",
+    "category": "Design",
+    "image": "",
+    "duration": "2 Months",
+    "desc": "test",
+    "enrolled": 0,
+    "status": "active"
+  }
+]

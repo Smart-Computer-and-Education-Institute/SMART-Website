@@ -1,0 +1,18 @@
+[
+  {
+    "id": "p1794890541844",
+    "title": "test",
+    "desc": "test",
+    "image": "/img/gallery/photo-1794890541842-236083041.png"
+  },
+  {
+    "id": "1789372179434",
+    "src": "/images/gallery1.jpg",
+    "caption": "Campus view"
+  },
+  {
+    "id": "1789372179435",
+    "src": "/images/gallery2.jpg",
+    "caption": "Classroom"
+  }
+]

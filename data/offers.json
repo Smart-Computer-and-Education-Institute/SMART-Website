@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "offer1794890485784",
+    "title": "test",
+    "description": "test",
+    "tag": "LIMITED TIME",
+    "image": "/img/offers/offer-1794890700587-719283391.png",
+    "ctaLabel": "Learn more",
+    "ctaLink": "Contact.html",
+    "status": "active",
+    "createdAt": "2026-11-17T04:41:25.784Z"
+  }
+]
